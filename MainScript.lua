@@ -215,7 +215,7 @@ local LoginTab = LoadIClientUI.New({
 warn("[IClient]: Successfully Generated Interface")
 warn("[IClient]: Now loading universal place")
 
-loadstring(GetURL("GameScripts/Universal.lua"))()
+loadstring(GetURL("GameScripts/Universal.Lua"))()
 
 --------------------------------------// Settings Tab
 do
