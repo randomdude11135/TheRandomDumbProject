@@ -5,27 +5,6 @@ until game:IsLoaded() == true
 
 warn("[IClient]: Game Loaded")
 
---// Synapse X Functions
-function IsFileBetter(file)
-	local suc, res = pcall(function()
-		return readfile(file)
-	end)
-	return suc and res ~= nil
-end
-
-function GetURL(scripturl)
-	if shared.IClientDev then
-		if not betterisfile("IClient/" .. scripturl) then
-			error("File not found : IClient/" .. scripturl)
-		end
-		return readfile("IClient/" .. scripturl)
-	else
-		local res = game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/" .. scripturl, true)
-		assert(res ~= "404: Not Found", "File not found")
-		return res
-	end
-end
-
 --// Main Varibles
 warn("[IClient]: Indexing GuiLibrary")
 local GuiLibrary = loadstring(GetURL("GuiLbrary.lua"))()
