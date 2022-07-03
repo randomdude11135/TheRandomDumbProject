@@ -56,7 +56,7 @@ local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
 local checkpublicreponum = 0
 local checkpublicrepo
 local function checkpublicrepo(id)
-    print("Getting module for game place id of" .. id)
+    print("Getting module for game place id of" .. id )
 	local suc, req = pcall(function()
 		return requestfunc({
 			Url = "https://raw.githubusercontent.com/randomdude11135/IClient/main/GameScripts/" .. id .. ".Lua",
