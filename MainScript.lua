@@ -214,12 +214,11 @@ local LoginTab = LoadIClientUI.New({
 
 warn("[IClient]: Successfully Generated Interface")
 warn("[IClient]: Now loading universal place")
-
 loadstring(GetURL("GameScripts/Universal.Lua"))()
 
+warn("[IClient]: Now Creating Setting Tab")
 --------------------------------------// Settings Tab
 do
-
 	local ProfileTable = {}
 	local ProfileSetName = ""
 	function refreshprofilelist()
@@ -318,8 +317,8 @@ do
 
 end
 
+warn("[IClient]: Now Creating Login Tab")
 --------------------------------------// Login Tab
-
 local Logged = {}
 local ChatTag = {}
 local IsAlerted = false
@@ -331,6 +330,7 @@ local headers = {
 }	
 local WebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient", Body = {}, Method = "GET", Headers = headers}
 
+warn("[IClient]: Now Creating player listener")
 do
 
 	local PasswordSet
@@ -367,6 +367,7 @@ do
 	end)
 end
 
+warn("[IClient]: Now Creating chat listener")
 local oldchanneltab
 local oldchannelfunc
 local oldchanneltabs = {}

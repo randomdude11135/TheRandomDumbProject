@@ -1,9 +1,8 @@
 --// Main Varibles
+warn("[IClient]: Running Universal Module")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-
-warn("[IClient]: Running Universal Module")
 
 local function Cape(char, texture)
 	for i,v in pairs(char:GetDescendants()) do
