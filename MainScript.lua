@@ -52,7 +52,7 @@ local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
 
 local checkpublicreponum = 0
 local checkpublicrepo
-function checkpublicrepo(id)
+local function checkpublicrepo(id)
 	local suc, req = pcall(function()
 		return requestfunc({
 			Url = "https://raw.githubusercontent.com/randomdude11135/IClient/main/GameScripts/" .. id .. ".lua",
