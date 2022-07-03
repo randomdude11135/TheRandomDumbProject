@@ -152,7 +152,7 @@ else
 end
 
 
-local teleportfunc = LocalPlayer.OnTeleport:Connect(function(State)
+LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
 		local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
         writefile(
