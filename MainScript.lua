@@ -46,11 +46,12 @@ local requestfunc = syn and syn.request or http and http.request or http_request
 end 
 
 --// Main Varibles
-warn("[IClient]: Indexing GuiLibrary")
-local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
+
 local ReplicatedStorage = game:getservice("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
+
 
 local checkpublicreponum = 0
 local checkpublicrepo
@@ -402,7 +403,7 @@ for i,v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.On
 	end
 end
 --// Check Using Client
-task.spawn(function()
+do
     
 	game:GetService("RunService").Heartbeat:Connect(function()
 		
@@ -495,6 +496,6 @@ task.spawn(function()
 		end
 		task.wait()
 	end)	
-end)
+end
 
 warn("[IClient]: Fully Loaded")
