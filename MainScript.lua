@@ -47,7 +47,6 @@ local requestfunc = syn and syn.request or http and http.request or http_request
 end 
 
 --// Main Varibles
-
 local ReplicatedStorage = game:getservice("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
