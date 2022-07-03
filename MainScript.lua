@@ -26,9 +26,29 @@ local function GetURL(scripturl)
 	end
 end
 
+
+local getasset = getsynasset or getcustomasset or function(location) return "rbxasset://"..location end
+local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport or function() end
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
+	if tab.Method == "GET" then
+		return {
+			Body = game:HttpGet(tab.Url, true),
+			Headers = {},
+			StatusCode = 200
+		}
+	else
+		return {
+			Body = "bad exploit",
+			Headers = {},
+			StatusCode = 404
+		}
+	end
+end 
+
 --// Main Varibles
 warn("[IClient]: Indexing GuiLibrary")
 local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
+
 
 local checkpublicreponum = 0
 local checkpublicrepo
@@ -52,27 +72,6 @@ function checkpublicrepo(id)
 	end
 	return nil
 end
-
-local getasset = getsynasset or getcustomasset or function(location)
-	return "rbxasset://" .. location
-end
-local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport or function() end
-
-local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
-		if tab.Method == "GET" then
-			return {
-				Body = game:HttpGet(tab.Url, true),
-				Headers = {},
-				StatusCode = 200,
-			}
-		else
-			return {
-				Body = "bad exploit",
-				Headers = {},
-				StatusCode = 404,
-			}
-		end
-	end
 
 --// Check if script is supported
 if not (getasset and requestfunc and queueteleport) then
