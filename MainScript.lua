@@ -56,6 +56,7 @@ local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
 local checkpublicreponum = 0
 local checkpublicrepo
 local function checkpublicrepo(id)
+    print("Getting module for game place id of" .. id)
 	local suc, req = pcall(function()
 		return requestfunc({
 			Url = "https://raw.githubusercontent.com/randomdude11135/IClient/main/GameScripts/" .. id .. ".Lua",
@@ -222,9 +223,9 @@ warn("[IClient]: Successfully Generated Interface")
 warn("[IClient]: Now loading universal place")
 loadstring(GetURL("GameScripts/Universal.Lua"))()
 local publicrepo = checkpublicrepo(game.PlaceId)
-		if publicrepo then
-            warn("[IClient]: Now loading real game place")
-			loadstring(publicrepo)()
+if publicrepo then
+        warn("[IClient]: Now loading real game place")
+		loadstring(publicrepo)()
 end
 warn("[IClient]: Now Creating Setting Tab")
 --------------------------------------// Settings Tab
