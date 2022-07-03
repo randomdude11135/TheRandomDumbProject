@@ -312,10 +312,10 @@ do
 
 			if ProfileSetName == "" then
 				warn("[IClient]: Saving Current Profile")
-				writefile("IClient/Settings/" .. game.PlaceId .. "/" .. readfile("IClient/SettingsSelecting/" .. game.PlaceId..".txt") ..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(IClientToggleProperty))
+				writefile("IClient/Settings/" .. game.PlaceId .. "/" .. readfile("IClient/SettingsSelecting/" .. game.PlaceId..".txt") ..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty))
 			else		
 				warn("[IClient]: Creating new profile")
-				writefile("IClient/Settings/" .. game.PlaceId .. "/" ..  ProfileSetName..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(IClientToggleProperty))
+				writefile("IClient/Settings/" .. game.PlaceId .. "/" ..  ProfileSetName..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty))
 				writefile("IClient/SettingsSelecting/" .. game.PlaceId..".txt",ProfileSetName)
 				ProfileSetName = ""		
 				refreshprofilelist()
