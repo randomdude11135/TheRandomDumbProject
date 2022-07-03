@@ -1,5 +1,4 @@
 --// Main Varibles
-warn("[IClient]: Running bedwar main Module")
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
 local WORKSPACE = game:GetService("Workspace")
@@ -12,6 +11,13 @@ local PlayerCharacter = lplr.Character or lplr.CharacterAdded:Wait()
 local GamePlaceId = game.PlaceId
 local mouse = lplr:GetMouse()
 local cam = WORKSPACE.CurrentCamera
+
+--// UI Elements
+local LiteFrame = shared.TabInGui["Non-Gaming chair"]
+local BlantantFrame = shared.TabInGui["Gaming chair"]
+local AnimationTab = shared.TabInGui["Animations"]
+local IClientToggleProperty = shared.IClientToggledProperty
+local ButtonInGui = shared.ButtonInGui
 
 --// Folder
 local ESPFolder = Instance.new("Folder")
@@ -939,13 +945,6 @@ connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHand
 		kit = p3.Bedwars.kit
 	end
 end)
-
---// UI Elements
-local LiteFrame = shared.TabInGui["Non-Gaming chair"]
-local BlantantFrame = shared.TabInGui["Gaming chair"]
-local AnimationTab = shared.TabInGui["Animations"]
-local IClientToggleProperty = shared.IClientToggledProperty
-local ButtonInGui = shared.ButtonInGui
 
 --------------------------------------// Non-Blantant Tab
 ----------// AutoClicker Handler
