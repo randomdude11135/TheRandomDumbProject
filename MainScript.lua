@@ -370,6 +370,14 @@ local function Cape(char, texture)
 	until not p or p.Parent ~= torso.Parent
 end
 
+local function isAlive(plr)
+	local plr = plr or LocalPlayer
+	if plr and plr.Character and ((plr.Character:FindFirstChild("Humanoid")) and (plr.Character:FindFirstChild("Humanoid").Health > 0) and (plr.Character:FindFirstChild("HumanoidRootPart")) and (plr.Character:FindFirstChild("Head"))) then
+		return true
+	end
+end
+
+
 --------------------------------------// Cosmetics Tab
 ----------// Cape
 do
@@ -431,8 +439,8 @@ do
 	ButtonInGui["Walk Trail"] = {WiggleAnimationFrame,"CosmeticWalkTrail"}
 
 
-	BindToRenderStep("WalkingTrail",function()
-		if IClientToggleProperty.CosmeticWalkTrail then
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if shared.IClientToggledProperty.CosmeticWalkTrail then
 			if isAlive() then
 				if breadcrumbtrail == nil then
 					breadcrumbattachment = Instance.new("Attachment")
