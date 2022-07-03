@@ -2,7 +2,7 @@
 repeat
 	task.wait()
 until game:IsLoaded() == true
-
+print("Oh Em Ge")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
