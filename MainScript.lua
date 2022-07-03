@@ -154,7 +154,6 @@ end
 game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
         local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()' -- im dumb
-		queueteleport(teleportstr)
 		writefile(
 			"IClient/Settings/"
 				.. game.PlaceId
@@ -163,6 +162,7 @@ game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
 				.. ".IClientSetting.txt",
 			game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
 		)
+        queueteleport(teleportstr)
 	end
 end)
 
