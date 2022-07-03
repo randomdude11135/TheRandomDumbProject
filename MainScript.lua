@@ -20,6 +20,7 @@ local function GetURL(scripturl)
 		end
 		return readfile("IClient/" .. scripturl)
 	else
+        warn("[IClient]: Getting " .. scripturl .. "File")
 		local res = game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/" .. scripturl, true)
 		assert(res ~= "404: Not Found", "File not found")
 		return res
