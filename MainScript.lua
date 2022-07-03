@@ -13,14 +13,13 @@ local function IsBetterFile(file)
 	return suc and res ~= nil
 end
 
-local function GetURL(scripturl)
+function GetURL(scripturl)
 	if shared.IClientDev then
 		if not betterisfile("IClient/" .. scripturl) then
 			error("File not found : IClient/" .. scripturl)
 		end
 		return readfile("IClient/" .. scripturl)
 	else
-        warn("[IClient]: Getting " .. scripturl .. "File")
 		local res = game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/" .. scripturl, true)
 		assert(res ~= "404: Not Found", "File not found")
 		return res
@@ -50,7 +49,9 @@ end
 local ReplicatedStorage = game:getservice("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+warn("[IClient]: Indexing GuiLibrary")
 local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
+warn("[IClient]: Finished")
 
 
 local checkpublicreponum = 0
