@@ -11,6 +11,7 @@ local PlayerCharacter = lplr.Character or lplr.CharacterAdded:Wait()
 local GamePlaceId = game.PlaceId
 local mouse = lplr:GetMouse()
 local cam = WORKSPACE.CurrentCamera
+local ContentProvider = game:GetService("ContentProvider")
 
 --// UI Elements
 local LiteFrame = shared.TabInGui["Non-Gaming chair"]
