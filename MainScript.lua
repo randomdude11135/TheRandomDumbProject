@@ -5,9 +5,6 @@ until game:IsLoaded() == true
 
 warn("[IClient]: Game Loaded")
 
---// Main Varibles
-local GuiLibrary = loadstring(GetURL("GuiLbrary.lua"))()
-
 --// Synapse X Functions
 function IsFileBetter(file)
 	local suc, res = pcall(function()
@@ -28,6 +25,9 @@ function GetURL(scripturl)
 		return res
 	end
 end
+
+--// Main Varibles
+local GuiLibrary = loadstring(GetURL("GuiLbrary.lua"))()
 
 local checkpublicreponum = 0
 local checkpublicrepo
@@ -55,16 +55,9 @@ end
 local getasset = getsynasset or getcustomasset or function(location)
 	return "rbxasset://" .. location
 end
-local queueteleport = syn and syn.queue_on_teleport
-	or queue_on_teleport
-	or fluxus and fluxus.queue_on_teleport
-	or function() end
-local requestfunc = syn and syn.request
-	or http and http.request
-	or http_request
-	or fluxus and fluxus.request
-	or request
-	or function(tab)
+local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport or function() end
+
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
 		if tab.Method == "GET" then
 			return {
 				Body = game:HttpGet(tab.Url, true),
