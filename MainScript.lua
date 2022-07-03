@@ -454,10 +454,10 @@ do
 					breadcrumbtrail.FaceCamera = true
 					breadcrumbtrail.Lifetime = (20 / 100)
 					breadcrumbtrail.Enabled = true
-					breadcrumbtrail.Parent = lplr.Character
+					breadcrumbtrail.Parent = LocalPlayer.Character
 				else
 					local trailfound = false
-					for i,v in pairs(lplr.Character:GetChildren()) do
+					for i,v in pairs(LocalPlayer.Character:GetChildren()) do
 						if v:IsA("Trail") then
 							if trailfound then	
 								v:Remove()
@@ -466,18 +466,18 @@ do
 							end
 						end
 					end
-					breadcrumbattachment.Parent = lplr.character.HumanoidRootPart
-					breadcrumbattachment2.Parent = lplr.character.HumanoidRootPart
-					breadcrumbtrail.Parent = lplr.Character
+					breadcrumbattachment.Parent = LocalPlayer.character.HumanoidRootPart
+					breadcrumbattachment2.Parent = LocalPlayer.character.HumanoidRootPart
+					breadcrumbtrail.Parent = LocalPlayer.Character
 				end
 			end
 		else
 			if breadcrumbtrail then
-				breadcrumbtrail:Remove()
+				breadcrumbtrail:Destroy()
 				if isAlive() then 
 					for i,v in pairs(LocalPlayer.Character:GetChildren()) do
 						if v:IsA("Trail") then
-							v:Remove()
+							v:Destroy()
 						end
 					end
 				end
