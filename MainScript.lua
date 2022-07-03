@@ -3,6 +3,11 @@ repeat
 	task.wait()
 until game:IsLoaded() == true
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.Character.CharacterAdded:Wait()
+
 --// Synapse X Functions
 local function IsBetterFile(file)
 	local suc, res = pcall(function()
@@ -44,9 +49,6 @@ local requestfunc = syn and syn.request or http and http.request or http_request
 end 
 
 --// Main Varibles
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
 
 
