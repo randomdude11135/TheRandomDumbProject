@@ -6,14 +6,14 @@ until game:IsLoaded() == true
 warn("[IClient]: Game Loaded")
 
 --// Synapse X Functions
-local function IsBetterFile(file)
+local function GetBetterFile(file)
 	local suc, res = pcall(function()
 		return readfile(file)
 	end)
 	return suc and res ~= nil
 end
 
-function GetURL(scripturl)
+local function GetURL(scripturl)
 	if shared.IClientDev then
 		if not betterisfile("IClient/" .. scripturl) then
 			error("File not found : IClient/" .. scripturl)
