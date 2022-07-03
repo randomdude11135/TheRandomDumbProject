@@ -7,7 +7,7 @@ until game:IsLoaded() == true
 local GuiLibrary = loadstring(GetURL("GuiLbrary.lua"))()
 
 --// Synapse X Functions
-local IsFileBetter = function(file)
+function IsFileBetter(file)
 	local suc, res = pcall(function()
 		return readfile(file)
 	end)
