@@ -28,7 +28,7 @@ end
 
 --// Main Varibles
 warn("[IClient]: Indexing GuiLibrary")
-local GuiLibrary = loadstring(GetURL("GuiLbrary.lua"))()
+local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
 
 local checkpublicreponum = 0
 local checkpublicrepo
