@@ -6,7 +6,7 @@ until game:IsLoaded() == true
 warn("[IClient]: Game Loaded")
 
 --// Synapse X Functions
-local function GetBetterFile(file)
+local function IsBetterFile(file)
 	local suc, res = pcall(function()
 		return readfile(file)
 	end)
@@ -46,7 +46,7 @@ local requestfunc = syn and syn.request or http and http.request or http_request
 end 
 
 --// Main Varibles
-local ReplicatedStorage = game:getservice("ReplicatedStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 warn("[IClient]: Indexing GuiLibrary")
