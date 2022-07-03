@@ -221,7 +221,11 @@ local LoginTab = LoadIClientUI.New({
 warn("[IClient]: Successfully Generated Interface")
 warn("[IClient]: Now loading universal place")
 loadstring(GetURL("GameScripts/Universal.Lua"))()
-
+local publicrepo = checkpublicrepo(game.PlaceId)
+		if publicrepo then
+            warn("[IClient]: Now loading real game place")
+			loadstring(publicrepo)()
+end
 warn("[IClient]: Now Creating Setting Tab")
 --------------------------------------// Settings Tab
 do
