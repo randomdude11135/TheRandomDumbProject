@@ -2,9 +2,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local GuiLibrary = shared.GuiLibrary
-local ButtonInGui = shared.ButtonInGui
-local TabInGui = shared.TabInGui
 
 local function Cape(char, texture)
 	for i,v in pairs(char:GetDescendants()) do
@@ -72,20 +69,17 @@ local function isAlive(plr)
 	end
 end
 
---// Element UI
-local CosmeticsFrame = TabInGui["Cosmetics"]
-
 --------------------------------------// Cosmetics Tab
 ----------// Cape
 do
 	local Capeconnection
 
-	local WiggleAnimationFrame = CosmeticsFrame.Toggle({
+	local WiggleAnimationFrame = shared.TabInGui["Cosmetics"].Toggle({
 		Text = "Cape",
 		Callback = function(Value)
 			shared.IClientToggledProperty.CosmeticCape  = Value
 			if shared.IClientToggledProperty.CosmeticCape then
-				Capeconnection = LocalPlayer.CharacterAdded:connect(function(char)
+				Capeconnection = LocalPlayer.CharacterAdded:Connect(function(char)
 					task.spawn(function()
 							pcall(function() 
 								Cape(char, "rbxassetid://880811505")
@@ -106,7 +100,7 @@ do
 				if LocalPlayer.Character then
 					for i,v in pairs(LocalPlayer.Character:GetDescendants()) do
 						if v.Name == "Cape" then
-							v:Remove()
+							v:Destroy()
 						end
 					end
 				end
@@ -115,7 +109,7 @@ do
 		Enabled = shared.IClientToggledProperty.CosmeticCape
 	})
 
-	ButtonInGui["Cape"] = {WiggleAnimationFrame,"CosmeticCape"}
+	shared.ButtonInGui["Cape"] = {WiggleAnimationFrame,"CosmeticCape"}
 
 
 end
@@ -125,7 +119,7 @@ do
 	local breadcrumbtrail = nil
 	local breadcrumbattachment
 	local breadcrumbattachment2
-	local WiggleAnimationFrame = CosmeticsFrame.Toggle({
+	local WiggleAnimationFrame = shared.TabInGui["Cosmetics"].Toggle({
 		Text = "Walk Trail",
 		Callback = function(Value)
 			shared.IClientToggledProperty.CosmeticWalkTrail = Value 
@@ -133,7 +127,7 @@ do
 		Enabled = shared.IClientToggledProperty.CosmeticWalkTrail
 	})
 
-	ButtonInGui["Walk Trail"] = {WiggleAnimationFrame,"CosmeticWalkTrail"}
+	shared.ButtonInGui["Walk Trail"] = {WiggleAnimationFrame,"CosmeticWalkTrail"}
 
 
 	game:GetService("RunService").Heartbeat:Connect(function()
@@ -157,7 +151,7 @@ do
 					for i,v in pairs(LocalPlayer.Character:GetChildren()) do
 						if v:IsA("Trail") then
 							if trailfound then	
-								v:Remove()
+								v:Destroy()
 							else
 								trailfound = true
 							end
