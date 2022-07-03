@@ -15,7 +15,7 @@ end
 
 function GetURL(scripturl)
 	if shared.IClientDev then
-		if not betterisfile("IClient" .. scripturl) then
+		if not betterisfile("IClient/" .. scripturl) then
 			error("File not found : IClient/" .. scripturl)
 		end
 		return readfile("IClient/" .. scripturl)
