@@ -151,7 +151,7 @@ else
 	)
 end
 
-local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()' -- im dumb
+local teleportstr = 'shared.SwitchServers = true loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
 queueteleport(teleportstr)
 
 game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
