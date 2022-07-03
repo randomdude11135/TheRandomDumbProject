@@ -151,12 +151,11 @@ else
 	)
 end
 
-local teleportstr = 'shared.SwitchServers = true loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
-print(teleportstr)
 
 game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
-		writefile(
+		local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
+        writefile(
 			"IClient/Settings/"
 				.. game.PlaceId
 				.. "/"
