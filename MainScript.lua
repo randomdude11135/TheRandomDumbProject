@@ -48,8 +48,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
-local ButtonInGui = {}
-local TabInGui = {}
+
 
 local checkpublicreponum = 0
 local checkpublicrepo
@@ -114,10 +113,10 @@ if not success2 or not result2 then
 end
 
 --// Set Shared Info
-shared.GuiLibrary = GuiLibrary
 shared.IClientToggledProperty = {}
-shared.TabInGui = TabInGui
-shared.ButtonInGui = ButtonInGui
+shared.GuiLibrary = GuiLibrary
+shared.TabInGui = {}
+shared.ButtonInGui = {}
 warn("[IClient]: Loading Settngs")
 
 --// Write Profile
@@ -182,25 +181,25 @@ local LoadIClientUI = GuiLibrary.Load({
 local LiteFrame = LoadIClientUI.New({
 	Title = "Non-Gaming chair",
 })
-TabInGui["Non-Gaming chair"] = LiteFrame
+shared.TabInGui["Non-Gaming chair"] = LiteFrame
 
 ----// Blantant Frame
 local BlantantFrame = LoadIClientUI.New({
 	Title = "Gaming Chair",
 })
-TabInGui["Gaming chair"] = BlantantFrame
+shared.TabInGui["Gaming chair"] = BlantantFrame
 
 ----// Cosmetics Frame
 local CosmeticsFrame = LoadIClientUI.New({
 	Title = "Cosmetics",
 })
-TabInGui["Cosmetics"] = CosmeticsFrame
+shared.TabInGui["Cosmetics"] = CosmeticsFrame
 
 ----// Animation Frame
 local AnimationTab = LoadIClientUI.New({
 	Title = "Animations",
 })
-TabInGui["Animations"] = AnimationTab
+shared.TabInGui["Animations"] = AnimationTab
 
 
 ----// Profile Frame
@@ -248,7 +247,7 @@ do
 
 								refreshprofilelist()
 
-								for x,z in pairs(ButtonInGui) do
+								for x,z in pairs(shared.ButtonInGui) do
 									pcall(function()
 										z[1]:SetState(false)
 									end)
@@ -262,7 +261,7 @@ do
 
 
 								wait(1)
-								for x,z in pairs(ButtonInGui) do
+								for x,z in pairs(shared.ButtonInGui) do
 									pcall(function()
 										z[1]:SetState(shared.IClientToggledProperty[z[2]])
 									end)
