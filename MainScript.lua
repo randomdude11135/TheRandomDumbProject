@@ -58,7 +58,7 @@ local checkpublicrepo
 local function checkpublicrepo(id)
 	local suc, req = pcall(function()
 		return requestfunc({
-			Url = "https://raw.githubusercontent.com/randomdude11135/IClient/main/GameScripts/" .. id .. ".lua",
+			Url = "https://raw.githubusercontent.com/randomdude11135/IClient/main/GameScripts/" .. id .. ".Lua",
 			Method = "GET",
 		})
 	end)
