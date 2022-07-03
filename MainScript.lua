@@ -6,7 +6,7 @@ print("Oh Em Ge")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-repeat wait() until LocalPlayer.Character ~= nil
+repeat task.wait(1) until LocalPlayer.Character ~= nil
 local Character = LocalPlayer.Character or LocalPlayer.Character.CharacterAdded:Wait()
 
 --// Synapse X Functions
