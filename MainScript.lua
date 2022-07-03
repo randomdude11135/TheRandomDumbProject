@@ -160,7 +160,7 @@ game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
 			game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
 		)
         local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
-
+		queueteleport(teleportstr)
 	end
 end)
 
