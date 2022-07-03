@@ -3,6 +3,8 @@ repeat
 	task.wait()
 until game:IsLoaded() == true
 
+warn("[IClient]: Game Loaded")
+
 --// Main Varibles
 local GuiLibrary = loadstring(GetURL("GuiLbrary.lua"))()
 
