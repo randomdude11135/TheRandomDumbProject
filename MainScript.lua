@@ -475,7 +475,7 @@ do
 			if breadcrumbtrail then
 				breadcrumbtrail:Remove()
 				if isAlive() then 
-					for i,v in pairs(lplr.Character:GetChildren()) do
+					for i,v in pairs(LocalPlayer.Character:GetChildren()) do
 						if v:IsA("Trail") then
 							v:Remove()
 						end
