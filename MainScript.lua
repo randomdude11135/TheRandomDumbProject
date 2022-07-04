@@ -118,7 +118,6 @@ shared.GuiLibrary = GuiLibrary
 shared.TabInGui = {}
 shared.ButtonInGui = {}
 
-warn("[IClient]: Loading Settngs")
 --// Write Profile
 local success2, result2 = pcall(function()
 	return game:GetService("HttpService"):JSONDecode(
@@ -133,12 +132,10 @@ local success2, result2 = pcall(function()
 end)
 
 if success2 and result2 then
-	warn("[IClient]: Data Found! Rewriting the configuration")
 	for i, v in pairs(result2) do
 		shared.IClientToggledProperty[i] = v
 	end
 else
-	warn("[IClient]: Data not found! Creating setting file")
 	writefile(
 		"IClient/Settings/"
 			.. game.PlaceId
@@ -214,8 +211,6 @@ local LoginTab = LoadIClientUI.New({
 	Title = "Login",
 })
 
-warn("[IClient]: Successfully Generated Interface")
-warn("[IClient]: Now loading universal place")
 loadstring(GetURL("GameScripts/Universal.Lua"))()
 local publicrepo = checkpublicrepo(game.PlaceId)
 if publicrepo then
@@ -247,9 +242,7 @@ do
 
 
 							if success2 and result2 then	
-								warn("[IClient]: Loading " .. newstr2 .. " Settings")
 								writefile("IClient/SettingsSelecting/" .. game.PlaceId..".txt",newstr2)
-
 								refreshprofilelist()
 
 								for x,z in pairs(shared.ButtonInGui) do
@@ -306,10 +299,8 @@ do
 		Callback = function(Value)
 
 			if ProfileSetName == "" then
-				warn("[IClient]: Saving Current Profile")
 				writefile("IClient/Settings/" .. game.PlaceId .. "/" .. readfile("IClient/SettingsSelecting/" .. game.PlaceId..".txt") ..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty))
 			else		
-				warn("[IClient]: Creating new profile")
 				writefile("IClient/Settings/" .. game.PlaceId .. "/" ..  ProfileSetName..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty))
 				writefile("IClient/SettingsSelecting/" .. game.PlaceId..".txt",ProfileSetName)
 				ProfileSetName = ""		
@@ -353,7 +344,6 @@ do
 		Callback = function(Value)
 			writefile("IClient/LoginSave.Txt", PasswordSet)
 			if os.time() > LoginDebounce then
-				warn("[IClient]:Setted your password")
 				LoginDebounce = os.time() + 5
 				PasswordSet = ""
 				Loggined = false
