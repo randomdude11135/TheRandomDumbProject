@@ -116,13 +116,7 @@ if not success2 or not result2 then
 	writefile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt", "MainSetting")
 end
 
---// Set Shared Info
-shared.IClientToggledProperty = {}
-shared.GuiLibrary = GuiLibrary
-shared.TabInGui = {}
-shared.ButtonInGui = {}
 warn("[IClient]: Loading Settngs")
-
 --// Write Profile
 local success2, result2 = pcall(function()
 	return game:GetService("HttpService"):JSONDecode(
@@ -153,6 +147,12 @@ else
 	)
 end
 
+
+--// Set Shared Info
+shared.IClientToggledProperty = {}
+shared.GuiLibrary = GuiLibrary
+shared.TabInGui = {}
+shared.ButtonInGui = {}
 
 LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
