@@ -56,6 +56,7 @@ local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
 local checkpublicreponum = 0
 local checkpublicrepo
 local function checkpublicrepo(id)
+    print("Getting module for game place id of" .. id )
 	local suc, req = pcall(function()
 		return requestfunc({
 			Url = "https://raw.githubusercontent.com/randomdude11135/IClient/main/GameScripts/" .. id .. ".Lua",
@@ -122,14 +123,45 @@ shared.TabInGui = {}
 shared.ButtonInGui = {}
 warn("[IClient]: Loading Settngs")
 
+--// Write Profile
+local success2, result2 = pcall(function()
+	return game:GetService("HttpService"):JSONDecode(
+		readfile(
+			"IClient/Settings/"
+				.. game.PlaceId
+				.. "/"
+				.. readfile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt")
+				.. ".IClientSetting.txt"
+		)
+	)
+end)
+
+if success2 and result2 then
+	warn("[IClient]: Data Found! Rewriting the configuration")
+	for i, v in pairs(result2) do
+		shared.IClientToggledProperty[i] = v
+	end
+else
+	warn("[IClient]: Data not found! Creating setting file")
+	writefile(
+		"IClient/Settings/"
+			.. game.PlaceId
+			.. "/"
+			.. readfile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt")
+			.. ".IClientSetting.txt",
+		game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
+	)
+end
+
+
 LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
 		local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
         writefile(
 			"IClient/Settings/"
-				.. shared.UseGameDataOf or game.PlaceId
+				.. game.PlaceId
 				.. "/"
-				.. readfile("IClient/SettingsSelecting/" .. shared.UseGameDataOf or game.PlaceId .. ".txt")
+				.. readfile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt")
 				.. ".IClientSetting.txt",
 			game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
 		)
@@ -195,37 +227,6 @@ if publicrepo then
         warn("[IClient]: Now loading real game place")
 		loadstring(publicrepo)()
 end
-
---// Write Profile
-local success2, result2 = pcall(function()
-	return game:GetService("HttpService"):JSONDecode(
-		readfile(
-			"IClient/Settings/"
-				.. shared.UseGameDataOf or game.PlaceId
-				.. "/"
-				.. readfile("IClient/SettingsSelecting/" .. shared.UseGameDataOf or game.PlaceId .. ".txt")
-				.. ".IClientSetting.txt"
-		)
-	)
-end)
-
-if success2 and result2 then
-	warn("[IClient]: Data Found! Rewriting the configuration")
-	for i, v in pairs(result2) do
-		shared.IClientToggledProperty[i] = v
-	end
-else
-	warn("[IClient]: Data not found! Creating setting file")
-	writefile(
-		"IClient/Settings/"
-			.. shared.UseGameDataOf or game.PlaceId
-			.. "/"
-			.. readfile("IClient/SettingsSelecting/" .. shared.UseGameDataOf or game.PlaceId .. ".txt")
-			.. ".IClientSetting.txt",
-		game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
-	)
-end
-
 warn("[IClient]: Now Creating Setting Tab")
 --------------------------------------// Settings Tab
 do
