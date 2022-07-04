@@ -99,8 +99,20 @@ if isfolder("IClient/Settings") == false then
 	makefolder("IClient/Settings")
 end
 
+if isfolder("IClient/Settings/" .. game.PlaceId) == false then
+	makefolder("IClient/Settings/" .. game.PlaceId)
+end
+
 if isfolder("IClient/SettingsSelecting") == false then
 	makefolder("IClient/SettingsSelecting")
+end
+
+local success2, result2 = pcall(function()
+	return readfile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt")
+end)
+
+if not success2 or not result2 then
+	writefile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt", "MainSetting")
 end
 
 --// Set Shared Info
@@ -178,26 +190,11 @@ local LoginTab = LoadIClientUI.New({
 warn("[IClient]: Successfully Generated Interface")
 warn("[IClient]: Now loading universal place")
 loadstring(GetURL("GameScripts/Universal.Lua"))()
-
 local publicrepo = checkpublicrepo(game.PlaceId)
 if publicrepo then
         warn("[IClient]: Now loading real game place")
 		loadstring(publicrepo)()
 end
-
---// Load Profile
-if isfolder("IClient/Settings/" .. shared.UseGameDataOf or game.PlaceId) == false then
-	makefolder("IClient/Settings/" ..shared.UseGameDataOf or game.PlaceId)
-end
-
-local success2, result2 = pcall(function()
-	return readfile("IClient/SettingsSelecting/" .. shared.UseGameDataOf or game.PlaceId .. ".txt")
-end)
-
-if not success2 or not result2 then
-	writefile("IClient/SettingsSelecting/" .. shared.UseGameDataOf or game.PlaceId .. ".txt", "MainSetting")
-end
-
 
 --// Write Profile
 local success2, result2 = pcall(function()
