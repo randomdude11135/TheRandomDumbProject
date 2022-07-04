@@ -1141,7 +1141,7 @@ end
 ----------// Sprint Handler
 do
 
-	local AlreadyStop = false
+	local AlreadyStop = true
 
 	local SprintFrame = LiteFrame.Toggle({
 		Text = "Sprint",
@@ -1161,8 +1161,10 @@ do
 				AlreadyStop = true
 			end
 		else
+			if AlreadyStop then
 			bedwars["sprintTable"]:startSprinting()
 			AlreadyStop = false
+			end
 		end 
 	end)
 
