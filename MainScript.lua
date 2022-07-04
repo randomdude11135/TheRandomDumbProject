@@ -66,7 +66,6 @@ local function checkpublicrepo(id)
 	if not suc then
 		checkpublicreponum = checkpublicreponum + 1
 		task.spawn(function()
-            warn("[IClient]:Loading CustomModule Failed!, Attempts: " .. checkpublicreponum )
 		end)
 		task.wait(2)
 		return checkpublicrepo(id)
@@ -79,19 +78,16 @@ end
 
 --// Check if script is supported
 if not (getasset and requestfunc and queueteleport) then
-	warn("[IClient]: IClient is not support with your executor haha")
 	return
 end
 
 if shared.AlreadyExecuted then
-	warn("[IClient]: IClient is already running.")
 	return
 else
 	shared.AlreadyExecuted = true
 end
 
 --// Create Folder
-warn("[IClient]: Checking / Creating Folder")
 if isfolder("IClient") == false then
 	makefolder("IClient")
 end
@@ -169,7 +165,6 @@ LocalPlayer.OnTeleport:Connect(function(State)
 	end
 end)
 
-warn("[IClient]: Generating User Interface")
 -------// Load UI
 local LoadIClientUI = GuiLibrary.Load({
 	Title = "IClient",
@@ -224,10 +219,10 @@ warn("[IClient]: Now loading universal place")
 loadstring(GetURL("GameScripts/Universal.Lua"))()
 local publicrepo = checkpublicrepo(game.PlaceId)
 if publicrepo then
-        warn("[IClient]: Now loading real game place")
-		loadstring(publicrepo)()
+	loadstring(publicrepo)()
 end
-warn("[IClient]: Now Creating Setting Tab")
+
+
 --------------------------------------// Settings Tab
 do
 	local ProfileTable = {}
@@ -328,7 +323,6 @@ do
 
 end
 
-warn("[IClient]: Now Creating Login Tab")
 --------------------------------------// Login Tab
 local Logged = {}
 local ChatTag = {}
@@ -341,7 +335,6 @@ local headers = {
 }	
 local WebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient", Body = {}, Method = "GET", Headers = headers}
 
-warn("[IClient]: Now Creating player listener")
 do
 
 	local PasswordSet
@@ -378,7 +371,6 @@ do
 	end)
 end
 
-warn("[IClient]: Now Creating chat listener")
 local oldchanneltab
 local oldchannelfunc
 local oldchanneltabs = {}
@@ -450,14 +442,12 @@ do
 					if  ChatTag[v.UserHash] == nil then
 						local RealInfo = v.ChatTagInfo
 						ChatTag[v.UserHash] = {TagText = tostring(RealInfo.TagName), TagColor = Color3.fromRGB(RealInfo.R, RealInfo.G, RealInfo.B)}
-						warn("[IClient]: Someone got their chat tag!")
 					end
 				else
 					ChatTag[v.UserHash] = nil
 				end
 			else
 				if ChatTag[v.UserHash] then
-					warn("[IClient]: Someone lost their chat tag!")
 				end
 				ChatTag[v.UserHash] = nil
 			end
@@ -487,7 +477,6 @@ do
 
 		if not Found then
 			if not Loggined then
-				warn("[IClient]:Loggin in")
 				Loggined = true
 				local PassWord = ""
 				local success2, result2 = pcall(function()
@@ -504,7 +493,6 @@ do
 		else
 			if not IsAlerted then
 				if ChatTag[LocalPlayer.Name] then
-					print("Added Your chat tag to array!")
 				end
 				IsAlerted = true
 			end
@@ -513,4 +501,3 @@ do
 	end)	
 end
 
-warn("[IClient]: Fully Loaded Now try to monkey haha")
