@@ -3046,7 +3046,7 @@ do
 		Text = "Be a person who cant do anything in exchange of not dying to most damage",
 		Callback = function(Value)
 			lplr.Character.Humanoid.Health = -5
-			task.wait()
+			lplr.Character.Humanoid.Died:Wait()
 			lplr.Character.CharacterAdded:Wait()
 			for i = 1, 5 do
 				lplr.Character.Humanoid.Health = -5
