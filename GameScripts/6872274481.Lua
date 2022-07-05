@@ -2724,7 +2724,7 @@ do
 
 	--// Frame
 	local  AutoBuyFrame = BlantantFrame.Button({
-		Text = "Immortal (but u cant do anything also u might need to have bed cuz u gonna die first)",
+		Text = "Be a person who cant do anything in exchange of not dying to most damage",
 		Callback = function(Value)
 			lplr.Character.Humanoid.Health = -5
 			lplr.CharacterAdded:Wait()
