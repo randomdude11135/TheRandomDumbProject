@@ -2725,8 +2725,6 @@ end
 ----------// Immortal
 do
 
-	local bodyspin
-
 	--// Frame
 	local  AutoBuyFrame = BlantantFrame.Button({
 		Text = "Immortal (but u cant do anything also u might need to have bed cuz u gonna die first)",
@@ -2737,11 +2735,7 @@ do
 				lplr.Character.Humnaoid.Health = -5
 			end
 		end,
-		Enabled = IClientToggleProperty.SpinBotToggle
 	})
-
-	ButtonInGui["SpinBot"] = {AutoBuyFrame,"SpinBotToggle"}
-
 end
 
 --------------------------------------// Animation Tab
