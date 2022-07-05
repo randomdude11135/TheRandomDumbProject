@@ -2726,10 +2726,10 @@ do
 	local  AutoBuyFrame = BlantantFrame.Button({
 		Text = "Immortal (but u cant do anything also u might need to have bed cuz u gonna die first)",
 		Callback = function(Value)
-			lplr.Character.Humnaoid.Health = -5
+			lplr.Character.Humanoid.Health = -5
 			lplr.CharacterAdded:Wait()
 			for i = 1,5 do
-				lplr.Character.Humnaoid.Health = -5
+				lplr.Character.Humanoid.Health = -5
 			end
 		end,
 	})
