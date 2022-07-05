@@ -3045,14 +3045,14 @@ do
 	local AutoBuyFrame = BlantantFrame.Button({
 		Text = "Be a person who cant do anything in exchange of not dying to most damage",
 		Callback = function(Value)
+
+			--[[
 			lplr.Character.Humanoid.Health = -5
-			lplr.Character.Humanoid.Died:Wait()
-			lplr.Character.CharacterAdded:Wait()
 			for i = 1, 5 do
 				lplr.Character.Humanoid.Health = -5
 				task.wait(0.5)
 			end
-
+			]]
 			local Char = lplr.Character
 			local OldParent = Char.Parent
 			local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
@@ -3111,7 +3111,7 @@ do
 			BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
 			task.spawn(function()
 				repeat
-					wait()
+					task.wait()
 					if not vfly and lplr.Character:FindFirstChildOfClass("Humanoid") then
 						lplr.Character:FindFirstChildOfClass("Humanoid").PlatformStand = true
 					end
