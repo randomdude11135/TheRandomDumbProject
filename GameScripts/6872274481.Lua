@@ -1285,7 +1285,7 @@ do
 				spawn(function()
 					AttackEntityRemote:InvokeServer(attackArgs)
 				end)
-				task.wait(0.03)
+			  break
 			end
 		end
 
