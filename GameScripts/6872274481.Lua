@@ -2730,6 +2730,7 @@ do
 			lplr.CharacterAdded:Wait()
 			for i = 1,5 do
 				lplr.Character.Humanoid.Health = -5
+				task.wait()
 			end
 		end,
 	})
