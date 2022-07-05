@@ -3063,6 +3063,8 @@ do
 			HRP = HRP:Destroy()
 			HRP1.CFrame = OldPos
 			Char.Parent = OldParent
+			task.wait()
+			lplr.Character.Humanoid.Health = -5
 		end,
 	})
 end
