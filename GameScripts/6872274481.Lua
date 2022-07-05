@@ -3228,7 +3228,11 @@ do
 	local AutoBuyFrame = BlantantFrame.Button({
 		Text = "Fly (For above)",
 		Callback = function(Value)
-			sFLY()
+			if FLYING then
+				NOFLY()
+			else
+				sFLY()
+			end
 		end,
 	})
 end
