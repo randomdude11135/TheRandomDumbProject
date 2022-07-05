@@ -1258,7 +1258,7 @@ do
 	local KillAuraTick = tick()
 	game["Run Service"].Heartbeat:Connect(function()
 		if not IClientToggleProperty.KillAuraToggle then return end
-
+		if KillAuraTick > tick() then return end
 		local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange -0.01)
 		if #plrs == 0 then
 			currentTarget = nil
@@ -1283,15 +1283,12 @@ do
 					["chargedAttack"] = {["chargeRatio"] = 1},
 				}
 				spawn(function()
+					local weapon = getBestSword()
+					KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
 					AttackEntityRemote:InvokeServer(attackArgs)
 				end)
 			  break
 			end
-		end
-
-		if #plrs >= 1 then
-			local weapon = getBestSword()
-			KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
 		end
 	end)
 end
