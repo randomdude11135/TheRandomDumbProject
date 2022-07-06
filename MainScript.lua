@@ -6,7 +6,9 @@ print("Oh Em Ge")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-repeat task.wait(1) until LocalPlayer.Character ~= nil
+repeat
+	task.wait(1)
+until LocalPlayer.Character ~= nil
 local Character = LocalPlayer.Character or LocalPlayer.Character.CharacterAdded:Wait()
 
 --// Synapse X Functions
@@ -30,33 +32,41 @@ local function GetURL(scripturl)
 	end
 end
 
-
-local getasset = getsynasset or getcustomasset or function(location) return "rbxasset://".. location end
-local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport or function() end
-local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
-	if tab.Method == "GET" then
-		return {
-			Body = game:HttpGet(tab.Url, true),
-			Headers = {},
-			StatusCode = 200
-		}
-	else
-		return {
-			Body = "bad exploit",
-			Headers = {},
-			StatusCode = 404
-		}
+local getasset = getsynasset or getcustomasset or function(location)
+	return "rbxasset://" .. location
+end
+local queueteleport = syn and syn.queue_on_teleport
+	or queue_on_teleport
+	or fluxus and fluxus.queue_on_teleport
+	or function() end
+local requestfunc = syn and syn.request
+	or http and http.request
+	or http_request
+	or fluxus and fluxus.request
+	or request
+	or function(tab)
+		if tab.Method == "GET" then
+			return {
+				Body = game:HttpGet(tab.Url, true),
+				Headers = {},
+				StatusCode = 200,
+			}
+		else
+			return {
+				Body = "bad exploit",
+				Headers = {},
+				StatusCode = 404,
+			}
+		end
 	end
-end 
 
 --// Main Varibles
 local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
 
-
 local checkpublicreponum = 0
 local checkpublicrepo
 local function checkpublicrepo(id)
-    print("Getting module for game place id of" .. id )
+	print("Getting module for game place id of" .. id)
 	local suc, req = pcall(function()
 		return requestfunc({
 			Url = "https://raw.githubusercontent.com/randomdude11135/IClient/main/GameScripts/" .. id .. ".Lua",
@@ -65,8 +75,7 @@ local function checkpublicrepo(id)
 	end)
 	if not suc then
 		checkpublicreponum = checkpublicreponum + 1
-		task.spawn(function()
-		end)
+		task.spawn(function() end)
 		task.wait(2)
 		return checkpublicrepo(id)
 	end
@@ -148,8 +157,9 @@ end
 
 LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
-		local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
-        writefile(
+		local teleportstr =
+			'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
+		writefile(
 			"IClient/Settings/"
 				.. game.PlaceId
 				.. "/"
@@ -157,7 +167,7 @@ LocalPlayer.OnTeleport:Connect(function(State)
 				.. ".IClientSetting.txt",
 			game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
 		)
-        queueteleport(teleportstr)
+		queueteleport(teleportstr)
 	end
 end)
 
@@ -199,7 +209,6 @@ local AnimationTab = LoadIClientUI.New({
 })
 shared.TabInGui["Animations"] = AnimationTab
 
-
 ----// Profile Frame
 local ProfileTab = LoadIClientUI.New({
 	Title = "Load Settings",
@@ -220,72 +229,80 @@ if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal
 	loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
 end
 
-
 --------------------------------------// Settings Tab
 do
 	local ProfileTable = {}
 	local ProfileSetName = ""
 	function refreshprofilelist()
 		if listfiles then
-			for i,v in pairs(listfiles("IClient/Settings/" .. game.PlaceId)) do
-
+			for i, v in pairs(listfiles("IClient/Settings/" .. game.PlaceId)) do
 				local newstr = v:gsub("IClient/Settings/" .. game.PlaceId, ""):sub(2, v:len())
-				local newstr2 = string.split(newstr,".")[1]
+				local newstr2 = string.split(newstr, ".")[1]
 				if ProfileTable[newstr2] then
-					ProfileTable[newstr2]:SetText("Load " .. newstr2 .. " Setting " .. (readfile("IClient/SettingsSelecting/" .. game.PlaceId..".txt") == newstr2 and "(Selected)" or ""))
+					ProfileTable[newstr2]:SetText(
+						"Load "
+							.. newstr2
+							.. " Setting "
+							.. (
+								readfile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt") == newstr2
+									and "(Selected)"
+								or ""
+							)
+					)
 				else
 					ProfileTable[newstr2] = ProfileTab.Button({
-						Text = "Load " .. newstr2 .. " Setting " .. (readfile("IClient/SettingsSelecting/" .. game.PlaceId..".txt") == newstr2 and "(Selected)" or ""),
+						Text = "Load " .. newstr2 .. " Setting " .. (readfile(
+							"IClient/SettingsSelecting/" .. game.PlaceId .. ".txt"
+						) == newstr2 and "(Selected)" or ""),
 						Callback = function(Value)
-
 							--// Write Profile
 							local success2, result2 = pcall(function()
-								return game:GetService("HttpService"):JSONDecode(readfile("IClient/Settings/" .. game.PlaceId .. "/" .. newstr2 .. ".IClientSetting.txt"))
+								return game:GetService("HttpService"):JSONDecode(
+									readfile(
+										"IClient/Settings/" .. game.PlaceId .. "/" .. newstr2 .. ".IClientSetting.txt"
+									)
+								)
 							end)
 
-
-							if success2 and result2 then	
-								writefile("IClient/SettingsSelecting/" .. game.PlaceId..".txt",newstr2)
+							if success2 and result2 then
+								writefile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt", newstr2)
 								refreshprofilelist()
 
-								for x,z in pairs(shared.ButtonInGui) do
+								for x, z in pairs(shared.ButtonInGui) do
 									pcall(function()
 										z[1]:SetState(false)
 									end)
 									task.wait()
 								end
 
-
-								for list , newprop in pairs(result2) do
+								for list, newprop in pairs(result2) do
 									shared.IClientToggledProperty[list] = newprop
 								end
 
-
 								wait(1)
-								for x,z in pairs(shared.ButtonInGui) do
+								for x, z in pairs(shared.ButtonInGui) do
 									pcall(function()
 										z[1]:SetState(shared.IClientToggledProperty[z[2]])
 									end)
 								end
 							end
-
 						end,
 
 						Menu = {
 							["Delete Profile"] = function(self)
-
 								if delfile then
-									delfile("IClient/Settings/" .. game.PlaceId .. "/" ..  newstr2..".IClientSetting.txt")
+									delfile(
+										"IClient/Settings/" .. game.PlaceId .. "/" .. newstr2 .. ".IClientSetting.txt"
+									)
 									--ProfileTable[newstr2]:SetText("Load " .. newstr2 .. " Setting (Deleted)")
 									ProfileTable[newstr2]:Remove()
-								end		
-							end
-						}
+								end
+							end,
+						},
 					})
-				end	
+				end
 			end
 		end
-
 	end
 
 	-----// Set Adding Profile Name
@@ -300,21 +317,28 @@ do
 	local WiggleAnimationFrame = ProfileTab.Button({
 		Text = "Add Profile / Save Current Profile",
 		Callback = function(Value)
-
 			if ProfileSetName == "" then
-				writefile("IClient/Settings/" .. game.PlaceId .. "/" .. readfile("IClient/SettingsSelecting/" .. game.PlaceId..".txt") ..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty))
-			else		
-				writefile("IClient/Settings/" .. game.PlaceId .. "/" ..  ProfileSetName..".IClientSetting.txt", game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty))
-				writefile("IClient/SettingsSelecting/" .. game.PlaceId..".txt",ProfileSetName)
-				ProfileSetName = ""		
+				writefile(
+					"IClient/Settings/"
+						.. game.PlaceId
+						.. "/"
+						.. readfile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt")
+						.. ".IClientSetting.txt",
+					game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
+				)
+			else
+				writefile(
+					"IClient/Settings/" .. game.PlaceId .. "/" .. ProfileSetName .. ".IClientSetting.txt",
+					game:GetService("HttpService"):JSONEncode(shared.IClientToggledProperty)
+				)
+				writefile("IClient/SettingsSelecting/" .. game.PlaceId .. ".txt", ProfileSetName)
+				ProfileSetName = ""
 				refreshprofilelist()
 			end
 		end,
 	})
 
 	refreshprofilelist()
-
-
 end
 
 --------------------------------------// Login Tab
@@ -325,13 +349,22 @@ local Found = false
 local Loggined = false
 local NextCheck = os.time()
 local headers = {
-	["content-type"] = "application/json"
-}	
-local WebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient", Body = {}, Method = "GET", Headers = headers}
-local CommandWebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetRunningCommands", Body = {}, Method = "GET", Headers = headers}
+	["content-type"] = "application/json",
+}
+local WebRequest = {
+	Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient",
+	Body = {},
+	Method = "GET",
+	Headers = headers,
+}
+local CommandWebRequest = {
+	Url = "https://majestic-tidal-saguaro.glitch.me/GetRunningCommands",
+	Body = {},
+	Method = "GET",
+	Headers = headers,
+}
 
 do
-
 	local PasswordSet
 	local LoginDebounce = os.time()
 	-----// Set Adding Profile Name
@@ -359,9 +392,9 @@ do
 	})
 
 	game:GetService("RunService").Heartbeat:Connect(function()
-
-		WiggleAnimationFrame:SetText(os.time() > LoginDebounce and "Login" or "Login Again in " .. LoginDebounce - os.time() .. " seconds")
-
+		WiggleAnimationFrame:SetText(
+			os.time() > LoginDebounce and "Login" or "Login Again in " .. LoginDebounce - os.time() .. " seconds"
+		)
 	end)
 end
 
@@ -370,8 +403,14 @@ local oldchannelfunc
 local oldchanneltabs = {}
 
 --// Chat Listener
-for i,v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent)) do
-	if v.Function and #debug.getupvalues(v.Function) > 0 and type(debug.getupvalues(v.Function)[1]) == "table" and getmetatable(debug.getupvalues(v.Function)[1]) and getmetatable(debug.getupvalues(v.Function)[1]).GetChannel then
+for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent)) do
+	if
+		v.Function
+		and #debug.getupvalues(v.Function) > 0
+		and type(debug.getupvalues(v.Function)[1]) == "table"
+		and getmetatable(debug.getupvalues(v.Function)[1])
+		and getmetatable(debug.getupvalues(v.Function)[1]).GetChannel
+	then
 		oldchanneltab = getmetatable(debug.getupvalues(v.Function)[1])
 		oldchannelfunc = getmetatable(debug.getupvalues(v.Function)[1]).GetChannel
 		getmetatable(debug.getupvalues(v.Function)[1]).GetChannel = function(Self, Name)
@@ -385,14 +424,15 @@ for i,v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.On
 					if MessageData.FromSpeaker and Players[MessageData.FromSpeaker] then
 						if ChatTag[Players[MessageData.FromSpeaker].Name] then
 							MessageData.ExtraData = {
-								NameColor = Players[MessageData.FromSpeaker].Team == nil and Color3.new(0, 1, 1) or Players[MessageData.FromSpeaker].TeamColor.Color,
+								NameColor = Players[MessageData.FromSpeaker].Team == nil and Color3.new(0, 1, 1)
+									or Players[MessageData.FromSpeaker].TeamColor.Color,
 								Tags = {
 									table.unpack(MessageData.ExtraData.Tags),
 									{
 										TagColor = ChatTag[Players[MessageData.FromSpeaker].Name].TagColor,
-										TagText = ChatTag[Players[MessageData.FromSpeaker].Name].TagText
-									}
-								}
+										TagText = ChatTag[Players[MessageData.FromSpeaker].Name].TagText,
+									},
+								},
 							}
 						end
 					end
@@ -404,14 +444,10 @@ for i,v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.On
 	end
 end
 
-
 --// Check Using Client
 do
-    
 	game:GetService("RunService").Heartbeat:Connect(function()
-		
-		for i , v in pairs(game.Players:GetPlayers()) do
-			
+		for i, v in pairs(game.Players:GetPlayers()) do
 			if v.Character then
 				if Logged[v.Name] then
 					v.Character.Head.Nametag.TeamIndicator.Image = "rbxassetid://9432891155"
@@ -420,24 +456,27 @@ do
 					v.Character.Head.Nametag.TeamIndicator.Image = ""
 					v.Character.Head.Nametag.TeamIndicator.BackgroundTransparency = 0
 				end
-			end			
+			end
 		end
-	end)	
-	
-	
+	end)
+
 	game:GetService("RunService").Heartbeat:Connect(function()
-		if NextCheck > os.time() then return end
+		if NextCheck > os.time() then
+			return
+		end
 		NextCheck = os.time() + (Loggined and 8 or 1)
 		local RequestedInfo = requestfunc(WebRequest)
-		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)		
+		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)
 
-		for i , v in pairs(EncodedInfo) do
-
+		for i, v in pairs(EncodedInfo) do
 			if v.ChatTagInfo then
-				if game.Players:FindFirstChild(v.UserHash)  then
-					if  ChatTag[v.UserHash] == nil then
+				if game.Players:FindFirstChild(v.UserHash) then
+					if ChatTag[v.UserHash] == nil then
 						local RealInfo = v.ChatTagInfo
-						ChatTag[v.UserHash] = {TagText = tostring(RealInfo.TagName), TagColor = Color3.fromRGB(RealInfo.R, RealInfo.G, RealInfo.B)}
+						ChatTag[v.UserHash] = {
+							TagText = tostring(RealInfo.TagName),
+							TagColor = Color3.fromRGB(RealInfo.R, RealInfo.G, RealInfo.B),
+						}
 					end
 				else
 					ChatTag[v.UserHash] = nil
@@ -448,9 +487,9 @@ do
 				ChatTag[v.UserHash] = nil
 			end
 
-			if v.UserHash ==  LocalPlayer.Name then
+			if v.UserHash == LocalPlayer.Name then
 				if Loggined then
-					Found = true			
+					Found = true
 				end
 			else
 				if not Logged[v.UserHash] and game.Players:FindFirstChild(v.UserHash) then
@@ -458,12 +497,24 @@ do
 					local playerlist = game:GetService("CoreGui"):FindFirstChild("PlayerList")
 					if playerlist then
 						pcall(function()
-							local playerlistplayers = playerlist.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScollingFrame.OffsetUndoFrame
-							local targetedplr = playerlistplayers:FindFirstChild("p_"..game.Players:FindFirstChild(v.UserHash).UserId)
-							if targetedplr then 
-								targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.Image = "rbxassetid://9432891155"
-								targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.ImageRectOffset = Vector2.new(0,0)
-								targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.ImageRectSize = Vector2.new(0,0)
+							local playerlistplayers =
+								playerlist.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScollingFrame.OffsetUndoFrame
+							local targetedplr = playerlistplayers:FindFirstChild(
+								"p_" .. game.Players:FindFirstChild(v.UserHash).UserId
+							)
+							if targetedplr then
+								targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.Image =
+									"rbxassetid://9432891155"
+								targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.ImageRectOffset =
+									Vector2.new(
+										0,
+										0
+									)
+								targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.ImageRectSize =
+									Vector2.new(
+										0,
+										0
+									)
 							end
 						end)
 					end
@@ -481,11 +532,19 @@ do
 				if success2 and result2 then
 					PassWord = result2
 				end
-				local WebBody =  game:GetService("HttpService"):JSONEncode({UserHash = LocalPlayer.Name,UserClientUsing = "IClient",LoginCode = PassWord})
-				local WebSendInfo = {Url = "https://majestic-tidal-saguaro.glitch.me/SendUserInfo", Body = WebBody, Method = "POST", Headers = headers}
+				local WebBody = game:GetService("HttpService"):JSONEncode({
+					UserHash = LocalPlayer.Name,
+					UserClientUsing = "IClient",
+					LoginCode = PassWord,
+				})
+				local WebSendInfo = {
+					Url = "https://majestic-tidal-saguaro.glitch.me/SendUserInfo",
+					Body = WebBody,
+					Method = "POST",
+					Headers = headers,
+				}
 				local RequestedInfo = requestfunc(WebSendInfo)
 			end
-
 		else
 			if not IsAlerted then
 				if ChatTag[LocalPlayer.Name] then
@@ -494,27 +553,30 @@ do
 			end
 		end
 		task.wait()
-	end)	
+	end)
 end
 
 local GloblCommandsList = {
- ["Kick"] = function(BodyInfo)
-	LocalPlayer:Kick("Trolled")
- end
-
+	["Kick"] = function(BodyInfo)
+		LocalPlayer:Kick(BodyInfo.Reason)
+	end,
 }
 
 --// Commands Listener
 do
 	local NextTck = os.time()
 	game:GetService("RunService").Heartbeat:Connect(function()
-		if NextTck > os.time() then return end
+		if NextTck > os.time() then
+			return
+		end
 		NextTck = os.time() + 5
 		local RequestedInfo = requestfunc(CommandWebRequest)
-		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)		
+		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)
 
-		for i , v in pairs(EncodedInfo) do
-			
+		for i, v in pairs(EncodedInfo) do
+			if GloblCommandsList[v.Commandd] then
+				GloblCommandsList[v.Commandd](v)
+			end
 		end
-	end)	
+	end)
 end
