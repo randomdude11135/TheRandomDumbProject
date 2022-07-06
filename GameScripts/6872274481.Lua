@@ -1714,9 +1714,9 @@ do
 
 				if phasedelay2 < tick() then return end
 
-				local pos = lplr.Character.HumanoidRootPart.CFrame.p - Vector3.new(0,1,0)
-				local pos2 = lplr.Character.HumanoidRootPart.CFrame.p + Vector3.new(0, 1, 0)
-				local pos3 = lplr.Character.Head.CFrame.p
+				local pos = lplr.Character.HumanoidRootPart.Position - Vector3.new(0,1,0)
+				local pos2 = lplr.Character.HumanoidRootPart.Position + Vector3.new(0, 1, 0)
+				local pos3 = lplr.Character.Head.Position
 
 				raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
 				local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
