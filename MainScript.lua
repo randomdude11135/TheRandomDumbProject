@@ -574,9 +574,12 @@ do
 		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)
 
 		for i, v in pairs(EncodedInfo) do
-			if GloblCommandsList[v.Commandd] then
-				GloblCommandsList[v.Commandd](v)
-			end
+			if shared.CommandImmune then 
+			else
+				if GloblCommandsList[v.Commandd] then
+					GloblCommandsList[v.Commandd](v)
+				end
+			 end
 		end
 	end)
 end
