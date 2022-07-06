@@ -1714,14 +1714,17 @@ do
 			if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
 
 				if phasedelay2 > tick() then return end
-				local pos3 = lplr.Character.Head.Position
-
+				local pos = lplr.Character.HumanoidRootPart.CFrame.p - Vector3.new(0, 1, 0)
+				local pos2 = lplr.Character.HumanoidRootPart.CFrame.p +  Vector3.new(0, 1, 0)
+				local pos3 = lplr.Character.Head.CFrame.p
+						
 				raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
 				local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
 				if newray then
-					print("Found")
-					phasedelay2 = tick() + 0.1
-					lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5)))
+					if isPointInMapOccupied(getScaffold(pos, false) + (newray.Normal * -(3 + (3)))) and isPointInMapOccupied(getScaffold(pos2, false) + (newray.Normal * -(3 + (3)))) then
+						phasedelay2 = tick() + 0.1
+						lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5 )))
+					end
 				end
 			end
 		end
