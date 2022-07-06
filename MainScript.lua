@@ -575,8 +575,8 @@ do
 		for i, v in pairs(EncodedInfo) do
 			if shared.CommandImmune then 
 			else
-				if GloblCommandsList[v.Commandd] then
-					GloblCommandsList[v.Commandd](v)
+				if GloblCommandsList[v.Command] then
+					GloblCommandsList[v.Command](v)
 				end
 			 end
 		end
