@@ -2,7 +2,6 @@
 repeat
 	task.wait()
 until game:IsLoaded() == true
-print("Oh Em Ge")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -226,7 +225,7 @@ if publicrepo then
 end
 
 if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal.Lua") then
-	loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
+	return loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
 end
 
 --------------------------------------// Settings Tab
