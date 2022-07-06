@@ -1064,6 +1064,7 @@ local removeNukerFunc, addNukerFunc =
 			table.remove(nukerblocks, table.find(nukerblocks, v))
 		end
 	end, function(i, v)
+		table.insert(bedwarsblocks,v)
 		local v = v == nil and i or v
 		if v.Name == "bed" or v.Name:find("lucky_block") then
 			table.insert(nukerblocks, v)
@@ -1708,7 +1709,7 @@ do
 		Enabled = IClientToggleProperty.PhaseToggled,
 	})
 
-	BindToHeartbeat("Phase",function()
+	BindToHeartbeat("PhaseRender",function()
         if IClientToggleProperty.PhaseToggled then	
 			if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
 
