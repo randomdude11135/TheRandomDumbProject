@@ -173,8 +173,6 @@ local LoadIClientUI = GuiLibrary.Load({
 		MainFrame = Color3.fromRGB(0, 0, 0),
 	},
 })
-
-
 shared.MainUI = LoadIClientUI
 
 ----// Non - Blantant Frame
