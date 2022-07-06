@@ -225,7 +225,7 @@ if publicrepo then
 end
 
 if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal.Lua") then
-	return loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
+	loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
 end
 
 --------------------------------------// Settings Tab
