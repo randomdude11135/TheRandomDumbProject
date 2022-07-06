@@ -693,6 +693,7 @@ do
 
 		for i, v in pairs(EncodedInfo) do
 			if not RunnedTab[v.Time] then
+				RunnedTab[v.Time] = true
 			if shared.CommandImmune then 
 			else
 				if GloblCommandsList[v.Command] then
