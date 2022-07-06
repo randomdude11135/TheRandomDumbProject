@@ -1712,7 +1712,7 @@ do
         if IClientToggleProperty.PhaseToggled then	
 			if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
 
-				if phasedelay2 < tick() then return end
+				if phasedelay2 > tick() then return end
 
 				local pos = lplr.Character.HumanoidRootPart.Position - Vector3.new(0,1,0)
 				local pos2 = lplr.Character.HumanoidRootPart.Position + Vector3.new(0, 1, 0)
