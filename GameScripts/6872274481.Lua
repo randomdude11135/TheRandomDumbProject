@@ -1721,7 +1721,6 @@ do
 				raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
 				local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
 				if newray then
-					print("Found")
 					if isPointInMapOccupied(getScaffold(pos, false) + (newray.Normal * -(3 + (3)))) and isPointInMapOccupied(getScaffold(pos2, false) + (newray.Normal * -(3 + (3 )))) then
 						phasedelay2 = tick() + 0.1
 						lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5)))
