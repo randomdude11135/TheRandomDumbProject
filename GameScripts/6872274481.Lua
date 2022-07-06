@@ -1692,6 +1692,45 @@ do
 	})
 end
 
+----------// Phase Handler
+do
+
+	local raycastparameters = RaycastParams.new()
+	raycastparameters.FilterType = Enum.RaycastFilterType.Whitelist
+	local phasedelay2 = tick()
+
+	--// Flying Frame
+	local BedNukerFrame = BlantantFrame.Toggle({
+		Text = "Phase",
+		Callback = function(Value)
+			IClientToggleProperty.PhaseToggled = IsToggleAble(Value)
+		end,
+		Enabled = IClientToggleProperty.PhaseToggled,
+	})
+
+	BindToHeartbeat("Phase",function()
+        if IClientToggleProperty.PhaseToggled then	
+			if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
+
+				if phasedelay2 < tick() then return end
+
+				local pos = lplr.Character.HumanoidRootPart.CFrame.p - Vector3.new(0,1,0)
+				local pos2 = lplr.Character.HumanoidRootPart.CFrame.p + Vector3.new(0, 1, 0)
+				local pos3 = lplr.Character.Head.CFrame.p
+
+				raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
+				local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
+				if newray then
+					if isPointInMapOccupied(getScaffold(pos, false) + (newray.Normal * -(3 + (3)))) and isPointInMapOccupied(getScaffold(pos2, false) + (newray.Normal * -(3 + (3 )))) then
+						phasedelay2 = tick() + 0.1
+						lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5)))
+					end
+				end
+			end
+		end
+	end)	
+end
+
 ----------// Anti cheat bypass real
 do
 	local IsUsingAntiCheatAssist = false
@@ -3237,6 +3276,32 @@ do
 			end
 		end,
 	})
+end
+
+----------// Auto Report
+do
+
+	local LoggedPerson = {}
+
+	--// Frame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "Auto Report",
+		Callback = function(Value)
+			IClientToggleProperty.AutoReportToggle = IsToggleAble(Value)
+		end,
+	    Enabled = IClientToggleProperty.AutoReportToggle
+	})
+
+	BindToRenderStep("AutoReport",function()
+		if IClientToggleProperty.AutoReportToggle then
+			for  i , v in pairs(PLAYERS:Getplayers()) do
+				if not LoggedPerson[v] and v ~= lplr  then
+					LoggedPerson[v] = true
+					PLAYERS:ReportAbuse(v, "Swearing", "Player did a bad thing!")
+				end
+			end	
+		end
+	end)	
 end
 
 --------------------------------------// Animation Tab
