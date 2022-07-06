@@ -218,8 +218,8 @@ if publicrepo then
 	loadstring(publicrepo)()
 end
 
-if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal") then
-	loadstring(readfile("IClient/CustomModules/Universal"))()
+if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal.Lua") then
+	loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
 end
 
 
