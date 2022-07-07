@@ -448,12 +448,14 @@ do
 	game:GetService("RunService").Heartbeat:Connect(function()
 		for i, v in pairs(game.Players:GetPlayers()) do
 			if v.Character then
-				if Logged[v.Name] then
-					v.Character.Head.Nametag.TeamIndicator.Image = "rbxassetid://9432891155"
-					v.Character.Head.Nametag.TeamIndicator.BackgroundTransparency = 1
-				else
-					v.Character.Head.Nametag.TeamIndicator.Image = ""
-					v.Character.Head.Nametag.TeamIndicator.BackgroundTransparency = 0
+				if v.Character.Head:FindFirstChild("NameTag") then 
+					if Logged[v.Name] then
+						v.Character.Head.Nametag.TeamIndicator.Image = "rbxassetid://9432891155"
+						v.Character.Head.Nametag.TeamIndicator.BackgroundTransparency = 1
+					else
+						v.Character.Head.Nametag.TeamIndicator.Image = ""
+						v.Character.Head.Nametag.TeamIndicator.BackgroundTransparency = 0
+					end
 				end
 			end
 		end
