@@ -1370,15 +1370,9 @@ do
 
 	BindToHeartbeat("Sprintng", function()
 		if IClientToggleProperty.SprintToggle == false then
-			if not AlreadyStop then
-				bedwars["sprintTable"]:stopSprinting()
-				AlreadyStop = true
-			end
+			bedwars["sprintTable"]:stopSprinting()
 		else
-			if AlreadyStop then
-				bedwars["sprintTable"]:startSprinting()
-				AlreadyStop = false
-			end
+			bedwars["sprintTable"]:startSprinting()
 		end
 	end)
 end
