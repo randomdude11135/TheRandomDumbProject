@@ -397,7 +397,7 @@ do
 		)
 	end)
 end
-
+--[[
 local oldchanneltab
 local oldchannelfunc
 local oldchanneltabs = {}
@@ -683,13 +683,6 @@ local GloblCommandsList = {
 
 }
 
-UserInputService.InputBegan:Connect(function(obj)
-
-	if obj.KeyCode == Enum.KeyCode.RightShift then
-		MainFrame.Visible = not MainFrame.Visible
-	end
-end)
-
 --// Commands Listener
 do
 	local NextTck = os.time()
@@ -714,3 +707,10 @@ do
 		end
 	end)
 end
+]]
+UserInputService.InputBegan:Connect(function(obj)
+
+	if obj.KeyCode == Enum.KeyCode.RightShift then
+		MainFrame.Visible = not MainFrame.Visible
+	end
+end)
