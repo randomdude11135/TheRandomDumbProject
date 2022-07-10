@@ -1302,47 +1302,52 @@ do
 						aimactive = false
 					end
 				end)
+
+				BindToRenderStep("AimAssist", function()
+					if aimactive and IClientToggleProperty.AimAssistToggle then
+						local plr = getAllPlrsNear(18 - 0.01)
+						for i, v in next, plr do
+							local plr = v
+							if
+								plr
+								and canBeTargeted(plr)
+								and getEquipped()["Type"] == "sword"
+								and #bedwars["AppController"]:getOpenApps() <= 1
+								and isNotHoveringOverGui()
+								and bedwars["SwordController"]:canSee({
+									["instance"] = plr.Character,
+									["player"] = plr,
+									["getInstance"] = function()
+										return plr.Character
+									end,
+								})
+								and bedwars["KatanaController"].chargingMaid == nil
+							then
+								local pos, vis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
+								if vis and isrbxactive() then
+									local senst = UserSettings():GetService("UserGameSettings").MouseSensitivity * (1 - (0 / 100))
+									aimpos(Vector2.new(pos.X, pos.Y), senst)
+									break
+								end
+							end
+						end
+					end
+				end)
+
 			else
 				if aimbegan and aimended then
 					aimbegan:Disconnect()
 					aimended:Disconnect()
 				end
+
+				UnbindFromRenderStep("AimAssist")
+
 				aimactive = false
 			end
 		end,
 		Enabled = IClientToggleProperty.AimAssistToggle,
 	})
-	
-	BindToRenderStep("AimAssist", function()
-		if aimactive and IClientToggleProperty.AimAssistToggle then
-			local plr = getAllPlrsNear(18 - 0.01)
-			for i, v in next, plr do
-				local plr = v
-				if
-					plr
-					and canBeTargeted(plr)
-					and getEquipped()["Type"] == "sword"
-					and #bedwars["AppController"]:getOpenApps() <= 1
-					and isNotHoveringOverGui()
-					and bedwars["SwordController"]:canSee({
-						["instance"] = plr.Character,
-						["player"] = plr,
-						["getInstance"] = function()
-							return plr.Character
-						end,
-					})
-					and bedwars["KatanaController"].chargingMaid == nil
-				then
-					local pos, vis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
-					if vis and isrbxactive() then
-						local senst = UserSettings():GetService("UserGameSettings").MouseSensitivity * (1 - (0 / 100))
-						aimpos(Vector2.new(pos.X, pos.Y), senst)
-						break
-					end
-				end
-			end
-		end
-	end)
+
 
 	ButtonInGui["AimAssistToggle"] = { SprintFrame, "AimAssistToggle" }
 end
@@ -1424,7 +1429,7 @@ end
 --------------------------------------// Blantant Tab
 ----------// Kill Aura Handler
 do
-	--// Kill Aura Frame
+	local KillAuraTick = tick()
 	local KillAuraToggleFrame = BlantantFrame.Toggle({
 		Text = "KillAura",
 		Callback = function(Value)
@@ -1440,6 +1445,61 @@ do
 		Text = "KillAura [Range]",
 		Callback = function(Value)
 			IClientToggleProperty.KillAuraRange = Value
+
+			if IClientToggleProperty.KillAuraRange then
+				BindToHeartbeat("KillAura",function()
+					if not IClientToggleProperty.KillAuraToggle then
+						return
+					end
+					if KillAuraTick > tick() then
+						return
+					end
+					local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange - 0.01)
+					if #plrs == 0 then
+						currentTarget = nil
+					end
+			
+					for i, v in next, plrs do
+						if canBeTargeted(v) then
+							currentTarget = v
+							local weapon = getBestSword()
+							local selfpos = lplr.Character.HumanoidRootPart.Position
+								+ (
+									IClientToggleProperty.KillAuraRange > 14
+										and (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude > 14
+										and (CFrame.lookAt(
+											lplr.Character.HumanoidRootPart.Position,
+											v.Character.HumanoidRootPart.Position
+										).lookVector * 4)
+									or Vector3.new(0, 0, 0)
+								)
+							local attackArgs = {
+								["weapon"] = weapon ~= nil and weapon.tool,
+								["entityInstance"] = v.Character,
+								["validate"] = {
+									["raycast"] = {
+										["cameraPosition"] = hashvector(cam.CFrame.p),
+										["cursorDirection"] = hashvector(
+											Ray.new(cam.CFrame.p, v.Character.HumanoidRootPart.Position).Unit.Direction
+										),
+									},
+									["targetPosition"] = hashvector(v.Character.HumanoidRootPart.Position),
+									["selfPosition"] = hashvector(selfpos),
+								},
+								["chargedAttack"] = { ["chargeRatio"] = 1 },
+							}
+							spawn(function()
+								local weapon = getBestSword()
+								KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
+								AttackEntityRemote:InvokeServer(attackArgs)
+							end)
+							break
+						end
+					end
+				end)
+			else
+				UnbindFromHeartbeat("Kill Aura")
+			end
 		end,
 		Min = 1,
 		Max = 18,
@@ -1447,59 +1507,6 @@ do
 	})
 
 	ButtonInGui["KillAura [Range]"] = { KillAuraRangeFrame, "KillAuraRange" }
-
-	--// Kill Aura Handler
-	local KillAuraTick = tick()
-	game["Run Service"].Heartbeat:Connect(function()
-		if not IClientToggleProperty.KillAuraToggle then
-			return
-		end
-		if KillAuraTick > tick() then
-			return
-		end
-		local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange - 0.01)
-		if #plrs == 0 then
-			currentTarget = nil
-		end
-
-		for i, v in next, plrs do
-			if canBeTargeted(v) then
-				currentTarget = v
-				local weapon = getBestSword()
-				local selfpos = lplr.Character.HumanoidRootPart.Position
-					+ (
-						IClientToggleProperty.KillAuraRange > 14
-							and (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude > 14
-							and (CFrame.lookAt(
-								lplr.Character.HumanoidRootPart.Position,
-								v.Character.HumanoidRootPart.Position
-							).lookVector * 4)
-						or Vector3.new(0, 0, 0)
-					)
-				local attackArgs = {
-					["weapon"] = weapon ~= nil and weapon.tool,
-					["entityInstance"] = v.Character,
-					["validate"] = {
-						["raycast"] = {
-							["cameraPosition"] = hashvector(cam.CFrame.p),
-							["cursorDirection"] = hashvector(
-								Ray.new(cam.CFrame.p, v.Character.HumanoidRootPart.Position).Unit.Direction
-							),
-						},
-						["targetPosition"] = hashvector(v.Character.HumanoidRootPart.Position),
-						["selfPosition"] = hashvector(selfpos),
-					},
-					["chargedAttack"] = { ["chargeRatio"] = 1 },
-				}
-				spawn(function()
-					local weapon = getBestSword()
-					KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
-					AttackEntityRemote:InvokeServer(attackArgs)
-				end)
-				break
-			end
-		end
-	end)
 end
 
 ----------// Bed Nuker Handler
@@ -1509,6 +1516,24 @@ do
 		Text = "Bed Nuker",
 		Callback = function(Value)
 			IClientToggleProperty.BedAuraToggle = IsToggleAble(Value, "BedAuraToggle")
+			if IClientToggleProperty.BedAuraToggle then
+				BindToHeartbeat("BedNuker", function()
+					if tick() < bedtick or not IClientToggleProperty.BedAuraToggle then
+						return
+					end
+					local blocktab = { "bed" }
+					local block = getBlockNear(40, blocktab)
+					if block then
+						local bestSide = getbestside(block.Position)
+						if bestSide then
+							bedtick = tick() + 0.3
+							bedwars["breakBlock"](block.Position, true, bestSide)
+						end
+					end
+				end)
+			else
+				UnbindFromHeartbeat("BedNuker")
+			end
 		end,
 		Enabled = IClientToggleProperty.BedAuraToggle,
 	})
@@ -1516,20 +1541,6 @@ do
 	ButtonInGui["Bed Nuker"] = { BedNukerFrame, "BedAuraToggle" }
 
 	local bedtick = tick()
-		BindToHeartbeat("BedNuker", function()
-			if tick() < bedtick or not IClientToggleProperty.BedAuraToggle then
-				return
-			end
-			local blocktab = { "bed" }
-			local block = getBlockNear(40, blocktab)
-			if block then
-				local bestSide = getbestside(block.Position)
-				if bestSide then
-					bedtick = tick() + 0.3
-					bedwars["breakBlock"](block.Position, true, bestSide)
-				end
-			end
-		end)
 end
 
 ----------// Speed Handler
@@ -1541,6 +1552,29 @@ do
 			IClientToggleProperty.SpeedToggled = IsToggleAble(Value)
 			if not IClientToggleProperty.SpeedToggled then
 				lplr.Character:WaitForChild("Humanoid").WalkSpeed = 16
+				UnbindFromHeartbeat("Speed")
+			else
+				BindToHeartbeat("Speed", function(dt)
+					if isAlive() then
+						if IClientToggleProperty.SpeedToggled then
+							lplr.Character.Humanoid.WalkSpeed = speedsettings.wsvalue
+							local velo = lplr.Character.Humanoid.MoveDirection
+								* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
+									lplr.Character.HumanoidRootPart
+								)) and speedsettings.factor or 0))
+								* dt
+							velo = Vector3.new(velo.x / 11, 0, velo.z / 11)
+							lplr.Character:TranslateBy(velo)
+							local velo2 = (lplr.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
+								/ speedsettings.velocitydivfactor
+							lplr.Character.HumanoidRootPart.Velocity = Vector3.new(
+								velo2.X,
+								lplr.Character.HumanoidRootPart.Velocity.Y,
+								velo2.Z
+							)
+						end
+					end
+				end)
 			end
 		end,
 		Enabled = IClientToggleProperty.SpeedToggled,
@@ -1549,27 +1583,6 @@ do
 	ButtonInGui["Speed"] = { SpeedFrame, "SpeedToggled" }
 
 	--SpeedFrame:SetState(IClientToggleProperty.SpeedToggled)
-		BindToHeartbeat("Speed", function(dt)
-			if isAlive() then
-				if IClientToggleProperty.SpeedToggled then
-					lplr.Character.Humanoid.WalkSpeed = speedsettings.wsvalue
-					local velo = lplr.Character.Humanoid.MoveDirection
-						* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
-							lplr.Character.HumanoidRootPart
-						)) and speedsettings.factor or 0))
-						* dt
-					velo = Vector3.new(velo.x / 11, 0, velo.z / 11)
-					lplr.Character:TranslateBy(velo)
-					local velo2 = (lplr.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
-						/ speedsettings.velocitydivfactor
-					lplr.Character.HumanoidRootPart.Velocity = Vector3.new(
-						velo2.X,
-						lplr.Character.HumanoidRootPart.Velocity.Y,
-						velo2.Z
-					)
-				end
-			end
-		end)
 end
 
 ----------// Gravity Handler
@@ -1683,27 +1696,31 @@ do
 		Text = "Phase (Not done but atleast it work)",
 		Callback = function(Value)
 			IClientToggleProperty.PhaseToggled = IsToggleAble(Value)
+			if IClientToggleProperty.PhaseToggled then
+				BindToHeartbeat("PhaseRender",function()
+					if IClientToggleProperty.PhaseToggled then	
+						if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
+			
+							if phasedelay2 > tick() then return end
+							local pos3 = lplr.Character.Head.Position
+			
+							raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
+							local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
+							if newray then
+								print("Found")
+								phasedelay2 = tick() + 0.1
+								lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5)))
+							end
+						end
+					end
+				end)	
+			else
+				UnbindFromHeartbeat("PhaseRender")
+			end
 		end,
 		Enabled = IClientToggleProperty.PhaseToggled,
 	})
 
-	BindToHeartbeat("PhaseRender",function()
-        if IClientToggleProperty.PhaseToggled then	
-			if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
-
-				if phasedelay2 > tick() then return end
-				local pos3 = lplr.Character.Head.Position
-
-				raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
-				local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
-				if newray then
-					print("Found")
-					phasedelay2 = tick() + 0.1
-					lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5)))
-				end
-			end
-		end
-	end)	
 end
 
 ----------// Anti cheat bypass real
@@ -2015,7 +2032,6 @@ do
 
 	ButtonInGui["AntiCheat Real"] = { AntiCheatFrame, "AnticheatBypass" }
 
-	--AntiCheatFrame:SetState(IClientToggleProperty.AnticheatBypass)
 end
 
 ----------// AutoBuy Handler
@@ -2118,6 +2134,69 @@ do
 		Text = "Auto Buy",
 		Callback = function(Value)
 			IClientToggleProperty.AutoBuyToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.AutoBuyToggle then
+
+				BindToHeartbeat("AutoBuy", function()
+					if not IClientToggleProperty.AutoBuyToggle then
+						return
+					end
+					local currentTeamUpgrades = bedwars["ClientStoreHandler"]:getState().Bedwars.teamUpgrades
+					if isAlive() then
+						for i, v in next, is do
+							local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
+							if mag <= 15 then
+								for b, a in ipairs(priolist) do
+									local buyme
+									for i, v in next, a do
+										local item = getShopItem(v)
+										local amt = getItemAmt(item.currency)
+										local currentItem = getCurrentItem(a) or { itemType = "placeholder" }
+										if
+											amt
+											and item
+											and item.price
+											and amt >= item.price
+											and (i > (table.find(a, currentItem.itemType) or 0))
+										then
+											if item.itemType == "diamond_sword" or item.itemType == "emerald_sword" then
+												if currentTeamUpgrades.armory ~= nil then
+													buyme = item
+												end
+											else
+												buyme = item
+											end
+										end
+									end
+									if buyme and not getItem(buyme.itemType) then
+										if buyme.itemType == "wool_white" and getwoolamt() < WoolCap.Value then
+											buy(buyme)
+										elseif buyme.itemType ~= "wool_white" then
+											buy(buyme)
+										end
+									end
+								end
+							end
+						end
+						for i, v in next, tu do
+							local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
+							if mag <= 15 then
+								for a, b in ipairs(teampriolist) do
+									local upgradetab = getTeamUpgrade(b)
+									local currentTier = currentTeamUpgrades[b] or -1
+									if currentTier + 1 ~= #upgradetab.tiers then
+										for i, v in next, upgradetab.tiers do
+											upgrade(b, i - 1)
+										end
+									end
+								end
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromHeartbeat("AutoBuy")
+			end
 		end,
 		Enabled = IClientToggleProperty.AutoBuyToggle,
 	})
@@ -2137,64 +2216,6 @@ do
 			is[#is + 1] = v
 		elseif v.Name:find("upgrade_shop") then
 			tu[#tu + 1] = v
-		end
-	end)
-
-	BindToHeartbeat("AutoBuy", function()
-		if not IClientToggleProperty.AutoBuyToggle then
-			return
-		end
-		local currentTeamUpgrades = bedwars["ClientStoreHandler"]:getState().Bedwars.teamUpgrades
-		if isAlive() then
-			for i, v in next, is do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					for b, a in ipairs(priolist) do
-						local buyme
-						for i, v in next, a do
-							local item = getShopItem(v)
-							local amt = getItemAmt(item.currency)
-							local currentItem = getCurrentItem(a) or { itemType = "placeholder" }
-							if
-								amt
-								and item
-								and item.price
-								and amt >= item.price
-								and (i > (table.find(a, currentItem.itemType) or 0))
-							then
-								if item.itemType == "diamond_sword" or item.itemType == "emerald_sword" then
-									if currentTeamUpgrades.armory ~= nil then
-										buyme = item
-									end
-								else
-									buyme = item
-								end
-							end
-						end
-						if buyme and not getItem(buyme.itemType) then
-							if buyme.itemType == "wool_white" and getwoolamt() < WoolCap.Value then
-								buy(buyme)
-							elseif buyme.itemType ~= "wool_white" then
-								buy(buyme)
-							end
-						end
-					end
-				end
-			end
-			for i, v in next, tu do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					for a, b in ipairs(teampriolist) do
-						local upgradetab = getTeamUpgrade(b)
-						local currentTier = currentTeamUpgrades[b] or -1
-						if currentTier + 1 ~= #upgradetab.tiers then
-							for i, v in next, upgradetab.tiers do
-								upgrade(b, i - 1)
-							end
-						end
-					end
-				end
-			end
 		end
 	end)
 
@@ -2235,6 +2256,53 @@ do
 		Text = "Player ESP",
 		Callback = function(Value)
 			IClientToggleProperty.PlayEspToggle = IsToggleAble(Value)
+			if IClientToggleProperty.PlayEspToggle then
+				BindToRenderStep("ESP", function()
+				
+					if IClientToggleProperty.PlayEspToggle then
+						for i, plr in pairs(PLAYERS:GetPlayers()) do
+							if plr.Character then
+								if BeeTable[plr.Character] then
+								else
+									if plr.Name == lplr.Name then
+									else
+										if plr.Character then
+											local MakeHighLight = Instance.new("BoxHandleAdornment")
+											MakeHighLight.Name = plr.Name
+											MakeHighLight.Adornee = plr.Character.HumanoidRootPart
+											MakeHighLight.Size = plr.Character.HumanoidRootPart.Size
+											MakeHighLight.AlwaysOnTop = true
+											MakeHighLight.Color3 = plr.Team.Name == lplr.Team.Name and Color3.new(0.333333, 1, 0)
+												or Color3.new(1, 0, 0)
+											MakeHighLight.Parent = ESPFolder
+											MakeHighLight.ZIndex = 1
+											MakeHighLight.Transparency = 0.3
+											BeeTable[plr.Character] = MakeHighLight
+										end
+									end
+								end
+			
+								for i, v in pairs(BeeTable) do
+									if i:IsDescendantOf(workspace) then
+										if i.Humanoid.Health > 0 then
+											v.Transparency = 0.3
+										else
+											v.Transparency = 1
+										end
+									else
+										v:Destroy()
+									end
+								end
+							end
+						end
+					end
+			end)
+		else
+			for i, v in pairs(BeeTable) do
+				v.Transparency = 1
+			end
+			UnbindFromStepped("ESP")
+		end
 		end,
 		Enabled = IClientToggleProperty.PlayEspToggle,
 	})
@@ -2242,51 +2310,6 @@ do
 	ButtonInGui["Player ESP"] = { AutoBuyFrame, "PlayEspToggle" }
 
 	local BeeTable = {}
-
-	BindToRenderStep("ESP", function()
-		
-		if IClientToggleProperty.PlayEspToggle then
-			for i, plr in pairs(PLAYERS:GetPlayers()) do
-				if plr.Character then
-					if BeeTable[plr.Character] then
-					else
-						if plr.Name == lplr.Name then
-						else
-							if plr.Character then
-								local MakeHighLight = Instance.new("BoxHandleAdornment")
-								MakeHighLight.Name = plr.Name
-								MakeHighLight.Adornee = plr.Character.HumanoidRootPart
-								MakeHighLight.Size = plr.Character.HumanoidRootPart.Size
-								MakeHighLight.AlwaysOnTop = true
-								MakeHighLight.Color3 = plr.Team.Name == lplr.Team.Name and Color3.new(0.333333, 1, 0)
-									or Color3.new(1, 0, 0)
-								MakeHighLight.Parent = ESPFolder
-								MakeHighLight.ZIndex = 1
-								MakeHighLight.Transparency = 0.3
-								BeeTable[plr.Character] = MakeHighLight
-							end
-						end
-					end
-
-					for i, v in pairs(BeeTable) do
-						if i:IsDescendantOf(workspace) then
-							if i.Humanoid.Health > 0 then
-								v.Transparency = 0.3
-							else
-								v.Transparency = 1
-							end
-						else
-							v:Destroy()
-						end
-					end
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
 end
 
 ----------// Bee ESP Handler
@@ -2296,6 +2319,47 @@ do
 		Text = "Bee ESP",
 		Callback = function(Value)
 			IClientToggleProperty.BeeEspToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.BeeEspToggle then
+				BindToRenderStep("BeeEsp", function()
+					if IClientToggleProperty.BeeEspToggle then
+						for i, plr in pairs(COLLECTION:GetTagged("bee")) do
+							if BeeTable[plr] then
+							else
+								local MakeHighLight = Instance.new("BoxHandleAdornment")
+								MakeHighLight.Name = "BeeEsp"
+								MakeHighLight.Adornee = plr.Root
+								MakeHighLight.Size = plr.Root.Size
+								MakeHighLight.AlwaysOnTop = true
+								MakeHighLight.Color3 = Color3.fromRGB(255, 255, 127)
+								MakeHighLight.Parent = ESPFolder
+								MakeHighLight.ZIndex = 1
+								MakeHighLight.Transparency = 0.3
+								BeeTable[plr] = MakeHighLight
+							end
+						end
+			
+						for i, v in pairs(BeeTable) do
+							if i:IsDescendantOf(workspace) then
+								if IClientToggleProperty.InstantBeeToggle then
+									i.Root.ProximityPrompt.HoldDuration = 0
+								else
+									i.Root.ProximityPrompt.HoldDuration = 0.3
+								end
+							else
+								v:Destroy()
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromStepped("BeeEsp")
+				for i, v in pairs(BeeTable) do
+					v.Transparency = 1
+				end
+			end
+
+
 		end,
 		Enabled = IClientToggleProperty.BeeEspToggle,
 	})
@@ -2303,42 +2367,6 @@ do
 	ButtonInGui["Bee ESP"] = { AutoBuyFrame, "BeeEspToggle" }
 
 	local BeeTable = {}
-
-	BindToRenderStep("BeeEsp", function()
-		if IClientToggleProperty.BeeEspToggle then
-			for i, plr in pairs(COLLECTION:GetTagged("bee")) do
-				if BeeTable[plr] then
-				else
-					local MakeHighLight = Instance.new("BoxHandleAdornment")
-					MakeHighLight.Name = "BeeEsp"
-					MakeHighLight.Adornee = plr.Root
-					MakeHighLight.Size = plr.Root.Size
-					MakeHighLight.AlwaysOnTop = true
-					MakeHighLight.Color3 = Color3.fromRGB(255, 255, 127)
-					MakeHighLight.Parent = ESPFolder
-					MakeHighLight.ZIndex = 1
-					MakeHighLight.Transparency = 0.3
-					BeeTable[plr] = MakeHighLight
-				end
-			end
-
-			for i, v in pairs(BeeTable) do
-				if i:IsDescendantOf(workspace) then
-					if IClientToggleProperty.InstantBeeToggle then
-						i.Root.ProximityPrompt.HoldDuration = 0
-					else
-						i.Root.ProximityPrompt.HoldDuration = 0.3
-					end
-				else
-					v:Destroy()
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
 end
 
 ----------// Sheep ESP Handler
@@ -2348,6 +2376,44 @@ do
 		Text = "Sheep ESP",
 		Callback = function(Value)
 			IClientToggleProperty.SheepEspToggle = IsToggleAble(Value)
+			if IClientToggleProperty.SheepEspToggle then
+				BindToRenderStep("SheepEsp", function()
+					if IClientToggleProperty.SheepEspToggle then
+						for i, plr in pairs(COLLECTION:GetTagged("SheepModel")) do
+							if BeeTable[plr] then
+							else
+								local MakeHighLight = Instance.new("BoxHandleAdornment")
+								MakeHighLight.Name = "SheepEsp"
+								MakeHighLight.Adornee = plr.RootPart
+								MakeHighLight.Size = plr.RootPart.Size
+								MakeHighLight.AlwaysOnTop = true
+								MakeHighLight.Color3 = Color3.fromRGB(85, 170, 255)
+								MakeHighLight.Parent = ESPFolder
+								MakeHighLight.ZIndex = 1
+								MakeHighLight.Transparency = 0.3
+								BeeTable[plr] = MakeHighLight
+							end
+						end
+			
+						for i, v in pairs(BeeTable) do
+							if i:IsDescendantOf(workspace) then
+							else
+								v:Destroy()
+							end
+						end
+					else
+						for i, v in pairs(BeeTable) do
+							v.Transparency = 1
+						end
+					end
+				end)
+			else
+				UnbindFromRenderStep("SheepEsp")
+				for i, v in pairs(BeeTable) do
+					v.Transparency = 1
+				end
+			end
+
 		end,
 		Enabled = IClientToggleProperty.SheepEspToggle,
 	})
@@ -2355,37 +2421,6 @@ do
 	ButtonInGui["Sheep ESP"] = { AutoBuyFrame, "SheepEspToggle" }
 
 	local BeeTable = {}
-
-	BindToRenderStep("SheepEsp", function()
-		if IClientToggleProperty.SheepEspToggle then
-			for i, plr in pairs(COLLECTION:GetTagged("SheepModel")) do
-				if BeeTable[plr] then
-				else
-					local MakeHighLight = Instance.new("BoxHandleAdornment")
-					MakeHighLight.Name = "SheepEsp"
-					MakeHighLight.Adornee = plr.RootPart
-					MakeHighLight.Size = plr.RootPart.Size
-					MakeHighLight.AlwaysOnTop = true
-					MakeHighLight.Color3 = Color3.fromRGB(85, 170, 255)
-					MakeHighLight.Parent = ESPFolder
-					MakeHighLight.ZIndex = 1
-					MakeHighLight.Transparency = 0.3
-					BeeTable[plr] = MakeHighLight
-				end
-			end
-
-			for i, v in pairs(BeeTable) do
-				if i:IsDescendantOf(workspace) then
-				else
-					v:Destroy()
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
 end
 
 ----------// Metal ESP Handler
@@ -2395,6 +2430,50 @@ do
 		Text = "Metal ESP",
 		Callback = function(Value)
 			IClientToggleProperty.MetalEspToggle = IsToggleAble(Value)
+			if (IClientToggleProperty.MetalEspToggle) then
+				BindToRenderStep("MetalEsp", function()
+					if IClientToggleProperty.MetalEspToggle then
+						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
+							if BeeTable[plr] then
+							else
+								local MakeHighLight = Instance.new("BoxHandleAdornment")
+								MakeHighLight.Name = "MetalEsp"
+								MakeHighLight.Adornee = plr.Part
+								MakeHighLight.Size = plr.Part.Size
+								MakeHighLight.AlwaysOnTop = true
+								MakeHighLight.Color3 = Color3.fromRGB(0, 0, 255)
+								MakeHighLight.Parent = ESPFolder
+								MakeHighLight.ZIndex = 1
+								MakeHighLight.Transparency = 0.3
+								BeeTable[plr] = MakeHighLight
+							end
+						end
+			
+						for i, v in pairs(BeeTable) do
+							if i:IsDescendantOf(workspace) then
+								v.Adornee = i.Part
+			
+								if IClientToggleProperty.MetalCollectType == "2x Speed" then
+									i.ProximityPrompt.HoldDuration = 0.5
+								elseif IClientToggleProperty.MetalCollectType == "Instant Collect" then
+									i.ProximityPrompt.HoldDuration = 0
+								else
+									i.ProximityPrompt.HoldDuration = 1
+								end
+							else
+								v:Destroy()
+							end
+						end
+					else
+						
+					end
+				end)
+			else
+				UnbindFromRenderStep("MetalEsp")
+				for i, v in pairs(BeeTable) do
+					v.Transparency = 1
+				end
+			end
 		end,
 		Enabled = IClientToggleProperty.MetalEspToggle,
 	})
@@ -2402,46 +2481,6 @@ do
 	ButtonInGui["Metal ESP"] = { AutoBuyFrame, "MetalEspToggle" }
 
 	local BeeTable = {}
-
-	BindToRenderStep("MetalEsp", function()
-		if IClientToggleProperty.MetalEspToggle then
-			for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
-				if BeeTable[plr] then
-				else
-					local MakeHighLight = Instance.new("BoxHandleAdornment")
-					MakeHighLight.Name = "MetalEsp"
-					MakeHighLight.Adornee = plr.Part
-					MakeHighLight.Size = plr.Part.Size
-					MakeHighLight.AlwaysOnTop = true
-					MakeHighLight.Color3 = Color3.fromRGB(0, 0, 255)
-					MakeHighLight.Parent = ESPFolder
-					MakeHighLight.ZIndex = 1
-					MakeHighLight.Transparency = 0.3
-					BeeTable[plr] = MakeHighLight
-				end
-			end
-
-			for i, v in pairs(BeeTable) do
-				if i:IsDescendantOf(workspace) then
-					v.Adornee = i.Part
-
-					if IClientToggleProperty.MetalCollectType == "2x Speed" then
-						i.ProximityPrompt.HoldDuration = 0.5
-					elseif IClientToggleProperty.MetalCollectType == "Instant Collect" then
-						i.ProximityPrompt.HoldDuration = 0
-					else
-						i.ProximityPrompt.HoldDuration = 1
-					end
-				else
-					v:Destroy()
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
 end
 
 ----------// Auto Bank Handler
@@ -2528,42 +2567,117 @@ do
 		Text = "Auto Bank",
 		Callback = function(Value)
 			IClientToggleProperty.AutoBankToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.AutoBankToggle,
-	})
 
-	ButtonInGui["Auto Bank"] = { AutoBuyFrame, "AutoBankToggle" }
-
-	local IsWithdrawed = false
-	local WithdrawTick = tick()
-
-	BindToRenderStep("AutoBank", function()
-		if tick() < WithdrawTick then
-			return
-		end
-		WithdrawTick = tick() + 0.15
-		if IClientToggleProperty.AutoBankToggle then
-			local IsNearNPC = false
-
-			for i, v in next, is do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					IsNearNPC = true
-				end
-			end
-			for i, v in next, tu do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					IsNearNPC = true
-				end
-			end
-
-			if isAlive() then
-				isWithdrawed = false
-				if IsNearNPC then
-					if echest == nil then
-						echest = ReplicatedStorage.Inventories:FindFirstChild(lplr.Name .. "_personal")
+			if IClientToggleProperty.AutoBankToggle then
+				BindToRenderStep("AutoBank", function()
+					if tick() < WithdrawTick then
+						return
 					end
+					WithdrawTick = tick() + 0.15
+					if IClientToggleProperty.AutoBankToggle then
+						local IsNearNPC = false
+			
+						for i, v in next, is do
+							local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
+							if mag <= 15 then
+								IsNearNPC = true
+							end
+						end
+						for i, v in next, tu do
+							local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
+							if mag <= 15 then
+								IsNearNPC = true
+							end
+						end
+			
+						if isAlive() then
+							isWithdrawed = false
+							if IsNearNPC then
+								if echest == nil then
+									echest = ReplicatedStorage.Inventories:FindFirstChild(lplr.Name .. "_personal")
+								end
+								local chestitems = echest and echest:GetChildren() or {}
+								if #chestitems > 0 then
+									for i3, v3 in pairs(chestitems) do
+										if
+											v3:IsA("Accessory")
+											and (
+												v3.Name == "void_crystal"
+												or v3.Name == "emerald"
+												or v3.Name == "iron"
+												or v3.Name == "diamond"
+											)
+										then
+											task.spawn(function()
+												bedwars["ClientHandler"]
+													:GetNamespace("Inventory")
+													:Get("ChestGetItem")
+													:CallServer(echest, v3)
+												refreshbank()
+											end)
+										end
+									end
+								end
+							else
+								local chestitems = bedwars["getInventory"](lplr).items
+								for i3, v3 in pairs(chestitems) do
+									if
+										v3.itemType == "void_crystal"
+										or v3.itemType == "emerald"
+										or v3.itemType == "iron"
+										or v3.itemType == "diamond"
+									then
+										bedwars["ClientHandler"]
+											:GetNamespace("Inventory")
+											:Get("ChestGiveItem")
+											:CallServer(echest, v3.tool)
+										refreshbank()
+									end
+								end
+							end
+						end
+			
+						if autobankui then
+							local hotbar = lplr.PlayerGui:FindFirstChild("hotbar")
+							if hotbar then
+								local healthbar = hotbar["1"]:FindFirstChild("HotbarHealthbarContainer")
+								if healthbar then
+									autobankui.Position = UDim2.new(0.5, -80, 0, healthbar.AbsolutePosition.Y - 50)
+								end
+							end
+						end
+					else
+						if not isWithdrawed then
+							isWithdrawed = true
+							local chestitems = echest and echest:GetChildren() or {}
+							if #chestitems > 0 then
+								for i3, v3 in pairs(chestitems) do
+									if
+										v3:IsA("Accessory")
+										and (
+											v3.Name == "void_crystal"
+											or v3.Name == "emerald"
+											or v3.Name == "iron"
+											or v3.Name == "diamond"
+										)
+									then
+										task.spawn(function()
+											bedwars["ClientHandler"]
+												:GetNamespace("Inventory")
+												:Get("ChestGetItem")
+												:CallServer(echest, v3)
+											refreshbank()
+										end)
+									end
+								end
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromRenderStep("AutoBank")
+				if not isWithdrawed then
+					isWithdrawed = true
 					local chestitems = echest and echest:GetChildren() or {}
 					if #chestitems > 0 then
 						for i3, v3 in pairs(chestitems) do
@@ -2586,62 +2700,17 @@ do
 							end
 						end
 					end
-				else
-					local chestitems = bedwars["getInventory"](lplr).items
-					for i3, v3 in pairs(chestitems) do
-						if
-							v3.itemType == "void_crystal"
-							or v3.itemType == "emerald"
-							or v3.itemType == "iron"
-							or v3.itemType == "diamond"
-						then
-							bedwars["ClientHandler"]
-								:GetNamespace("Inventory")
-								:Get("ChestGiveItem")
-								:CallServer(echest, v3.tool)
-							refreshbank()
-						end
-					end
 				end
 			end
+		end,
+		Enabled = IClientToggleProperty.AutoBankToggle,
+	})
 
-			if autobankui then
-				local hotbar = lplr.PlayerGui:FindFirstChild("hotbar")
-				if hotbar then
-					local healthbar = hotbar["1"]:FindFirstChild("HotbarHealthbarContainer")
-					if healthbar then
-						autobankui.Position = UDim2.new(0.5, -80, 0, healthbar.AbsolutePosition.Y - 50)
-					end
-				end
-			end
-		else
-			if not isWithdrawed then
-				isWithdrawed = true
-				local chestitems = echest and echest:GetChildren() or {}
-				if #chestitems > 0 then
-					for i3, v3 in pairs(chestitems) do
-						if
-							v3:IsA("Accessory")
-							and (
-								v3.Name == "void_crystal"
-								or v3.Name == "emerald"
-								or v3.Name == "iron"
-								or v3.Name == "diamond"
-							)
-						then
-							task.spawn(function()
-								bedwars["ClientHandler"]
-									:GetNamespace("Inventory")
-									:Get("ChestGetItem")
-									:CallServer(echest, v3)
-								refreshbank()
-							end)
-						end
-					end
-				end
-			end
-		end
-	end)
+	ButtonInGui["Auto Bank"] = { AutoBuyFrame, "AutoBankToggle" }
+
+	local IsWithdrawed = false
+	local WithdrawTick = tick()
+
 end
 
 ----------// Chest Stealer Handler
@@ -2705,22 +2774,27 @@ do
 		Text = "Chest Stealer",
 		Callback = function(Value)
 			IClientToggleProperty.ChestStealerToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.ChestStealerToggle then
+				BindToRenderStep("ChestStealer", function()
+					if IClientToggleProperty.ChestStealerToggle then
+					else
+						return
+					end
+					if isAlive() then
+						cheststealerfuncs["Open"]()
+						cheststealerfuncs["Closed"]()
+					end
+				end)
+			else
+				UnbindFromRenderStep("ChestStealer")
+			end
+
 		end,
 		Enabled = IClientToggleProperty.ChestStealerToggle,
 	})
 
 	ButtonInGui["Chest Stealer"] = { WiggleAnimationFrame, "ChestStealerToggle" }
-
-	BindToRenderStep("ChestStealer", function()
-		if IClientToggleProperty.ChestStealerToggle then
-		else
-			return
-		end
-		if isAlive() then
-			cheststealerfuncs["Open"]()
-			cheststealerfuncs["Closed"]()
-		end
-	end)
 end
 
 ----------// Fast Consumer Handler
@@ -2884,62 +2958,70 @@ do
 		Text = "Auto Heal",
 		Callback = function(Value)
 			IClientToggleProperty.AutoHealToggle = IsToggleAble(Value)
+
+			if iClientToggleProperty.AutoHealToggle then
+				BindToRenderStep("AutoHeal", function()
+					if IClientToggleProperty.AutoHealToggle then
+					else
+						return
+					end
+					if isAlive() then
+						local item = getItem("apple")
+						local shield = getItem("big_shield") or getItem("mini_shield")
+						local pot = getItem("heal_splash_potion")
+						if item or pot then
+							if lplr.Character:GetAttribute("Health") <= (lplr.Character:GetAttribute("MaxHealth") - (100 - 70)) then
+								if item then
+									bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
+										["item"] = item["tool"],
+									})
+								else
+									local newray = workspace:Raycast(
+										(lplr.character.HumanoidRootPart).Position,
+										Vector3.new(0, -76, 0),
+										blockraycast
+									)
+									if newray ~= nil then
+										bedwars["ClientHandler"]:Get(bedwars["ProjectileRemote"]):CallServerAsync(
+											pot["tool"],
+											"heal_splash_potion",
+											"heal_splash_potion",
+											(lplr.character.HumanoidRootPart).Position,
+											Vector3.new(0, -70, 0),
+											game:GetService("HttpService"):GenerateGUID(),
+											{ drawDurationSeconds = 1 }
+										)
+									end
+								end
+							end
+						end
+						if shield then
+							if
+								lplr.Character:GetAttribute("Shield_POTION")
+								and (
+									(not lplr.Character:GetAttribute("Shield_POTION"))
+									or lplr.Character:GetAttribute("Shield_POTION") == 0
+								)
+							then
+								bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
+									["item"] = shield["tool"],
+								})
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromRenderStep("AutoHeal")
+			end
+
+
 		end,
 		Enabled = IClientToggleProperty.AutoHealToggle,
 	})
 
 	ButtonInGui["Auto Heal"] = { AutoBuyFrame, "AutoHealToggle" }
 
-	BindToRenderStep("AutoHeal", function()
-		if IClientToggleProperty.AutoHealToggle then
-		else
-			return
-		end
-		if isAlive() then
-			local item = getItem("apple")
-			local shield = getItem("big_shield") or getItem("mini_shield")
-			local pot = getItem("heal_splash_potion")
-			if item or pot then
-				if lplr.Character:GetAttribute("Health") <= (lplr.Character:GetAttribute("MaxHealth") - (100 - 70)) then
-					if item then
-						bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
-							["item"] = item["tool"],
-						})
-					else
-						local newray = workspace:Raycast(
-							(lplr.character.HumanoidRootPart).Position,
-							Vector3.new(0, -76, 0),
-							blockraycast
-						)
-						if newray ~= nil then
-							bedwars["ClientHandler"]:Get(bedwars["ProjectileRemote"]):CallServerAsync(
-								pot["tool"],
-								"heal_splash_potion",
-								"heal_splash_potion",
-								(lplr.character.HumanoidRootPart).Position,
-								Vector3.new(0, -70, 0),
-								game:GetService("HttpService"):GenerateGUID(),
-								{ drawDurationSeconds = 1 }
-							)
-						end
-					end
-				end
-			end
-			if shield then
-				if
-					lplr.Character:GetAttribute("Shield_POTION")
-					and (
-						(not lplr.Character:GetAttribute("Shield_POTION"))
-						or lplr.Character:GetAttribute("Shield_POTION") == 0
-					)
-				then
-					bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
-						["item"] = shield["tool"],
-					})
-				end
-			end
-		end
-	end)
+
 end
 
 ----------// Auto Leave/Queue Handler
@@ -3041,11 +3123,11 @@ do
 					end
 				end)
 			else
+				UnbindFromRenderStep("SpinBot")
 				if bodyspin then
 					bodyspin.AngularVelocity = Vector3.new(0, 0, 0)
 					bodyspin:Destroy()
 				end
-				UnbindFromRenderStep("SpinBot")
 			end
 		end,
 		Enabled = IClientToggleProperty.SpinBotToggle,
@@ -3264,20 +3346,25 @@ do
 		Text = "Auto Report",
 		Callback = function(Value)
 			IClientToggleProperty.AutoReportToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.AutoReport then
+
+				BindToRenderStep("AutoReport",function()
+					if IClientToggleProperty.AutoReportToggle then
+						for  i , v in pairs(PLAYERS:GetPlayers()) do
+							if not LoggedPerson[v] and v ~= lplr  then
+								LoggedPerson[v] = true
+								PLAYERS:ReportAbuse(v, "Swearing", "Player did a bad thing!")
+							end
+						end	
+					end
+				end)	
+			else
+				UnbindFromRenderStep("AutoReport")
+			end
 		end,
 	    Enabled = IClientToggleProperty.AutoReportToggle
 	})
-
-	BindToRenderStep("AutoReport",function()
-		if IClientToggleProperty.AutoReportToggle then
-			for  i , v in pairs(PLAYERS:GetPlayers()) do
-				if not LoggedPerson[v] and v ~= lplr  then
-					LoggedPerson[v] = true
-					PLAYERS:ReportAbuse(v, "Swearing", "Player did a bad thing!")
-				end
-			end	
-		end
-	end)	
 end
 
 --------------------------------------// Animation Tab
