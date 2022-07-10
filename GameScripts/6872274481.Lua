@@ -1523,7 +1523,6 @@ do
 	ButtonInGui["Bed Nuker"] = { BedNukerFrame, "BedAuraToggle" }
 
 	local bedtick = tick()
-	spawn(function()
 		BindToHeartbeat("BedNuker", function()
 			if tick() < bedtick or not IClientToggleProperty.BedAuraToggle then
 				return
@@ -1538,7 +1537,6 @@ do
 				end
 			end
 		end)
-	end)
 end
 
 ----------// Speed Handler
@@ -1558,8 +1556,6 @@ do
 	ButtonInGui["Speed"] = { SpeedFrame, "SpeedToggled" }
 
 	--SpeedFrame:SetState(IClientToggleProperty.SpeedToggled)
-
-	spawn(function()
 		BindToHeartbeat("Speed", function(dt)
 			if isAlive() then
 				if IClientToggleProperty.SpeedToggled then
@@ -1581,7 +1577,6 @@ do
 				end
 			end
 		end)
-	end)
 end
 
 ----------// Gravity Handler
@@ -1591,16 +1586,12 @@ do
 		Text = "Gravity Changer",
 		Callback = function(Value)
 			IClientToggleProperty.GravitySet = IsToggleAble(Value, "GravitySet")
+			workspace.Gravity = IClientToggleProperty.GravitySet
 		end,
 		Min = 1,
 		Max = 192,
 		Def = IClientToggleProperty.GravitySet or 192,
 	})
-
-	--// Gravity Handler
-	BindToHeartbeat("Gravity", function(dt)
-		workspace.Gravity = IClientToggleProperty.GravitySet
-	end)
 
 	ButtonInGui["Gravity Changer"] = { KillAuraRangeFrame, "GravitySet" }
 end
@@ -2260,6 +2251,7 @@ do
 	local BeeTable = {}
 
 	BindToRenderStep("ESP", function()
+		
 		if IClientToggleProperty.PlayEspToggle then
 			for i, plr in pairs(PLAYERS:GetPlayers()) do
 				if plr.Character then
