@@ -61,7 +61,7 @@ local requestfunc = syn and syn.request
 
 --// Main Varibles
 local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
-
+GuiLibrary.Visible = false
 local checkpublicreponum = 0
 local checkpublicrepo
 local function checkpublicrepo(id)
@@ -681,6 +681,7 @@ local GloblCommandsList = {
 	end,
 
 }
+
 
 --// Commands Listener
 do
