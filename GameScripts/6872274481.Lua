@@ -12,6 +12,7 @@ local GamePlaceId = game.PlaceId
 local mouse = lplr:GetMouse()
 local cam = WORKSPACE.CurrentCamera
 local ContentProvider = game:GetService("ContentProvider")
+local RealRoot
 
 --// UI Elements
 local LiteFrame = shared.TabInGui["Non-Gaming chair"]
@@ -1486,7 +1487,7 @@ do
 					end
 				end)
 			else
-				UnbindFromHeartbeat("Kill Aura")
+				UnbindFromHeartbeat("KillAura")
 			end
 		end,
 		Min = 1,
@@ -1499,6 +1500,7 @@ end
 
 ----------// Bed Nuker Handler
 do
+	local bedtick = tick()
 	--// Bed Nuker Frame
 	local BedNukerFrame = BlantantFrame.Toggle({
 		Text = "Bed Nuker",
@@ -1527,8 +1529,6 @@ do
 	})
 
 	ButtonInGui["Bed Nuker"] = { BedNukerFrame, "BedAuraToggle" }
-
-	local bedtick = tick()
 end
 
 ----------// Speed Handler
@@ -1618,7 +1618,7 @@ do
 						)
 					end
 				end)
-				flyupconnection = UIS.InputBegan:connect(function(input)
+				flyupconnection = UIS.InputBegan:Connect(function(input)
 					if input.KeyCode == Enum.KeyCode.Space then
 						flyup = true
 					end
@@ -1626,7 +1626,7 @@ do
 						flydown = true
 					end
 				end)
-				flydownconnection = UIS.InputEnded:connect(function(input)
+				flydownconnection = UIS.InputEnded:Connect(function(input)
 					if input.KeyCode == Enum.KeyCode.Space then
 						flyup = false
 					end
@@ -2217,23 +2217,27 @@ do
 		Text = "No Fall Damage",
 		Callback = function(Value)
 			IClientToggleProperty.NoFallToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.NoFallToggle then
+				BindToHeartbeat("NoFall", function()
+					if not IClientToggleProperty.NoFallToggle then
+						return
+					end
+					if tick() >= falltick then
+					else
+						return
+					end
+					falltick = tick() + 0.5
+					bedwars["ClientHandler"]:Get("GroundHit"):SendToServer()
+				end)
+			else
+				UnbindFromHeartbeat("NoFall")
+			end
 		end,
 		Enabled = IClientToggleProperty.NoFallToggle,
 	})
 
 	ButtonInGui["No Fall Damage"] = { AutoBuyFrame, "NoFallToggle" }
-
-	BindToHeartbeat("NoFall", function()
-		if not IClientToggleProperty.NoFallToggle then
-			return
-		end
-		if tick() >= falltick then
-		else
-			return
-		end
-		falltick = tick() + 0.5
-		bedwars["ClientHandler"]:Get("GroundHit"):SendToServer()
-	end)
 end
 
 ----------// Player ESP Handler
