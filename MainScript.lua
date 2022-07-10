@@ -4,6 +4,7 @@ repeat
 until game:IsLoaded() == true
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 repeat
 	task.wait(1)
@@ -61,7 +62,6 @@ local requestfunc = syn and syn.request
 
 --// Main Varibles
 local GuiLibrary = loadstring(GetURL("GuiLibrary.lua"))()
-GuiLibrary.Visible = false
 local checkpublicreponum = 0
 local checkpublicrepo
 local function checkpublicrepo(id)
@@ -171,7 +171,7 @@ LocalPlayer.OnTeleport:Connect(function(State)
 end)
 
 -------// Load UI
-local LoadIClientUI = GuiLibrary.Load({
+local LoadIClientUI,MainFrame = GuiLibrary.Load({
 	Title = "IClient",
 	Style = 3,
 	SizeX = 500,
@@ -182,6 +182,7 @@ local LoadIClientUI = GuiLibrary.Load({
 		MainFrame = Color3.fromRGB(0, 0, 0),
 	},
 })
+MainFrame.Visible = false
 shared.MainUI = LoadIClientUI
 
 ----// Non - Blantant Frame
@@ -682,6 +683,12 @@ local GloblCommandsList = {
 
 }
 
+UserInputService.InputBegan:Connect(function(obj)
+
+	if obj.KeyCode == Enum.KeyCode.RightShift then
+		MainFrame.Visible = not MainFrame.Visible
+	end
+end)
 
 --// Commands Listener
 do

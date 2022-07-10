@@ -2438,7 +2438,8 @@ function Material.Load(Config)
 		return OptionLibrary
 	end
 
-	return TabLibrary
+	return TabLibrary,MainFrame
 end
+
 --// Hello
 return Material
