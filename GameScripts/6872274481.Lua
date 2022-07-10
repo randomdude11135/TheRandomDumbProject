@@ -186,29 +186,9 @@ local function UnbindFromRenderStep(name)
 	end
 end
 
-
-local function skipFrame()
-	return game:GetService("RunService").Heartbeat:Wait()
-end
-
-local function betterfind(tab, obj)
-	for i, v in pairs(tab) do
-		if v == obj then
-			return i
-		end
-	end
-	return nil
-end
-
 local function canBeTargeted(plr, doTeamCheck)
 	if plr and plr.Team then
 		return not (plr.Team.Name == lplr.Team.Name)
-	end
-end
-
-local function getColorFromPlayer(v)
-	if v.Team ~= nil then
-		return v.TeamColor.Color
 	end
 end
 
@@ -218,38 +198,6 @@ local function getremote(t)
 			return t[i + 1]
 		end
 	end
-end
-
-local function getPlrNear(max)
-	local returning, nearestnum = nil, max
-	for i, v in next, PLAYERS:GetPlayers() do
-		if isAlive(v) and v ~= lplr then
-			local diff = (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
-			if diff < nearestnum then
-				nearestnum = diff
-				nearestval = v
-			end
-		end
-	end
-	return returning
-end
-
-local function getPlrNearMouse(max)
-	local max = max or 99999999999999
-	local nearestval, nearestnum = nil, max
-	for i, v in next, PLAYERS:GetPlayers() do
-		if isAlive(v) and v ~= lplr then
-			local pos, vis = WORKSPACE.CurrentCamera:WorldToScreenPoint(v.Character.HumanoidRootPart.Position)
-			if vis and pos then
-				local diff = (UIS:GetMouseLocation() - Vector2.new(pos.X, pos.Y)).Magnitude
-				if diff < nearestnum then
-					nearestnum = diff
-					nearestval = v
-				end
-			end
-		end
-	end
-	return nearestval
 end
 
 local function getAllPlrsNear(max)
@@ -271,14 +219,6 @@ local function getAllPlrsNear(max)
 	return t
 end
 
-local function getMoveDirection(plr)
-	if not isAlive(plr) then
-		return Vector3.new()
-	end
-	local velocity = plr.Character.HumanoidRootPart:GetVelocityAtPosition(plr.Character.HumanoidRootPart.Position)
-	local velocityDirection = velocity.Magnitude > 0 and velocity.Unit or Vector3.new()
-	return velocityDirection
-end
 
 local function getwool()
 	for i5, v5 in pairs(bedwars["getInventory"](lplr)["items"]) do
@@ -296,22 +236,6 @@ local function getwoolamt()
 		end
 	end
 	return 0
-end
-
-local function getblockitem()
-	for i5, v5 in pairs(bedwars.getInventory(lplr).items) do
-		if
-			v5.itemType:match("wool")
-			or v5.itemType:match("grass")
-			or v5.itemType:match("stone_brick")
-			or v5.itemType:match("wood_plank")
-			or v5.itemType:match("stone")
-			or v5.itemType:match("bedrock")
-		then
-			return v5.itemType, v5.amount
-		end
-	end
-	return nil
 end
 
 local function getItem(itemName)
@@ -355,28 +279,6 @@ local function hashvector(vec)
 	}
 end
 
-local function targetCheck(plr)
-	return plr and plr.Humanoid and plr.Humanoid.Health > 0 and plr.Character:FindFirstChild("ForceField") == nil
-end
-
-local function GetNearestHumanoidToPosition(player, distance, overridepos)
-	local closest, returnedplayer = distance, nil
-	if lplr.isAlive then
-		for i, v in pairs(lplr.entityList) do
-			if v.Targetable and targetCheck(v) then
-				local mag = (lplr.character.HumanoidRootPart.Position - v.RootPart.Position).magnitude
-				if overridepos and mag > distance then
-					mag = (overridepos - v.RootPart.Position).magnitude
-				end
-				if mag <= closest then
-					closest = mag
-					returnedplayer = v
-				end
-			end
-		end
-	end
-	return returnedplayer
-end
 
 --// Framework
 warn("[IClient]: Getting Framework")
@@ -2416,6 +2318,7 @@ end
 
 ----------// Metal ESP Handler
 do
+	local BeeTable = {}
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Metal ESP",
@@ -2470,8 +2373,6 @@ do
 	})
 
 	ButtonInGui["Metal ESP"] = { AutoBuyFrame, "MetalEspToggle" }
-
-	local BeeTable = {}
 end
 
 ----------// Auto Bank Handler
