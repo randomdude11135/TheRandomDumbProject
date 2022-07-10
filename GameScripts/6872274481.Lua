@@ -2959,7 +2959,7 @@ do
 		Callback = function(Value)
 			IClientToggleProperty.AutoHealToggle = IsToggleAble(Value)
 
-			if iClientToggleProperty.AutoHealToggle then
+			if IClientToggleProperty.AutoHealToggle then
 				BindToRenderStep("AutoHeal", function()
 					if IClientToggleProperty.AutoHealToggle then
 					else
