@@ -2476,6 +2476,11 @@ end
 
 ----------// Auto Bank Handler
 do
+
+	local IsWithdrawed = false
+	local WithdrawTick = tick()
+
+
 	--// UI Stats
 	local MakeUI = Instance.new("ScreenGui", lplr.PlayerGui)
 	MakeUI.ResetOnSpawn = false
@@ -2698,10 +2703,6 @@ do
 	})
 
 	ButtonInGui["Auto Bank"] = { AutoBuyFrame, "AutoBankToggle" }
-
-	local IsWithdrawed = false
-	local WithdrawTick = tick()
-
 end
 
 ----------// Chest Stealer Handler
