@@ -185,18 +185,6 @@ local function UnbindFromRenderStep(name)
 	end
 end
 
-local function BindToStepped(name, func)
-	if SteppedTable[name] == nil then
-		SteppedTable[name] = game:GetService("RunService").Stepped:connect(func)
-	end
-end
-
-local function UnbindFromStepped(name)
-	if SteppedTable[name] then
-		SteppedTable[name]:Disconnect()
-		SteppedTable[name] = nil
-	end
-end
 
 local function skipFrame()
 	return game:GetService("RunService").Heartbeat:Wait()
@@ -1615,7 +1603,7 @@ do
 		Callback = function(Value)
 			IClientToggleProperty.FlyToggle = IsToggleAble(Value, "FlyToggle")
 			if IClientToggleProperty.FlyToggle then
-				BindToStepped("Fly", function(time, dt)
+				BindToRenderStep("Fly", function(time, dt)
 					if isAlive() then
 						local dt = 1
 						local updirection = 0 - 5
@@ -1649,7 +1637,7 @@ do
 			else
 				flyup = false
 				flydown = false
-				UnbindFromStepped("Fly")
+				UnbindFromRenderStep("Fly")
 				if flyupconnection then
 					flyupconnection:Disconnect()
 				end
@@ -1855,7 +1843,7 @@ do
 
 			PlayFunction()
 
-			BindToStepped("AnticheatAssist", function()
+			BindToRenderStep("AnticheatAssist", function()
 				--// Check FPS
 				if NextTrack <= os.time() then
 					local ping = math.floor(
@@ -1954,7 +1942,7 @@ do
 			end
 			local char = char or lplr.Character
 			local Humanoid = char:FindFirstChildWhichIsA("Humanoid")
-			UnbindFromStepped("AnticheatAssist")
+			UnbindFromRenderStep("AnticheatAssist")
 			pcall(function()
 				char.Parent = game
 			end)
@@ -2015,7 +2003,7 @@ do
 					AnticheatAssistFunction(lplr.Character)
 				end
 			else
-				UnbindFromStepped("AnticheatAssist")
+				UnbindFromRenderStep("AnticheatAssist")
 
 				for i, v in next, AnticheatAssistConnections do
 					v:Disconnect()
@@ -2136,7 +2124,6 @@ do
 			IClientToggleProperty.AutoBuyToggle = IsToggleAble(Value)
 
 			if IClientToggleProperty.AutoBuyToggle then
-
 				BindToHeartbeat("AutoBuy", function()
 					if not IClientToggleProperty.AutoBuyToggle then
 						return
@@ -2251,6 +2238,7 @@ end
 
 ----------// Player ESP Handler
 do
+	local BeeTable = {}
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Player ESP",
@@ -2301,7 +2289,7 @@ do
 			for i, v in pairs(BeeTable) do
 				v.Transparency = 1
 			end
-			UnbindFromStepped("ESP")
+			UnbindFromRenderStep("ESP")
 		end
 		end,
 		Enabled = IClientToggleProperty.PlayEspToggle,
@@ -2309,11 +2297,11 @@ do
 
 	ButtonInGui["Player ESP"] = { AutoBuyFrame, "PlayEspToggle" }
 
-	local BeeTable = {}
 end
 
 ----------// Bee ESP Handler
 do
+	local BeeTable = {}
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Bee ESP",
@@ -2353,7 +2341,7 @@ do
 					end
 				end)
 			else
-				UnbindFromStepped("BeeEsp")
+				UnbindFromRenderStep("BeeEsp")
 				for i, v in pairs(BeeTable) do
 					v.Transparency = 1
 				end
@@ -2366,11 +2354,11 @@ do
 
 	ButtonInGui["Bee ESP"] = { AutoBuyFrame, "BeeEspToggle" }
 
-	local BeeTable = {}
 end
 
 ----------// Sheep ESP Handler
 do
+	local BeeTable = {}
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Sheep ESP",
@@ -2420,7 +2408,6 @@ do
 
 	ButtonInGui["Sheep ESP"] = { AutoBuyFrame, "SheepEspToggle" }
 
-	local BeeTable = {}
 end
 
 ----------// Metal ESP Handler
