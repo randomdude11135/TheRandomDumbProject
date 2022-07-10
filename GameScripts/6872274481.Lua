@@ -1312,16 +1312,9 @@ do
 		end,
 		Enabled = IClientToggleProperty.AimAssistToggle,
 	})
-
-	local function aimpos(vec, multiplier)
-		local newvec = (vec - UIS:GetMouseLocation() - Vector2.new(0, 36)) * tonumber(multiplier)
-		mousemoverel(newvec.X, newvec.Y)
-	end
-
+	
 	BindToRenderStep("AimAssist", function()
-		if aimactive then
-			local targettable = {}
-			local targetsize = 0
+		if aimactive and IClientToggleProperty.AimAssistToggle then
 			local plr = getAllPlrsNear(18 - 0.01)
 			for i, v in next, plr do
 				local plr = v
