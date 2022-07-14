@@ -2193,10 +2193,11 @@ do
 					end
 			end)
 		else
+			UnbindFromRenderStep("ESP")
 			for i, v in pairs(BeeTable) do
 				v.Transparency = 1
 			end
-			UnbindFromRenderStep("ESP")
+			BeeTable = {}
 		end
 		end,
 		Enabled = IClientToggleProperty.PlayEspToggle,
@@ -2252,6 +2253,7 @@ do
 				for i, v in pairs(BeeTable) do
 					v.Transparency = 1
 				end
+				BeeTable = {}
 			end
 
 
@@ -2307,6 +2309,7 @@ do
 				for i, v in pairs(BeeTable) do
 					v.Transparency = 1
 				end
+				BeeTable = {}
 			end
 
 		end,
@@ -2368,6 +2371,7 @@ do
 				for i, v in pairs(BeeTable) do
 					v.Transparency = 1
 				end
+				BeeTable = {}
 			end
 		end,
 		Enabled = IClientToggleProperty.MetalEspToggle,
