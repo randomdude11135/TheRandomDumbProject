@@ -1,4 +1,4 @@
-warn("Version Trash 4")
+warn("Version Trash 5")
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -2400,7 +2400,7 @@ do
 								IsCollectingMetal = true
 								task.spawn(function()
 									TheMetalObject.ProximityPrompt:InputHoldBegin()
-									TheMetalObject.ProximityPropt.Triggered:Wait()
+									TheMetalObject.Changed:Wait()
 									TheMetalObject.ProximityPrompt:InputHoldEnd()
 									IsCollectingMetal = false
 								end)
