@@ -1,4 +1,4 @@
-warn("Version Trash 8")
+warn("Version Trash Final")
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -2396,11 +2396,15 @@ do
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
 								if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled == true and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance then
-								IsCollectingMetal = true
+								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(function()
+									IsCollectingMetal:Disconnect()
+									IsCollectingMetal = false
+								end)
 								task.spawn(function()
 									TheMetalObject.ProximityPrompt:InputHoldBegin()
 									TheMetalObject.Changed:Wait()
 									TheMetalObject.ProximityPrompt:InputHoldEnd()
+									IsCollectingMetal:Disconnect()
 									IsCollectingMetal = false
 								end)
 								break
@@ -2436,10 +2440,15 @@ do
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("bee")) do
 							if IsCollectingMetal == false and TheMetalObject.Root.ProximityPrompt.Enabled == true and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Root.Position).Magnitude <= TheMetalObject.Root.ProximityPrompt.MaxActivationDistance then
 							IsCollectingMetal = true
+							IsCollectingMetal = TheMetalObject.Root.ProximityPrompt.PromptButtonHoldEnded:Connect(function()
+								IsCollectingMetal:Disconnect()
+								IsCollectingMetal = false
+							end)
 							task.spawn(function()
 								TheMetalObject.Root.ProximityPrompt:InputHoldBegin()
 								TheMetalObject.Changed:Wait()
 								TheMetalObject.Root.ProximityPrompt:InputHoldEnd()
+								IsCollectingMetal:Disconnect()
 								IsCollectingMetal = false
 							end)
 							break
