@@ -2390,8 +2390,8 @@ do
 		Text = "Metal Aura",
 		Callback = function(Value)
 			IClientToggleProperty.MetalAuraToggle = IsToggleAble(Value)
-			if (IClientToggleProperty.MetalAuraToggle) then
-				BindToRenderStep("MetalAura", function()
+			if IClientToggleProperty.MetalAuraToggle then
+				BindToHeartbeat("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
 							print(i.ProximityPrompt.Enabled)
@@ -2411,7 +2411,7 @@ do
 					end
 				end)
 			else
-				UnbindFromRenderStep("MetalAura")
+				UnbindFromHeartbeat("MetalAura")
 			end
 		end,
 		Enabled = IClientToggleProperty.MetalAuraToggle,
