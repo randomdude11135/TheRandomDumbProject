@@ -43,6 +43,7 @@ local CurrentAnimation = nil
 local connectionstodisconnect = {}
 local disabletpcheck = false
 local anticheatfunnyyes = false
+local RunService = game:GetService("RunService")
 local savedc0 = game:GetService("ReplicatedStorage"):WaitForChild("Assets"):WaitForChild("Viewmodel"):WaitForChild(
 	"RightHand"
 ):WaitForChild("RightWrist").C0
@@ -2392,9 +2393,8 @@ do
 						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
 							if BeeTable[plr] then
 							else
-								BeeTable[plr] = i.ProximityPrompt.PromptShown:Connect(function()
-
-									if not IsCollectingMetal then
+								BeeTable[plr] = RunService.Heartbeat:Connect(function()
+									if not IsCollectingMetal and i.ProximityPrompt.Enabled then
 										IsCollectingMetal = true
 										i.ProximityPrompt:InputHoldBegin() 
 										task.wait(i.ProximityPrompt.HoldDuration)  
@@ -2440,8 +2440,8 @@ do
 							if BeeTable[plr] then
 							else
 								if i.Root:FindFirtChild("ProximityPrompt") then
-									BeeTable[plr] = i.Root.ProximityPrompt.PromptShown:Connect(function()
-										if not IsCollectingMetal then
+									BeeTable[plr] = RunService.Heartbeat:Connect(function()
+										if not IsCollectingMetal and i.Root.ProximityPrompt.Enabled then
 											IsCollectingMetal = true
 											i.Root.ProximityPrompt:InputHoldBegin() 
 											task.wait(i.Root.ProximityPrompt.HoldDuration)  
