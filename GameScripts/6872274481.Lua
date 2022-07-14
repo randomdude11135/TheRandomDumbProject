@@ -2394,7 +2394,7 @@ do
 							if BeeTable[plr] then
 							else
 								BeeTable[plr] = RunService.Heartbeat:Connect(function()
-									if not IsCollectingMetal and i.ProximityPrompt.Enabled then
+									if IsCollectingMetal == false and i.ProximityPrompt.Enabled then
 										print("Found one")
 										IsCollectingMetal = true
 										i.ProximityPrompt:InputHoldBegin() 
@@ -2414,6 +2414,7 @@ do
 				UnbindFromRenderStep("MetalAura")
 				for i, v in pairs(BeeTable) do
 					v:Disconnect()
+					
 				end
 			end
 		end,
