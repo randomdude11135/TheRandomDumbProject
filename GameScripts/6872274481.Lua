@@ -1,4 +1,4 @@
-warn("Version Trash 3")
+warn("Version Trash 4")
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -2395,10 +2395,7 @@ do
 				BindToHeartbeat("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
-							print(i,TheMetalObject)
-							--print(plr.ProximityPrompt.Enabled)
-							print((lplr.Character.HumanoidRootPart.Position - TheMetalObject.Position).Magnitude,(lplr.Character.HumanoidRootPart.Position - TheMetalObject.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance)
-							if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance then
+								if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance then
 								warn("Found a metal")
 								IsCollectingMetal = true
 								task.spawn(function()
