@@ -2396,7 +2396,6 @@ do
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
 								if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance then
-								warn("Found a metal")
 								IsCollectingMetal = true
 								task.spawn(function()
 									TheMetalObject.ProximityPrompt:InputHoldBegin()
@@ -2422,8 +2421,7 @@ end
 
 ----------// Bee Aura Handler
 do
-	local BeeTable = {
-	}
+
     local IsCollectingMetal = false
 
 	--// Frame
@@ -2434,30 +2432,24 @@ do
 			if (IClientToggleProperty.BeeAuraToggle) then
 				BindToRenderStep("BeeAura", function()
 					if IClientToggleProperty.BeeAuraToggle then
-						for i, plr in pairs(COLLECTION:GetTagged("bee")) do
-							if BeeTable[plr] then
-							else
-								if i.Root:FindFirtChild("ProximityPrompt") then
-									BeeTable[plr] = RunService.Heartbeat:Connect(function()
-										if not IsCollectingMetal and i.Root.ProximityPrompt.Enabled then
-											IsCollectingMetal = true
-											i.Root.ProximityPrompt:InputHoldBegin()
-											task.wait(i.Root.ProximityPrompt.HoldDuration)
-											i.Root.ProximityPrompt:InputHoldEnd()
-											IsCollectingMetal = false
-										end
-									end)
-								end
-							end
+
+						for i, TheMetalObject in pairs(COLLECTION:GetTagged("bee")) do
+							if IsCollectingMetal == false and TheMetalObject.Root.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Root.Position).Magnitude <= TheMetalObject.Root.ProximityPrompt.MaxActivationDistance then
+							IsCollectingMetal = true
+							task.spawn(function()
+								TheMetalObject.Root.ProximityPrompt:InputHoldBegin()
+								TheMetalObject.Changed:Wait()
+								TheMetalObject.Root.ProximityPrompt:InputHoldEnd()
+								IsCollectingMetal = false
+							end)
+							break
 						end
+					end
 					else
 					end
 				end)
 			else
 				UnbindFromRenderStep("BeeAura")
-				for i, v in pairs(BeeTable) do
-					v:Disconnect()
-				end
 			end
 		end,
 		Enabled = IClientToggleProperty.BeeAuraToggle,
