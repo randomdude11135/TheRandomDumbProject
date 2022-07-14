@@ -2394,16 +2394,17 @@ do
 			if IClientToggleProperty.MetalAuraToggle then
 				BindToHeartbeat("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
-						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
+						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
+							print(i,TheMetalObject)
 							--print(plr.ProximityPrompt.Enabled)
-							print((lplr.Character.HumanoidRootPart.Position - plr.Position).Magnitude,(lplr.Character.HumanoidRootPart.Position - plr.Position).Magnitude <= plr.ProximityPrompt.MaxActivationDistance)
-							if IsCollectingMetal == false and plr.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - plr.Position).Magnitude <= plr.ProximityPrompt.MaxActivationDistance then
+							print((lplr.Character.HumanoidRootPart.Position - TheMetalObject.Position).Magnitude,(lplr.Character.HumanoidRootPart.Position - TheMetalObject.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance)
+							if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance then
 								warn("Found a metal")
 								IsCollectingMetal = true
 								task.spawn(function()
-									plr.ProximityPrompt:InputHoldBegin()
-									plr.ProximityPropt.Triggered:Wait()
-									plr.ProximityPrompt:InputHoldEnd()
+									TheMetalObject.ProximityPrompt:InputHoldBegin()
+									TheMetalObject.ProximityPropt.Triggered:Wait()
+									TheMetalObject.ProximityPrompt:InputHoldEnd()
 									IsCollectingMetal = false
 								end)
 								break
