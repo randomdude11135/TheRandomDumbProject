@@ -2383,7 +2383,7 @@ end
 
 ----------// Metal Aura Handler
 do
-
+local BeeTable ={}
     local IsCollectingMetal = false
 
 	--// Frame
@@ -2395,17 +2395,19 @@ do
 				BindToHeartbeat("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
-							--print(plr.ProximityPrompt.Enabled)
-							if IsCollectingMetal == false and plr.ProximityPrompt.Enabled then
-								warn("Found a metal")
-								IsCollectingMetal = true
-								task.spawn(function()
-									plr.ProximityPrompt:InputHoldBegin()
-									task.wait(plr.ProximityPrompt.HoldDuration)
-									plr.ProximityPrompt:InputHoldEnd()
-									IsCollectingMetal = false
-								end)
-								break
+							if BeeTable[plr] then
+							else
+								if plr:FindFirtChild("ProximityPrompt") then
+									BeeTable[plr] = plr.ProximityPrompt.PromptShown:Connect(function()
+										if not IsCollectingMetal then
+											IsCollectingMetal = true
+											plr.ProximityPrompt:InputHoldBegin()
+											task.wait(plr.ProximityPrompt.HoldDuration)
+											plr.ProximityPrompt:InputHoldEnd()
+											IsCollectingMetal = false
+										end
+									end)
+								end
 							end
 						end
 					else
@@ -2413,6 +2415,10 @@ do
 				end)
 			else
 				UnbindFromHeartbeat("MetalAura")
+				for i, v in pairs(BeeTable) do
+					v:Disconnect()
+				end
+				BeeTable = {}
 			end
 		end,
 		Enabled = IClientToggleProperty.MetalAuraToggle,
@@ -2436,20 +2442,22 @@ do
 				BindToRenderStep("BeeAura", function()
 					if IClientToggleProperty.BeeAuraToggle then
 						for i, plr in pairs(COLLECTION:GetTagged("bee")) do
+
 							if BeeTable[plr] then
 							else
-								if i.Root:FindFirtChild("ProximityPrompt") then
-									BeeTable[plr] = RunService.Heartbeat:Connect(function()
-										if not IsCollectingMetal and i.Root.ProximityPrompt.Enabled then
+								if plr.Root:FindFirtChild("ProximityPrompt") then
+									BeeTable[plr] = plr.Root.ProximityPrompt.PromptShown:Connect(function()
+										if not IsCollectingMetal then
 											IsCollectingMetal = true
-											i.Root.ProximityPrompt:InputHoldBegin()
-											task.wait(i.Root.ProximityPrompt.HoldDuration)
-											i.Root.ProximityPrompt:InputHoldEnd()
+											plr.Root.ProximityPrompt:InputHoldBegin()
+											task.wait(plr.Root.ProximityPrompt.HoldDuration)
+											plr.Root.ProximityPrompt:InputHoldEnd()
 											IsCollectingMetal = false
 										end
 									end)
 								end
 							end
+
 						end
 					else
 					end
@@ -2459,6 +2467,7 @@ do
 				for i, v in pairs(BeeTable) do
 					v:Disconnect()
 				end
+				BeeTable = {}
 			end
 		end,
 		Enabled = IClientToggleProperty.BeeAuraToggle,
