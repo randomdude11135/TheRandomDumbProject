@@ -2434,7 +2434,7 @@ do
 		Callback = function(Value)
 			IClientToggleProperty.BeeAuraToggle = IsToggleAble(Value)
 			if (IClientToggleProperty.BeeAuraToggle) then
-				BindToRenderStep("BeeAura", function()
+				BindToHeartbeat("BeeAura", function()
 					if IClientToggleProperty.BeeAuraToggle then
 
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("bee")) do
@@ -2458,7 +2458,7 @@ do
 					end
 				end)
 			else
-				UnbindFromRenderStep("BeeAura")
+				UnbindFromHeartbeat("BeeAura")
 			end
 		end,
 		Enabled = IClientToggleProperty.BeeAuraToggle,
@@ -2665,6 +2665,7 @@ do
 				end)
 			else
 				UnbindFromRenderStep("AutoBank")
+				autobankui.Position = UDim2.new(0, 0, 0, -200)
 				if not isWithdrawed then
 					isWithdrawed = true
 					local chestitems = echest and echest:GetChildren() or {}
