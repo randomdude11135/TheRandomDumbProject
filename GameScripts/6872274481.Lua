@@ -2375,6 +2375,99 @@ do
 	ButtonInGui["Metal ESP"] = { AutoBuyFrame, "MetalEspToggle" }
 end
 
+----------// Metal Aura Handler
+do
+	local BeeTable = {
+	}
+    local IsCollectingMetal = false
+
+	--// Frame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "Metal Aura",
+		Callback = function(Value)
+			IClientToggleProperty.MetalAuraToggle = IsToggleAble(Value)
+			if (IClientToggleProperty.MetalAuraToggle) then
+				BindToRenderStep("MetalAura", function()
+					if IClientToggleProperty.MetalAuraToggle then
+						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
+							if BeeTable[plr] then
+							else
+								BeeTable[plr] = i.ProximityPrompt.PromptShown:Connect(function()
+
+									if not IsCollectingMetal then
+										IsCollectingMetal = true
+										i.ProximityPrompt:InputHoldBegin() 
+										task.wait(i.ProximityPrompt.HoldDuration)  
+										i.ProximityPrompt:InputHoldEnd() 
+										IsCollectingMetal = false
+									end
+								end)
+							end
+						end
+		
+					else
+						
+					end
+				end)
+			else
+				UnbindFromRenderStep("MetalAura")
+				for i, v in pairs(BeeTable) do
+					v:Disconnect()
+				end
+			end
+		end,
+		Enabled = IClientToggleProperty.MetalAuraToggle,
+	})
+
+	ButtonInGui["MetalAura"] = { AutoBuyFrame, "MetalAuraToggle" }
+end
+
+----------// Bee Aura Handler
+do
+	local BeeTable = {
+	}
+    local IsCollectingMetal = false
+
+	--// Frame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "Bee Aura",
+		Callback = function(Value)
+			IClientToggleProperty.BeeAuraToggle = IsToggleAble(Value)
+			if (IClientToggleProperty.BeeAuraToggle) then
+				BindToRenderStep("BeeAura", function()
+					if IClientToggleProperty.BeeAuraToggle then
+						for i, plr in pairs(COLLECTION:GetTagged("bee")) do
+							if BeeTable[plr] then
+							else
+								if i.Root:FindFirtChild("ProximityPrompt") then
+									BeeTable[plr] = i.Root.ProximityPrompt.PromptShown:Connect(function()
+										if not IsCollectingMetal then
+											IsCollectingMetal = true
+											i.Root.ProximityPrompt:InputHoldBegin() 
+											task.wait(i.Root.ProximityPrompt.HoldDuration)  
+											i.Root.ProximityPrompt:InputHoldEnd() 
+											IsCollectingMetal = false
+										end
+									end)
+								end
+							end
+						end
+					else
+					end
+				end)
+			else
+				UnbindFromRenderStep("BeeAura")
+				for i, v in pairs(BeeTable) do
+					v:Disconnect()
+				end
+			end
+		end,
+		Enabled = IClientToggleProperty.BeeAuraToggle,
+	})
+
+	ButtonInGui["BeeAura"] = { AutoBuyFrame, "BeeAuraToggle" }
+end
+
 ----------// Auto Bank Handler
 do
 
