@@ -2399,6 +2399,7 @@ local BeeTable ={}
 							else
 								if plr:FindFirtChild("ProximityPrompt") then
 									BeeTable[plr] = plr.ProximityPrompt.PromptShown:Connect(function()
+										print("Shown")
 										if not IsCollectingMetal then
 											IsCollectingMetal = true
 											plr.ProximityPrompt:InputHoldBegin()
