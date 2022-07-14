@@ -2395,6 +2395,7 @@ do
 							else
 								BeeTable[plr] = RunService.Heartbeat:Connect(function()
 									if not IsCollectingMetal and i.ProximityPrompt.Enabled then
+										print("Found one")
 										IsCollectingMetal = true
 										i.ProximityPrompt:InputHoldBegin() 
 										task.wait(i.ProximityPrompt.HoldDuration)  
