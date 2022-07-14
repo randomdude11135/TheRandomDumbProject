@@ -2378,8 +2378,7 @@ end
 
 ----------// Metal Aura Handler
 do
-	local BeeTable = {
-	}
+
     local IsCollectingMetal = false
 
 	--// Frame
@@ -2391,30 +2390,25 @@ do
 				BindToRenderStep("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
-							if BeeTable[plr] then
-							else
-								BeeTable[plr] = RunService.Heartbeat:Connect(function()
-									if IsCollectingMetal == false and i.ProximityPrompt.Enabled then
-										print("Found one")
-										IsCollectingMetal = true
-										i.ProximityPrompt:InputHoldBegin() 
-										task.wait(i.ProximityPrompt.HoldDuration)  
-										i.ProximityPrompt:InputHoldEnd() 
-										IsCollectingMetal = false
-									end
+							if IsCollectingMetal == false and i.ProximityPrompt.Enabled then
+								IsCollectingMetal = true
+								task.spawn(function()
+									i.ProximityPrompt:InputHoldBegin() 
+									task.wait(i.ProximityPrompt.HoldDuration)  
+									i.ProximityPrompt:InputHoldEnd() 
+									IsCollectingMetal = false
 								end)
+								break
 							end
 						end
-		
 					else
-						
 					end
 				end)
 			else
 				UnbindFromRenderStep("MetalAura")
 				for i, v in pairs(BeeTable) do
 					v:Disconnect()
-					
+
 				end
 			end
 		end,
