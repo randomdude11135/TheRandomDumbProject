@@ -1,3 +1,4 @@
+warn("Version Trash")
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -3536,4 +3537,3 @@ do
 	})
 end
 
-warn("Version Trash")
