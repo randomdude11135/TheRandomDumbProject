@@ -397,7 +397,8 @@ do
 		)
 	end)
 end
---[[
+
+
 local oldchanneltab
 local oldchannelfunc
 local oldchanneltabs = {}
@@ -707,7 +708,7 @@ do
 		end
 	end)
 end
-]]
+
 UserInputService.InputBegan:Connect(function(obj)
 
 	if obj.KeyCode == Enum.KeyCode.RightShift then
