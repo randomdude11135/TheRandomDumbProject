@@ -1,4 +1,4 @@
-warn("Version Trash2")
+warn("Version Trash 3")
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -2396,12 +2396,13 @@ do
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
 							--print(plr.ProximityPrompt.Enabled)
+							print((lplr.Character.HumanoidRootPart.Position - plr.Position).Magnitude,(lplr.Character.HumanoidRootPart.Position - plr.Position).Magnitude <= plr.ProximityPrompt.MaxActivationDistance)
 							if IsCollectingMetal == false and plr.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - plr.Position).Magnitude <= plr.ProximityPrompt.MaxActivationDistance then
 								warn("Found a metal")
 								IsCollectingMetal = true
 								task.spawn(function()
 									plr.ProximityPrompt:InputHoldBegin()
-									task.wait(plr.ProximityPrompt.HoldDuration)
+									plr.ProximityPropt.Triggered:Wait()
 									plr.ProximityPrompt:InputHoldEnd()
 									IsCollectingMetal = false
 								end)
