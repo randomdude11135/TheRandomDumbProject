@@ -1,4 +1,4 @@
-warn("Version Trash 5")
+warn("Version Trash 6")
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -2395,7 +2395,7 @@ do
 				BindToHeartbeat("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
-								if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance then
+								if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance and bedwars["getInventory"](lplr).hand == "metal_detector" then
 								IsCollectingMetal = true
 								task.spawn(function()
 									TheMetalObject.ProximityPrompt:InputHoldBegin()
@@ -2434,7 +2434,7 @@ do
 					if IClientToggleProperty.BeeAuraToggle then
 
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("bee")) do
-							if IsCollectingMetal == false and TheMetalObject.Root.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Root.Position).Magnitude <= TheMetalObject.Root.ProximityPrompt.MaxActivationDistance then
+							if IsCollectingMetal == false and TheMetalObject.Root.ProximityPrompt.Enabled and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Root.Position).Magnitude <= TheMetalObject.Root.ProximityPrompt.MaxActivationDistance and bedwars["getInventory"](lplr).hand == "bee_net" then
 							IsCollectingMetal = true
 							task.spawn(function()
 								TheMetalObject.Root.ProximityPrompt:InputHoldBegin()
