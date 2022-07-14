@@ -2395,14 +2395,14 @@ do
 				BindToHeartbeat("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
-							print(i.ProximityPrompt.Enabled)
-							if IsCollectingMetal == false and i.ProximityPrompt.Enabled then
+							--print(plr.ProximityPrompt.Enabled)
+							if IsCollectingMetal == false and plr.ProximityPrompt.Enabled then
 								warn("Found a metal")
 								IsCollectingMetal = true
 								task.spawn(function()
-									i.ProximityPrompt:InputHoldBegin()
-									task.wait(i.ProximityPrompt.HoldDuration)
-									i.ProximityPrompt:InputHoldEnd()
+									plr.ProximityPrompt:InputHoldBegin()
+									task.wait(plr.ProximityPrompt.HoldDuration)
+									plr.ProximityPrompt:InputHoldEnd()
 									IsCollectingMetal = false
 								end)
 								break
