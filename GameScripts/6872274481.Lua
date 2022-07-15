@@ -2402,7 +2402,7 @@ do
 								end)
 								task.spawn(function()
 									TheMetalObject.ProximityPrompt:InputHoldBegin()
-									TheMetalObject.Changed:Wait()
+									task.wait(TheMetalObject.ProximityPrompt.HoldDuration + 0.1)
 									TheMetalObject.ProximityPrompt:InputHoldEnd()
 									IsCollectingMetal:Disconnect()
 									IsCollectingMetal = false
