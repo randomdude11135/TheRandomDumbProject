@@ -1018,6 +1018,7 @@ end)
 
 
 warn("[IClient]: Generating tab")
+--[[
 --------------------------------------// Non-Blantant Tab
 ----------// AutoClicker Handler
 do
@@ -1110,6 +1111,7 @@ do
 	end)
 end
 
+
 ----------// Legit Kill Aura Handler
 do
 	local InstantKillToggleFrame = LiteFrame.Toggle({
@@ -1153,7 +1155,7 @@ do
 		end
 	end)
 end
-
+]]
 ----------// Aim Assist Handler
 do
 	local aimbegan
