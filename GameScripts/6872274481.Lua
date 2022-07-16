@@ -1016,6 +1016,8 @@ connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHand
 	end
 end)
 
+
+warn("[IClient]: Generating tab")
 --------------------------------------// Non-Blantant Tab
 ----------// AutoClicker Handler
 do

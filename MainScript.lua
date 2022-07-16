@@ -185,6 +185,13 @@ local LoadIClientUI,MainFrame = GuiLibrary.Load({
 MainFrame.Visible = false
 shared.MainUI = LoadIClientUI
 
+
+UserInputService.InputBegan:Connect(function(obj)
+	if obj.KeyCode == Enum.KeyCode.RightShift then
+		MainFrame.Visible = not MainFrame.Visible
+	end
+end)
+
 ----// Non - Blantant Frame
 local LiteFrame = LoadIClientUI.New({
 	Title = "Non-Gaming chair",
@@ -708,10 +715,3 @@ do
 		end
 	end)
 end
-
-UserInputService.InputBegan:Connect(function(obj)
-
-	if obj.KeyCode == Enum.KeyCode.RightShift then
-		MainFrame.Visible = not MainFrame.Visible
-	end
-end)
