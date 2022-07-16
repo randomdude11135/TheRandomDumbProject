@@ -1018,8 +1018,9 @@ end)
 
 
 warn("[IClient]: Generating tab")
---[[
+
 --------------------------------------// Non-Blantant Tab
+--[[
 ----------// AutoClicker Handler
 do
 	local autoclickertick = tick()
@@ -1303,6 +1304,7 @@ do
 end
 
 --------------------------------------// Blantant Tab
+--[[
 ----------// Kill Aura Handler
 do
 	local KillAuraTick = tick()
@@ -1384,7 +1386,7 @@ do
 
 	ButtonInGui["KillAura [Range]"] = { KillAuraRangeFrame, "KillAuraRange" }
 end
-
+]]
 ----------// Bed Nuker Handler
 do
 	local bedtick = tick()
