@@ -320,30 +320,8 @@ getmetatable(Client).Get = function(Self, remotename)
 	end
 	return OldClientGet(Self, remotename)
 end
-
+warn("[IClient]: Setting Bedwar table")
 bedwars = {
-	["CheckWhitelisted"] = function(plr, ownercheck)
-		local plrstr = bedwars["HashFunction"](plr.Name .. plr.UserId)
-		local localstr = bedwars["HashFunction"](lplr.Name .. lplr.UserId)
-		return false
-	end,
-	["CheckPlayerType"] = function(plr)
-		local plrstr = bedwars["HashFunction"](plr.Name .. plr.UserId)
-		local playertype = "DEFAULT"
-		return playertype
-	end,
-	["HashFunction"] = function(str)
-		return nil
-	end,
-	["IsPrivateIngame"] = function()
-		for i, v in pairs(PLAYERS:GetChildren()) do
-			if bedwars["CheckPlayerType"](v) ~= "DEFAULT" then
-				return true
-			end
-		end
-		return false
-	end,
-
 	["AnimationUtil"] = require(
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out["shared"].util["animation-util"]
 	).AnimationUtil,
