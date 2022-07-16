@@ -1,4 +1,4 @@
-warn("Version Trash Final 2")
+warn("Version Trash Final 3")
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -300,6 +300,8 @@ local Client = require(game:GetService("ReplicatedStorage").TS.remotes).default.
 local InventoryUtil = require(game:GetService("ReplicatedStorage").TS.inventory["inventory-util"]).InventoryUtil
 local OldClientGet = getmetatable(Client).Get
 local OldClientWaitFor = getmetatable(Client).WaitFor
+
+--[[
 getmetatable(Client).Get = function(Self, remotename)
 	if remotename == bedwars["AttackRemote"] then
 		local res = OldClientGet(Self, remotename)
@@ -319,7 +321,7 @@ getmetatable(Client).Get = function(Self, remotename)
 		}
 	end
 	return OldClientGet(Self, remotename)
-end
+end]]
 warn("[IClient]: Setting Bedwar table")
 bedwars = {
 	["AnimationUtil"] = require(
@@ -483,9 +485,10 @@ bedwars = {
 	["VictoryScreen"] = require(lplr.PlayerScripts.TS.controllers["game"].match.ui["victory-section"]).VictorySection,
 	["ViewmodelController"] = KnitClient.Controllers.ViewmodelController,
 	["WeldTable"] = require(game:GetService("ReplicatedStorage").TS.util["weld-util"]).WeldUtil,
+	--[[
 	["AttackRemote"] = getremote(
 		debug.getconstants(getmetatable(KnitClient.Controllers.SwordController)["attackEntity"])
-	),
+	),]]
 	["VelocityUtil"] = require(
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out["shared"].util["velocity-util"]
 	).VelocityUtil,
@@ -999,10 +1002,10 @@ local AuraAnimations = {}
 for i, v in next, AuraAnimationList do
 	AuraAnimations[#AuraAnimations + 1] = i
 end
-
+--[[
 local AttackEntityRemote = bedwars.ClientHandler:Get(bedwars.AttackRemote).instance
 local AuraAnimation = { Value = "" }
-
+]]
 connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHandler"].changed:connect(function(p3, p4)
 	if p3.Game ~= p4.Game then
 		matchState = p3.Game.matchState
