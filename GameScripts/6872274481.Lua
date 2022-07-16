@@ -288,9 +288,9 @@ local Flamework =
 	require(
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@flamework"].core.out
 	).Flamework
-repeat
-	task.wait()
-until Flamework.isInitialized
+
+wait(5)
+
 local KnitClient = debug.getupvalue(
 	require(lplr.PlayerScripts.TS.controllers.game["block-break-controller"]).BlockBreakController.onEnable,
 	1
