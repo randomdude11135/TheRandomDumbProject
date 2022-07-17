@@ -258,6 +258,7 @@ do
 
 				--// Setting CFrame
 				if isAlive() then
+					FakeRoot.CanCollide = false
 					--// Check if got anti cheated
 					if
 						networkownerfunc == nil
