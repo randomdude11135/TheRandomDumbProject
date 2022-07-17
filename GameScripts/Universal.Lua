@@ -435,21 +435,11 @@ do
 				BindToHeartbeat("Speed", function(dt)
 					if isAlive() then
 						if IClientToggleProperty.SpeedToggled then
-							LocalPlayer.Character.Humanoid.WalkSpeed = 16
-							local velo = LocalPlayer.Character.Humanoid.MoveDirection
-								* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
-									LocalPlayer.Character.HumanoidRootPart
-								)) and speedsettings.factor or 0))
-								* dt
-							velo = Vector3.new(velo.x / 11, 0, velo.z / 11)
-							LocalPlayer.Character:TranslateBy(velo)
-							local velo2 = (LocalPlayer.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
-								/ speedsettings.velocitydivfactor
-								LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(
-								velo2.X,
-								LocalPlayer.Character.HumanoidRootPart.Velocity.Y,
-								velo2.Z
-							)
+							local movevec = LocalPlayer.Character.Humanoid.MoveDirection.Unit
+							movevec = movevec == movevec and movevec or Vector3.new()
+							local newpos = (movevec * (math.clamp(40 - LocalPlayer.Character.Humanoid.WalkSpeed, 0, 1000000000) * dt))
+							LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + newpos
+
 						end
 					end
 				end)
