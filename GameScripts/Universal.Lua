@@ -212,12 +212,12 @@ do
 			char.PrimaryPart = FakeRoot -- // Change
 			char.Parent = workspace
 			RealRoot.CanCollide = true
-			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 1 or 0
+			RealRoot.Transparency = 1
 			RealRoot.Color = Color3.fromRGB(71, 236, 50)
 			RealRoot.Material = Enum.Material.Water
 
 			task.wait(0.1)
-
+			--[[
 			for i, v in next, char:GetDescendants() do
 				if v:IsA("BodyVelocity") then
 					v:Destroy()
@@ -320,7 +320,7 @@ do
 						end
 					end
 				end
-			end)
+			end) ]]
 		end)
 	end
 
