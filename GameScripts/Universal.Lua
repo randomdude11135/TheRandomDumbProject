@@ -425,7 +425,7 @@ do
 
 	--// Speed Frame
 	local SpeedFrame = BlantantFrame.Toggle({
-		Text = "Speed",
+		Text = "Speed 2",
 		Callback = function(Value)
 			IClientToggleProperty.SpeedToggled = Value
 			if not IClientToggleProperty.SpeedToggled then
