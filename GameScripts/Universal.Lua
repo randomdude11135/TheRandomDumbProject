@@ -438,11 +438,8 @@ do
 						if IClientToggleProperty.SpeedToggled then
 							local movevec = LocalPlayer.Character.Humanoid.MoveDirection.Unit
 							movevec = movevec == movevec and movevec or Vector3.new()
-							if speeddelayval <= tick() then
-								speeddelayval = tick() + (40 / 10)
-								local newpos = (movevec * 40)
-								LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + newpos
-							end
+							local newpos = (movevec * (math.clamp(40 - LocalPlayer.Character.Humanoid.WalkSpeed, 0, 1000000000) * dt))
+							LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + newpos
 						end
 					end
 				end)
