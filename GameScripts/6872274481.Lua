@@ -54,11 +54,7 @@ local isnetworkowner = isnetworkowner or function()
 	return true
 end
 local printtable = printtable or print
-local speedsettings = {
-	factor = 5.37,
-	velocitydivfactor = 2.9,
-	wsvalue = 22.5,
-}
+
 
 local AnticheatBypassNumbers = {
 	TPSpeed = 0.1,
