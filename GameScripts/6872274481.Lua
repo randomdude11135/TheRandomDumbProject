@@ -1,4 +1,9 @@
 warn("Version Trash Final 3")
+
+--// Remove all the ui
+shared.ButtonInGui["Speed"][1]:Remove()
+shared.ButtonInGui["AntiCheat Real"][1]:Remove()
+
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")

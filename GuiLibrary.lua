@@ -2160,6 +2160,11 @@ function Material.Load(Config)
 				return ToggleDefault
 			end
 
+			function ToggleLibrary:Remove()
+				Toggle:Destroy()
+				return ToggleDefault
+			end
+
 			return ToggleLibrary
 		end
 
