@@ -425,7 +425,7 @@ do
 
 	--// Speed Frame
 	local SpeedFrame = BlantantFrame.Toggle({
-		Text = "Speed 2",
+		Text = "Speed 3",
 		Callback = function(Value)
 			IClientToggleProperty.SpeedToggled = Value
 			if not IClientToggleProperty.SpeedToggled then
@@ -437,7 +437,7 @@ do
 						if IClientToggleProperty.SpeedToggled then
 							local movevec = LocalPlayer.Character.Humanoid.MoveDirection.Unit
 							movevec = movevec == movevec and movevec or Vector3.new()
-							local newpos = (movevec * (math.clamp(40 - LocalPlayer.Character.Humanoid.WalkSpeed, 0, 1000000000) * dt))
+							local newpos = (movevec * (math.clamp(120 - LocalPlayer.Character.Humanoid.WalkSpeed, 0, 1000000000) * dt))
 							LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + newpos
 
 						end
