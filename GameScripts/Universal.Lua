@@ -435,7 +435,7 @@ do
 				BindToHeartbeat("Speed", function(dt)
 					if isAlive() then
 						if IClientToggleProperty.SpeedToggled then
-							LocalPlayer.Character.Humanoid.WalkSpeed = speedsettings.wsvalue
+							LocalPlayer.Character.Humanoid.WalkSpeed = 16
 							local velo = LocalPlayer.Character.Humanoid.MoveDirection
 								* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
 									LocalPlayer.Character.HumanoidRootPart
