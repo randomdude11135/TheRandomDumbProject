@@ -422,10 +422,11 @@ do
 		velocitydivfactor = 2.9,
 		wsvalue = 22.5,
 	}
+	local speeddelayval = tick()
 
 	--// Speed Frame
 	local SpeedFrame = BlantantFrame.Toggle({
-		Text = "Speed 3",
+		Text = "Speed 4",
 		Callback = function(Value)
 			IClientToggleProperty.SpeedToggled = Value
 			if not IClientToggleProperty.SpeedToggled then
@@ -437,9 +438,11 @@ do
 						if IClientToggleProperty.SpeedToggled then
 							local movevec = LocalPlayer.Character.Humanoid.MoveDirection.Unit
 							movevec = movevec == movevec and movevec or Vector3.new()
-							local newpos = (movevec * (math.clamp(120 - LocalPlayer.Character.Humanoid.WalkSpeed, 0, 1000000000) * dt))
-							LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + newpos
-
+							if speeddelayval <= tick() then
+								speeddelayval = tick() + (40 / 10)
+								local newpos = (movevec * 40)
+								LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + newpos
+							end
 						end
 					end
 				end)
