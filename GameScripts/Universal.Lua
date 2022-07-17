@@ -212,7 +212,7 @@ do
 			char.PrimaryPart = FakeRoot -- // Change
 			char.Parent = workspace
 			RealRoot.CanCollide = true
-			RealRoot.Transparency = 1
+			RealRoot.Transparency = 0.99
 			RealRoot.Color = Color3.fromRGB(71, 236, 50)
 			RealRoot.Material = Enum.Material.Water
 
