@@ -60,7 +60,6 @@ local isnetworkowner = isnetworkowner or function()
 end
 local printtable = printtable or print
 
-
 local AnticheatBypassNumbers = {
 	TPSpeed = 0.1,
 	TPCombat = 0.3,
@@ -104,10 +103,8 @@ end
 
 function PlayFunction()
 	if IClientToggleProperty.CurrentPickAnimationId <= 200 then
-		CurrentAnimation = bedwars["GameAnimationUtil"].playAnimation(
-			lplr.Character,
-			IClientToggleProperty.CurrentPickAnimationId
-		)
+		CurrentAnimation =
+			bedwars["GameAnimationUtil"].playAnimation(lplr.Character, IClientToggleProperty.CurrentPickAnimationId)
 
 		if IClientToggleProperty.CurrentPickAnimationId == 34 then
 			task.wait(1)
@@ -127,9 +124,8 @@ function PlayFunction()
 
 			SavedAnimation[IClientToggleProperty.CurrentPickAnimationId] = anim2
 		end
-		CurrentAnimation = lplr.Character.Humanoid:LoadAnimation(
-			SavedAnimation[IClientToggleProperty.CurrentPickAnimationId]
-		)
+		CurrentAnimation =
+			lplr.Character.Humanoid:LoadAnimation(SavedAnimation[IClientToggleProperty.CurrentPickAnimationId])
 		CurrentAnimation.Priority = Enum.AnimationPriority.Action
 		task.wait()
 		CurrentAnimation:Play()
@@ -222,7 +218,6 @@ local function getAllPlrsNear(max)
 	return t
 end
 
-
 local function getwool()
 	for i5, v5 in pairs(bedwars["getInventory"](lplr)["items"]) do
 		if v5.itemType:match("wool") then
@@ -282,13 +277,10 @@ local function hashvector(vec)
 	}
 end
 
-
 --// Framework
 warn("[IClient]: Getting Framework")
 local Flamework =
-	require(
-		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@flamework"].core.out
-	).Flamework
+	require(game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@flamework"].core.out).Flamework
 repeat
 	task.wait()
 until Flamework.isInitialized
@@ -610,9 +602,8 @@ local function getScaffold(vec, diagonaltoggle)
 	local newpos = (oldpos - realvec)
 	local returedpos = realvec
 	if lplr.isAlive then
-		local angle = math.deg(
-			math.atan2(-lplr.character.Humanoid.MoveDirection.X, -lplr.character.Humanoid.MoveDirection.Z)
-		)
+		local angle =
+			math.deg(math.atan2(-lplr.character.Humanoid.MoveDirection.X, -lplr.character.Humanoid.MoveDirection.Z))
 		local goingdiagonal = (angle >= 130 and angle <= 150)
 			or (angle <= -35 and angle >= -50)
 			or (angle >= 35 and angle <= 50)
@@ -940,7 +931,7 @@ local removeNukerFunc, addNukerFunc =
 			table.remove(nukerblocks, table.find(nukerblocks, v))
 		end
 	end, function(i, v)
-		table.insert(bedwarsblocks,v)
+		table.insert(bedwarsblocks, v)
 		local v = v == nil and i or v
 		if v.Name == "bed" or v.Name:find("lucky_block") then
 			table.insert(nukerblocks, v)
@@ -1019,7 +1010,6 @@ connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHand
 		kit = p3.Bedwars.kit
 	end
 end)
-
 
 warn("[IClient]: Generating tab")
 
@@ -1206,7 +1196,8 @@ do
 							then
 								local pos, vis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
 								if vis and isrbxactive() then
-									local senst = UserSettings():GetService("UserGameSettings").MouseSensitivity * (1 - (0 / 100))
+									local senst = UserSettings():GetService("UserGameSettings").MouseSensitivity
+										* (1 - (0 / 100))
 									aimpos(Vector2.new(pos.X, pos.Y), senst)
 									break
 								end
@@ -1214,7 +1205,6 @@ do
 						end
 					end
 				end)
-
 			else
 				if aimbegan and aimended then
 					aimbegan:Disconnect()
@@ -1229,7 +1219,6 @@ do
 		Enabled = IClientToggleProperty.AimAssistToggle,
 	})
 
-
 	ButtonInGui["AimAssistToggle"] = { SprintFrame, "AimAssistToggle" }
 end
 
@@ -1241,19 +1230,22 @@ do
 		Text = "Sprint",
 		Callback = function(Value)
 			IClientToggleProperty.SprintToggle = IsToggleAble(Value)
+			if IClientToggleProperty.SprintToggle then
+				BindToHeartbeat("Sprintng", function()
+					if IClientToggleProperty.SprintToggle == false then
+						bedwars["sprintTable"]:stopSprinting()
+					else
+						bedwars["sprintTable"]:startSprinting()
+					end
+				end)
+			else
+				UnbindFromHeartbeat("Sprintng")
+			end
 		end,
 		Enabled = IClientToggleProperty.SprintToggle,
 	})
 
 	ButtonInGui["Sprint"] = { SprintFrame, "SprintToggle" }
-
-	BindToHeartbeat("Sprintng", function()
-		if IClientToggleProperty.SprintToggle == false then
-			bedwars["sprintTable"]:stopSprinting()
-		else
-			bedwars["sprintTable"]:startSprinting()
-		end
-	end)
 end
 
 ----------// Auto Tool Handler
@@ -1448,11 +1440,8 @@ do
 							lplr.Character:TranslateBy(velo)
 							local velo2 = (lplr.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
 								/ speedsettings.velocitydivfactor
-							lplr.Character.HumanoidRootPart.Velocity = Vector3.new(
-								velo2.X,
-								lplr.Character.HumanoidRootPart.Velocity.Y,
-								velo2.Z
-							)
+							lplr.Character.HumanoidRootPart.Velocity =
+								Vector3.new(velo2.X, lplr.Character.HumanoidRootPart.Velocity.Y, velo2.Z)
 						end
 					end
 				end)
@@ -1504,11 +1493,8 @@ do
 							updirection = (flyup and 30 or flydown and -30 or 0) * dt
 						end
 						local MoveDirection = lplr.Character.Humanoid.MoveDirection * (50 * dt)
-						lplr.Character.HumanoidRootPart.Velocity = Vector3.new(
-							MoveDirection.X,
-							updirection,
-							MoveDirection.Z
-						)
+						lplr.Character.HumanoidRootPart.Velocity =
+							Vector3.new(MoveDirection.X, updirection, MoveDirection.Z)
 					end
 				end)
 				flyupconnection = UIS.InputBegan:Connect(function(input)
@@ -1567,7 +1553,6 @@ end
 
 ----------// Phase Handler
 do
-
 	local raycastparameters = RaycastParams.new()
 	raycastparameters.FilterType = Enum.RaycastFilterType.Whitelist
 	local phasedelay2 = tick()
@@ -1578,30 +1563,33 @@ do
 		Callback = function(Value)
 			IClientToggleProperty.PhaseToggled = IsToggleAble(Value)
 			if IClientToggleProperty.PhaseToggled then
-				BindToHeartbeat("PhaseRender",function()
-					if IClientToggleProperty.PhaseToggled then	
+				BindToHeartbeat("PhaseRender", function()
+					if IClientToggleProperty.PhaseToggled then
 						if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
-			
-							if phasedelay2 > tick() then return end
+							if phasedelay2 > tick() then
+								return
+							end
 							local pos3 = lplr.Character.Head.Position
-			
-							raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
-							local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
+
+							raycastparameters.FilterDescendantsInstances =
+								{ bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform }
+							local newray =
+								workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
 							if newray then
 								print("Found")
 								phasedelay2 = tick() + 0.1
-								lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5)))
+								lplr.Character.HumanoidRootPart.CFrame =
+									addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -3.5))
 							end
 						end
 					end
-				end)	
+				end)
 			else
 				UnbindFromHeartbeat("PhaseRender")
 			end
 		end,
 		Enabled = IClientToggleProperty.PhaseToggled,
 	})
-
 end
 
 ----------// Anti cheat bypass real
@@ -1912,7 +1900,6 @@ do
 	})
 
 	ButtonInGui["AntiCheat Real"] = { AntiCheatFrame, "AnticheatBypass" }
-
 end
 
 ----------// AutoBuy Handler
@@ -2143,7 +2130,6 @@ do
 			IClientToggleProperty.PlayEspToggle = IsToggleAble(Value)
 			if IClientToggleProperty.PlayEspToggle then
 				BindToRenderStep("ESP", function()
-				
 					if IClientToggleProperty.PlayEspToggle then
 						for i, plr in pairs(PLAYERS:GetPlayers()) do
 							if plr.Character then
@@ -2157,7 +2143,8 @@ do
 											MakeHighLight.Adornee = plr.Character.HumanoidRootPart
 											MakeHighLight.Size = plr.Character.HumanoidRootPart.Size
 											MakeHighLight.AlwaysOnTop = true
-											MakeHighLight.Color3 = plr.Team.Name == lplr.Team.Name and Color3.new(0.333333, 1, 0)
+											MakeHighLight.Color3 = plr.Team.Name == lplr.Team.Name
+													and Color3.new(0.333333, 1, 0)
 												or Color3.new(1, 0, 0)
 											MakeHighLight.Parent = ESPFolder
 											MakeHighLight.ZIndex = 1
@@ -2166,7 +2153,7 @@ do
 										end
 									end
 								end
-			
+
 								for i, v in pairs(BeeTable) do
 									if i:IsDescendantOf(workspace) then
 										if i.Humanoid.Health > 0 then
@@ -2181,20 +2168,19 @@ do
 							end
 						end
 					end
-			end)
-		else
-			UnbindFromRenderStep("ESP")
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
+				end)
+			else
+				UnbindFromRenderStep("ESP")
+				for i, v in pairs(BeeTable) do
+					v.Transparency = 1
+				end
+				BeeTable = {}
 			end
-			BeeTable = {}
-		end
 		end,
 		Enabled = IClientToggleProperty.PlayEspToggle,
 	})
 
 	ButtonInGui["Player ESP"] = { AutoBuyFrame, "PlayEspToggle" }
-
 end
 
 ----------// Bee ESP Handler
@@ -2224,7 +2210,7 @@ do
 								BeeTable[plr] = MakeHighLight
 							end
 						end
-			
+
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 								if IClientToggleProperty.InstantBeeToggle then
@@ -2245,14 +2231,11 @@ do
 				end
 				BeeTable = {}
 			end
-
-
 		end,
 		Enabled = IClientToggleProperty.BeeEspToggle,
 	})
 
 	ButtonInGui["Bee ESP"] = { AutoBuyFrame, "BeeEspToggle" }
-
 end
 
 ----------// Sheep ESP Handler
@@ -2281,7 +2264,7 @@ do
 								BeeTable[plr] = MakeHighLight
 							end
 						end
-			
+
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 							else
@@ -2301,13 +2284,11 @@ do
 				end
 				BeeTable = {}
 			end
-
 		end,
 		Enabled = IClientToggleProperty.SheepEspToggle,
 	})
 
 	ButtonInGui["Sheep ESP"] = { AutoBuyFrame, "SheepEspToggle" }
-
 end
 
 ----------// Metal ESP Handler
@@ -2318,7 +2299,7 @@ do
 		Text = "Metal ESP",
 		Callback = function(Value)
 			IClientToggleProperty.MetalEspToggle = IsToggleAble(Value)
-			if (IClientToggleProperty.MetalEspToggle) then
+			if IClientToggleProperty.MetalEspToggle then
 				BindToRenderStep("MetalEsp", function()
 					if IClientToggleProperty.MetalEspToggle then
 						for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
@@ -2336,11 +2317,11 @@ do
 								BeeTable[plr] = MakeHighLight
 							end
 						end
-			
+
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 								v.Adornee = i.Part
-			
+
 								if IClientToggleProperty.MetalCollectType == "2x Speed" then
 									i.ProximityPrompt.HoldDuration = 0.5
 								elseif IClientToggleProperty.MetalCollectType == "Instant Collect" then
@@ -2353,7 +2334,6 @@ do
 							end
 						end
 					else
-						
 					end
 				end)
 			else
@@ -2372,8 +2352,7 @@ end
 
 ----------// Metal Aura Handler
 do
-
-    local IsCollectingMetal = false
+	local IsCollectingMetal = false
 
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
@@ -2384,11 +2363,18 @@ do
 				BindToHeartbeat("MetalAura", function()
 					if IClientToggleProperty.MetalAuraToggle then
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
-								if IsCollectingMetal == false and TheMetalObject.ProximityPrompt.Enabled == true and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude <= TheMetalObject.ProximityPrompt.MaxActivationDistance then
-								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(function()
-									IsCollectingMetal:Disconnect()
-									IsCollectingMetal = false
-								end)
+							if
+								IsCollectingMetal == false
+								and TheMetalObject.ProximityPrompt.Enabled == true
+								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude
+									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
+							then
+								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(
+									function()
+										IsCollectingMetal:Disconnect()
+										IsCollectingMetal = false
+									end
+								)
 								task.spawn(function()
 									TheMetalObject.ProximityPrompt:InputHoldBegin()
 									TheMetalObject.Changed:Wait()
@@ -2414,35 +2400,40 @@ end
 
 ----------// Bee Aura Handler
 do
-
-    local IsCollectingMetal = false
+	local IsCollectingMetal = false
 
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Bee Aura",
 		Callback = function(Value)
 			IClientToggleProperty.BeeAuraToggle = IsToggleAble(Value)
-			if (IClientToggleProperty.BeeAuraToggle) then
+			if IClientToggleProperty.BeeAuraToggle then
 				BindToHeartbeat("BeeAura", function()
 					if IClientToggleProperty.BeeAuraToggle then
-
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("bee")) do
-							if IsCollectingMetal == false and TheMetalObject.Root.ProximityPrompt.Enabled == true and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Root.Position).Magnitude <= TheMetalObject.Root.ProximityPrompt.MaxActivationDistance then
-							IsCollectingMetal = true
-							IsCollectingMetal = TheMetalObject.Root.ProximityPrompt.PromptButtonHoldEnded:Connect(function()
-								IsCollectingMetal:Disconnect()
-								IsCollectingMetal = false
-							end)
-							task.spawn(function()
-								TheMetalObject.Root.ProximityPrompt:InputHoldBegin()
-								TheMetalObject.Changed:Wait()
-								TheMetalObject.Root.ProximityPrompt:InputHoldEnd()
-								IsCollectingMetal:Disconnect()
-								IsCollectingMetal = false
-							end)
-							break
+							if
+								IsCollectingMetal == false
+								and TheMetalObject.Root.ProximityPrompt.Enabled == true
+								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Root.Position).Magnitude
+									<= TheMetalObject.Root.ProximityPrompt.MaxActivationDistance
+							then
+								IsCollectingMetal = true
+								IsCollectingMetal = TheMetalObject.Root.ProximityPrompt.PromptButtonHoldEnded:Connect(
+									function()
+										IsCollectingMetal:Disconnect()
+										IsCollectingMetal = false
+									end
+								)
+								task.spawn(function()
+									TheMetalObject.Root.ProximityPrompt:InputHoldBegin()
+									TheMetalObject.Changed:Wait()
+									TheMetalObject.Root.ProximityPrompt:InputHoldEnd()
+									IsCollectingMetal:Disconnect()
+									IsCollectingMetal = false
+								end)
+								break
+							end
 						end
-					end
 					else
 					end
 				end)
@@ -2458,10 +2449,8 @@ end
 
 ----------// Auto Bank Handler
 do
-
 	local IsWithdrawed = false
 	local WithdrawTick = tick()
-
 
 	--// UI Stats
 	local MakeUI = Instance.new("ScreenGui", lplr.PlayerGui)
@@ -2554,7 +2543,7 @@ do
 					WithdrawTick = tick() + 0.15
 					if IClientToggleProperty.AutoBankToggle then
 						local IsNearNPC = false
-			
+
 						for i, v in next, is do
 							local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
 							if mag <= 15 then
@@ -2567,7 +2556,7 @@ do
 								IsNearNPC = true
 							end
 						end
-			
+
 						if isAlive() then
 							isWithdrawed = false
 							if IsNearNPC then
@@ -2614,7 +2603,7 @@ do
 								end
 							end
 						end
-			
+
 						if autobankui then
 							local hotbar = lplr.PlayerGui:FindFirstChild("hotbar")
 							if hotbar then
@@ -2764,7 +2753,6 @@ do
 			else
 				UnbindFromRenderStep("ChestStealer")
 			end
-
 		end,
 		Enabled = IClientToggleProperty.ChestStealerToggle,
 	})
@@ -2790,37 +2778,28 @@ do
 				bedwars["ClickHold"].showProgress = function(p5)
 					local roact = debug.getupvalue(oldclickhold2, 1)
 					local countdown = roact.mount(
-						roact.createElement(
-							"ScreenGui",
-							{},
-							{
-								roact.createElement(
-									"Frame",
-									{
-										[roact.Ref] = p5.wrapperRef,
-										Size = UDim2.new(0, 0, 0, 0),
-										Position = UDim2.new(0.5, 0, 0.55, 0),
-										AnchorPoint = Vector2.new(0.5, 0),
-										BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-										BackgroundTransparency = 0.8,
-									},
-									{
-										roact.createElement("Frame", {
-											[roact.Ref] = p5.progressRef,
-											Size = UDim2.new(0, 0, 1, 0),
-											BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-											BackgroundTransparency = 0.5,
-										}),
-									}
-								),
-							}
-						),
+						roact.createElement("ScreenGui", {}, {
+							roact.createElement("Frame", {
+								[roact.Ref] = p5.wrapperRef,
+								Size = UDim2.new(0, 0, 0, 0),
+								Position = UDim2.new(0.5, 0, 0.55, 0),
+								AnchorPoint = Vector2.new(0.5, 0),
+								BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+								BackgroundTransparency = 0.8,
+							}, {
+								roact.createElement("Frame", {
+									[roact.Ref] = p5.progressRef,
+									Size = UDim2.new(0, 0, 1, 0),
+									BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+									BackgroundTransparency = 0.5,
+								}),
+							}),
+						}),
 						lplr:FindFirstChild("PlayerGui")
 					)
 					p5.handle = countdown
-					local sizetween = game
-						:GetService("TweenService")
-						:Create(p5.wrapperRef:getValue(), TweenInfo.new(0.1), {
+					local sizetween =
+						game:GetService("TweenService"):Create(p5.wrapperRef:getValue(), TweenInfo.new(0.1), {
 							Size = UDim2.new(0.11, 0, 0.005, 0),
 						})
 					table.insert(p5.tweens, sizetween)
@@ -2945,7 +2924,10 @@ do
 						local shield = getItem("big_shield") or getItem("mini_shield")
 						local pot = getItem("heal_splash_potion")
 						if item or pot then
-							if lplr.Character:GetAttribute("Health") <= (lplr.Character:GetAttribute("MaxHealth") - (100 - 70)) then
+							if
+								lplr.Character:GetAttribute("Health")
+								<= (lplr.Character:GetAttribute("MaxHealth") - (100 - 70))
+							then
 								if item then
 									bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
 										["item"] = item["tool"],
@@ -2988,15 +2970,11 @@ do
 			else
 				UnbindFromRenderStep("AutoHeal")
 			end
-
-
 		end,
 		Enabled = IClientToggleProperty.AutoHealToggle,
 	})
 
 	ButtonInGui["Auto Heal"] = { AutoBuyFrame, "AutoHealToggle" }
-
-
 end
 
 ----------// Auto Leave/Queue Handler
@@ -3117,7 +3095,6 @@ do
 	local AutoBuyFrame = BlantantFrame.Button({
 		Text = "Be a person who cant do anything in exchange of not dying to most damage",
 		Callback = function(Value)
-
 			--[[
 			lplr.Character.Humanoid.Health = -5
 			for i = 1, 5 do
@@ -3199,18 +3176,18 @@ do
 					end
 					if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
 						BV.velocity = (
-								(workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B))
-								+ (
-									(
-										workspace.CurrentCamera.CoordinateFrame
-										* CFrame.new(
-											CONTROL.L + CONTROL.R,
-											(CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
-											0
-										).p
-									) - workspace.CurrentCamera.CoordinateFrame.p
-								)
-							) * SPEED
+							(workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B))
+							+ (
+								(
+									workspace.CurrentCamera.CoordinateFrame
+									* CFrame.new(
+										CONTROL.L + CONTROL.R,
+										(CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
+										0
+									).p
+								) - workspace.CurrentCamera.CoordinateFrame.p
+							)
+						) * SPEED
 						lCONTROL = { F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R }
 					elseif
 						(CONTROL.L + CONTROL.R) == 0
@@ -3219,22 +3196,22 @@ do
 						and SPEED ~= 0
 					then
 						BV.velocity = (
-								(workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B))
-								+ (
-									(
-										workspace.CurrentCamera.CoordinateFrame
-										* CFrame.new(
-											lCONTROL.L + lCONTROL.R,
-											(lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
-											0
-										).p
-									) - workspace.CurrentCamera.CoordinateFrame.p
-								)
-							) * SPEED
+							(workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B))
+							+ (
+								(
+									workspace.CurrentCamera.CoordinateFrame
+									* CFrame.new(
+										lCONTROL.L + lCONTROL.R,
+										(lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
+										0
+									).p
+								) - workspace.CurrentCamera.CoordinateFrame.p
+							)
+						) * SPEED
 					else
 						BV.velocity = Vector3.new(0, 0, 0)
 					end
-					--BG.cframe = workspace.CurrentCamera.CoordinateFrame
+				--BG.cframe = workspace.CurrentCamera.CoordinateFrame
 				until not FLYING
 				CONTROL = { F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0 }
 				lCONTROL = { F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0 }
@@ -3313,7 +3290,6 @@ end
 
 ----------// Auto Report
 do
-
 	local LoggedPerson = {}
 
 	--// Frame
@@ -3323,22 +3299,21 @@ do
 			IClientToggleProperty.AutoReportToggle = IsToggleAble(Value)
 
 			if IClientToggleProperty.AutoReport then
-
-				BindToRenderStep("AutoReport",function()
+				BindToRenderStep("AutoReport", function()
 					if IClientToggleProperty.AutoReportToggle then
-						for  i , v in pairs(PLAYERS:GetPlayers()) do
-							if not LoggedPerson[v] and v ~= lplr  then
+						for i, v in pairs(PLAYERS:GetPlayers()) do
+							if not LoggedPerson[v] and v ~= lplr then
 								LoggedPerson[v] = true
 								PLAYERS:ReportAbuse(v, "Swearing", "Player did a bad thing!")
 							end
-						end	
+						end
 					end
-				end)	
+				end)
 			else
 				UnbindFromRenderStep("AutoReport")
 			end
 		end,
-	    Enabled = IClientToggleProperty.AutoReportToggle
+		Enabled = IClientToggleProperty.AutoReportToggle,
 	})
 end
 
@@ -3526,4 +3501,3 @@ do
 		end,
 	})
 end
-
