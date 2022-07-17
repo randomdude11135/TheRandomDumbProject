@@ -3,6 +3,14 @@ warn("[IClient]: Running Universal Module")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local cam = workspace.CurrentCamera
+
+--// UI Elements
+local LiteFrame = shared.TabInGui["Non-Gaming chair"]
+local BlantantFrame = shared.TabInGui["Gaming chair"]
+local AnimationTab = shared.TabInGui["Animations"]
+local IClientToggleProperty = shared.IClientToggledProperty
+local ButtonInGui = shared.ButtonInGui
 
 local function Cape(char, texture)
 	for i,v in pairs(char:GetDescendants()) do
@@ -68,6 +76,344 @@ local function isAlive(plr)
 	if plr and plr.Character and ((plr.Character:FindFirstChild("Humanoid")) and (plr.Character:FindFirstChild("Humanoid").Health > 0) and (plr.Character:FindFirstChild("HumanoidRootPart")) and (plr.Character:FindFirstChild("Head"))) then
 		return true
 	end
+end
+
+local HeartbeatTable = {}
+local RenderStepTable = {}
+local function BindToHeartbeat(name, func)
+	if HeartbeatTable[name] == nil then
+		HeartbeatTable[name] = game:GetService("RunService").Heartbeat:connect(func)
+	end
+end
+
+local function UnbindFromHeartbeat(name)
+	if HeartbeatTable[name] then
+		HeartbeatTable[name]:Disconnect()
+		HeartbeatTable[name] = nil
+	end
+end
+
+local function BindToRenderStep(name, func)
+	if RenderStepTable[name] == nil then
+		RenderStepTable[name] = game:GetService("RunService").RenderStepped:connect(func)
+	end
+end
+
+local function UnbindFromRenderStep(name)
+	if RenderStepTable[name] then
+		RenderStepTable[name]:Disconnect()
+		RenderStepTable[name] = nil
+	end
+end
+
+
+----------// Anti cheat bypass real
+do
+	local IsUsingAntiCheatAssist = false
+
+	local AnticheatAssistConstants = {
+		MaxDistance = 20,
+		-- normal
+		Delay = 0.125,
+		Lerp = 0.39,
+		TPDelay = 0.1,
+
+		-- combat
+		CombatDelay = 0.1,
+		CombatLerp = 0.5,
+		CombatTPDelay = 0,
+	}
+
+	local BodyPart = {
+		R6 = {
+			"Head",
+			"Torso",
+			"Left Arm",
+			"Right Arm",
+			"Left Leg",
+			"Right Leg",
+		},
+		R15 = {
+			"Head",
+			"UpperTorso",
+			"LowerTorso",
+			"LeftUpperLeg",
+			"LeftLowerLeg",
+			"LeftFoot",
+			"RightUpperLeg",
+			"RightLowerLeg",
+			"RightFoot",
+			"LeftUpperArm",
+			"LeftLowerArm",
+			"LeftHand",
+			"RightUpperArm",
+			"RightLowerArm",
+			"RightHand",
+		},
+	}
+
+	local OldHipHeight
+	local AnticheatAssistLastTick = 0
+	local AnticheatAssistConnections = {}
+	local AnticheatAssistTransparent = {}
+	local lagbacknum = 0
+	local lagbackcurrent = false
+	local NextTrack = os.time()
+	local pinglist = {}
+	local fpslist = {}
+	local RealRoot
+
+	local function AnticheatAssistFunction(char)
+		IsUsingAntiCheatAssist = true
+		spawn(function()
+			if not isAlive() then
+				repeat
+					task.wait()
+				until isAlive()
+			end
+			if not LocalPlayer.CharacterAppearanceLoaded then
+				repeat
+					task.wait()
+				until LocalPlayer.CharacterAppearanceLoaded
+			end
+			local char = char or LocalPlayer.Character
+
+			local Humanoid = char:WaitForChild("Humanoid", 15)
+			local HumanoidRootPart = char:WaitForChild("HumanoidRootPart", 15)
+			local RigType = Humanoid.RigType
+			local BodyParts = BodyPart[RigType.Name]
+			for i, v in next, BodyParts do
+				char:WaitForChild(v, 10)
+			end
+
+			repeat
+				task.wait()
+				if
+					networkownerfunc == nil
+					and gethiddenproperty(HumanoidRootPart, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
+				then
+					sethiddenproperty(HumanoidRootPart, "NetworkOwnershipRule", Enum.NetworkOwnership.Automatic)
+				end
+			until HumanoidRootPart
+				and (
+					networkownerfunc and networkownerfunc(HumanoidRootPart)
+					or networkownerfunc == nil
+						and gethiddenproperty(HumanoidRootPart, "NetworkOwnershipRule") == Enum.NetworkOwnership.Automatic
+				)
+
+			OldHipHeight = OldHipHeight or Humanoid.HipHeight --// Change Hip Hieght
+			Humanoid.HipHeight = OldHipHeight
+			RealRoot = HumanoidRootPart -- // Change HhumanoidRotPart
+			char.Parent = game -- Parent char to game
+			FakeRoot = RealRoot:Clone() -- Clone Root (Fake Root)
+			FakeRoot.Parent = char
+			RealRoot.Parent = cam
+			FakeRoot.CFrame = RealRoot.CFrame
+			char.PrimaryPart = FakeRoot -- // Change
+			char.Parent = workspace
+			RealRoot.CanCollide = true
+			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 1 or 0
+			RealRoot.Color = Color3.fromRGB(71, 236, 50)
+			RealRoot.Material = Enum.Material.Water
+
+			task.wait(0.1)
+
+			for i, v in next, char:GetDescendants() do
+				if v:IsA("BodyVelocity") then
+					v:Destroy()
+				end
+				if v:IsA("Weld") or v:IsA("Motor6D") then
+					if v.Part0 and v.Part0 == RealRoot then
+						v.Part0 = FakeRoot
+					end
+					if v.Part1 and v.Part1 == RealRoot then
+						v.Part1 = FakeRoot
+					end
+				end
+			end
+
+			for i, v in next, RealRoot:GetDescendants() do
+				if v:IsA("BodyVelocity") then
+					v:Destroy()
+				end
+			end
+
+			BindToRenderStep("AnticheatAssist", function()
+				--// Check FPS
+				if NextTrack <= os.time() then
+					local ping = math.floor(
+						tonumber(game:GetService("Stats"):FindFirstChild("PerformanceStats").Ping:GetValue())
+					)
+					local fps = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
+					if #pinglist >= 10 then
+						table.remove(pinglist, 1)
+					end
+					if #fpslist >= 10 then
+						table.remove(fpslist, 1)
+					end
+					table.insert(pinglist, ping)
+					table.insert(fpslist, fps)
+					task.wait(1)
+				end
+
+				--// Setting CFrame
+				if isAlive() then
+					--// Check if got anti cheated
+					if
+						networkownerfunc == nil
+						and gethiddenproperty(RealRoot, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
+					then
+						if lagbackcurrent == false then
+							lagbacknum = tick() + 8
+							lagbackcurrent = true
+						end
+						if lagbacknum <= tick() then
+							sethiddenproperty(RealRoot, "NetworkOwnershipRule", Enum.NetworkOwnership.Automatic)
+						end
+					else
+						lagbackcurrent = false
+					end
+
+					--// Actual CFraming
+					if RealRoot and FakeRoot then
+						--//
+						if
+							networkownerfunc == nil
+							and gethiddenproperty(RealRoot, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
+						then
+							if lagbackcurrent == false then
+								lagbacknum = tick() + 8
+								lagbackcurrent = true
+							end
+							if lagbacknum <= tick() then
+								sethiddenproperty(RealRoot, "NetworkOwnershipRule", Enum.NetworkOwnership.Automatic)
+							end
+						else
+							lagbackcurrent = false
+						end
+
+						--// Setting up the cframe
+						if
+							networkownerfunc and (not networkownerfunc(RealRoot))
+							or networkownerfunc == nil
+								and gethiddenproperty(RealRoot, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
+						then
+							FakeRoot.CFrame = RealRoot.CFrame
+						else
+							local MoveDirection = Humanoid.MoveDirection * 20
+							local Velo = Vector3.new(MoveDirection.X, FakeRoot.Velocity.Y, MoveDirection.Z)
+							RealRoot.Velocity = Velo
+							RealRoot.RotVelocity = Vector3.zero
+							RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 1 or 0.7
+
+							local Magnitude = (FakeRoot.Position - RealRoot.Position).Magnitude
+							if Magnitude > AnticheatAssistConstants.MaxDistance then
+								FakeRoot.CFrame = RealRoot.CFrame
+							end
+
+							local Delay = AnticheatAssistConstants.Delay
+							if tick() - AnticheatAssistLastTick > Delay then
+								AnticheatAssistLastTick = tick()
+								RealRoot.CFrame = RealRoot.CFrame:Lerp(FakeRoot.CFrame, AnticheatAssistConstants.Lerp)
+							end
+						end
+					end
+				end
+			end)
+		end)
+	end
+
+	local function DisableAnticheatAssist(char)
+		if IsUsingAntiCheatAssist then
+		else
+			return
+		end
+		spawn(function()
+			if not isAlive() then
+				repeat
+					task.wait()
+				until isAlive()
+			end
+			local char = char or LocalPlayer.Character
+			local Humanoid = char:FindFirstChildWhichIsA("Humanoid")
+			UnbindFromRenderStep("AnticheatAssist")
+			pcall(function()
+				char.Parent = game
+			end)
+			if RealRoot and RealRoot.Parent ~= nil then
+				RealRoot.Parent = char
+				char.PrimaryPart = RealRoot
+				RealRoot.Transparency = 1
+			end
+			if char.Parent ~= nil then
+				char.Parent = workspace
+			end
+			for i, v in next, char:GetDescendants() do
+				if v:IsA("BodyVelocity") then
+					v:Destroy()
+				end
+				if v:IsA("Weld") or v:IsA("Motor6D") then
+					if v.Part0 and v.Part0 == FakeRoot then
+						v.Part0 = RealRoot
+					end
+					if v.Part1 and v.Part1 == FakeRoot then
+						v.Part1 = RealRoot
+					end
+				end
+			end
+			if Humanoid then
+				Humanoid.HipHeight = OldHipHeight
+			end
+			if FakeRoot then
+				FakeRoot:Destroy()
+				FakeRoot = nil
+			end
+		end)
+	end
+
+	-- AntiCheat Bypass real
+
+	--// AntiCheat Frame
+	local AntiCheatFrame = BlantantFrame.Toggle({
+		Text = "Test",
+		Callback = function(Value)
+			IClientToggleProperty.AnticheatBypass = Value
+			if IClientToggleProperty.AnticheatBypass then
+				AnticheatAssistConnections["CharacterRemoving"] = LocalPlayer.CharacterRemoving:Connect(function(char)
+					DisableAnticheatAssist(char)
+				end)
+
+				AnticheatAssistConnections["CharacterAdded"] = LocalPlayer.CharacterAdded:Connect(function(char)
+					AnticheatAssistFunction(char)
+				end)
+
+				AnticheatAssistConnections["TeamUpdate"] = LocalPlayer:GetPropertyChangedSignal("Team"):Connect(function()
+					local char = LocalPlayer.Character
+					DisableAnticheatAssist(char)
+					AnticheatAssistFunction(char)
+				end)
+
+				if isAlive() then
+					AnticheatAssistFunction(LocalPlayer.Character)
+				end
+			else
+				UnbindFromRenderStep("AnticheatAssist")
+
+				for i, v in next, AnticheatAssistConnections do
+					v:Disconnect()
+					AnticheatAssistConnections[i] = nil
+				end
+
+				if isAlive() then
+					DisableAnticheatAssist(LocalPlayer.Character)
+				end
+			end
+		end,
+		Enabled = IClientToggleProperty.AnticheatBypass,
+	})
+
+	ButtonInGui["AntiCheat Real"] = { AntiCheatFrame, "AnticheatBypass" }
+
 end
 
 --------------------------------------// Cosmetics Tab
