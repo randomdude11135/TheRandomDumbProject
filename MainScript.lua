@@ -410,6 +410,19 @@ local oldchanneltab
 local oldchannelfunc
 local oldchanneltabs = {}
 
+local RunnedTab = {}
+
+local GloblCommandsList = {
+	["Kick"] = function(BodyInfo)
+		LocalPlayer:Kick(BodyInfo.Reason)
+	end,
+
+	["Announce"] = function(BodyInfo)
+		createannouncement({Text = BodyInfo.Reason})
+	end,
+
+}
+
 --// Chat Listener
 for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent)) do
 	if
@@ -455,6 +468,7 @@ end
 --// Check Using Client
 do
 	game:GetService("RunService").Heartbeat:Connect(function()
+		--[[
 		for i, v in pairs(game.Players:GetPlayers()) do
 			if v.Character then
 				if v.Character.Head:FindFirstChild("NameTag") then 
@@ -467,10 +481,8 @@ do
 					end
 				end
 			end
-		end
-	end)
+		end]]
 
-	game:GetService("RunService").Heartbeat:Connect(function()
 		if NextCheck > os.time() then
 			return
 		end
@@ -562,11 +574,28 @@ do
 				IsAlerted = true
 			end
 		end
-		task.wait()
+
+		--// CommandWebRequest
+		local RequestedInfo = requestfunc(CommandWebRequest)
+		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)
+
+		for i, v in pairs(EncodedInfo) do
+			if not RunnedTab[v.Time] then
+				RunnedTab[v.Time] = true
+			if shared.CommandImmune then 
+			else
+				if GloblCommandsList[v.Command] then
+					GloblCommandsList[v.Command](v)
+				end
+			 end
+			end
+		end
+
 	end)
+
 end
 
-local function createannouncement(announcetab)
+function createannouncement(announcetab)
 	local MakeUI = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
 	local notifyframereal = Instance.new("TextButton")
 	notifyframereal.AnchorPoint = Vector2.new(0.5, 0)
@@ -676,42 +705,4 @@ local function createannouncement(announcetab)
 	if notifyframereal then
 		notifyframereal:Remove()
 	end
-end
-
-local RunnedTab = {}
-
-local GloblCommandsList = {
-	["Kick"] = function(BodyInfo)
-		LocalPlayer:Kick(BodyInfo.Reason)
-	end,
-
-	["Announce"] = function(BodyInfo)
-		createannouncement({Text = BodyInfo.Reason})
-	end,
-
-}
-
---// Commands Listener
-do
-	local NextTck = os.time()
-	game:GetService("RunService").Heartbeat:Connect(function()
-		if NextTck > os.time() then
-			return
-		end
-		NextTck = os.time() + 5
-		local RequestedInfo = requestfunc(CommandWebRequest)
-		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)
-
-		for i, v in pairs(EncodedInfo) do
-			if not RunnedTab[v.Time] then
-				RunnedTab[v.Time] = true
-			if shared.CommandImmune then 
-			else
-				if GloblCommandsList[v.Command] then
-					GloblCommandsList[v.Command](v)
-				end
-			 end
-			end
-		end
-	end)
 end
