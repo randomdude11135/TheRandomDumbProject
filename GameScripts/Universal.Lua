@@ -107,6 +107,102 @@ local function UnbindFromRenderStep(name)
 end
 
 
+
+--// Game Hider
+do
+	local connections = {}
+    local renamedInstances = {}
+    local textservice = game:GetService("TextService")
+    local namebox = {Value="Player"}
+    local others = {Enabled=false}
+    local othersnamebox = {Value="Other"}
+    local function x(v) 
+        local removed = v:gsub(LocalPlayer.Name, namebox.Value or "Player")
+        :gsub(tostring(LocalPlayer.UserId), "1")
+        :gsub(LocalPlayer.DisplayName, namebox.Value or "Player")
+        if others.Enabled then
+            for _,plr in next, Players:GetPlayers() do 
+                removed = removed:gsub(plr.Name, othersnamebox.Value or "Other")
+                :gsub(tostring(plr.UserId), "1")
+                :gsub(plr.DisplayName, othersnamebox.Value or "Other")
+            end
+        end
+        return removed
+    end
+    local function replace(v) 
+        if pcall(function() return v.Text end) and typeof(v.Text)=="string" then
+            renamedInstances[v] = {Original = v.Text, Property = "Text"}
+            local y = x(v.Text)
+            v.Text = y
+            connections[#connections+1] = v:GetPropertyChangedSignal("Text"):connect(function() 
+                renamedInstances[v].Original = v.Text
+                v.Text = x(v.Text)
+            end)
+            return y
+        end    
+        if pcall(function() return v.Image end) and typeof(v.Image)=="string" then 
+            renamedInstances[v] = {Original = v.Image, Property = "Image"}
+            local y = x(v.Image)
+            v.Image = y
+            connections[#connections+1] = v:GetPropertyChangedSignal("Image"):connect(function() 
+                renamedInstances[v].Original = v.Image
+                v.Image = x(v.Image)
+            end)
+            return y
+        end   
+        return v
+    end
+
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    local oldnamecall = mt.__namecall
+
+	--// NickHider Frame
+	local AntiCheatFrame = LiteFrame.Toggle({
+		Text = "NickHider",
+		Callback = function(Value)
+			IClientToggleProperty.NickHiderToggle = Value
+			if IClientToggleProperty.NickHiderToggle then
+				spawn(function()
+                    for i,v in next, game:GetDescendants() do
+                        replace(v)
+                        if i % 500 == 0 then 
+							task.wait()
+                        end
+                    end
+                end)
+                connections[#connections+1] = game.DescendantAdded:connect(function(v)
+                    replace(v)
+                end)
+                mt.__namecall = newcclosure(function(self, ...) 
+                    local args = {...}
+                    local ncm = getnamecallmethod()
+                    if ncm == "GetTextSize" and self == textservice then 
+                        args[1] = replace(args[1])    
+                    end
+                    return oldnamecall(self, table.unpack(args))
+                end)
+			else
+				for i,v in next, connections do 
+                    v:Disconnect()
+                    connections[i] = nil
+                end
+                mt.__namecall = oldnamecall
+                for i,v in next, renamedInstances do 
+                    if typeof(i)=="Instance" and i.Parent ~= nil then 
+                        i[v.Property] = v.Original   
+                    end
+                end
+			end
+		end,
+		Enabled = IClientToggleProperty.NickHiderToggle,
+	})
+
+	ButtonInGui["NickHider"] = { AntiCheatFrame, "NickHiderToggle" }
+	
+
+end
+
 ----------// Anti cheat bypass real
 do
 	local IsUsingAntiCheatAssist = false
