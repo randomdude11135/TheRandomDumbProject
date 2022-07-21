@@ -2401,7 +2401,7 @@ end
 ----------// Star Aura Handler
 do
 	local IsCollectingMetal = false
-local StarTable = {}
+    local StarTable = {}
 	local Connection
 	local Connection2
 
@@ -2415,6 +2415,7 @@ local StarTable = {}
 
 				for i , v in pairs(game.Workspace:GetChildren()) do
 					if v.Name == "CritStar" or v.Name == "VitalityStar" then
+						print("Inserted " .. v.Name)
 						table.insert(StarTable,v)
 					end
 				end
@@ -2437,10 +2438,13 @@ local StarTable = {}
 				BindToHeartbeat("StarAura", function()
 					if IClientToggleProperty.StarAuraToggle then
 						for i, TheMetalObject in pairs(StarTable) do
+							print(TheMetalObject.ProximityPrompt.Enabled)
+							print((lplr.Character.HumanoidRootPart.Position - TheMetalObject.RootPart.Position).Magnitude)
 							if
+							
 								IsCollectingMetal == false
 								and TheMetalObject.ProximityPrompt.Enabled == true
-								and (lplr.Character.RootPart.Position - TheMetalObject.Part.Position).Magnitude
+								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.RootPart.Position).Magnitude
 									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
 							then
 								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(
@@ -2467,7 +2471,7 @@ local StarTable = {}
 					Connection:Disconnect()
 					Connection2:Disconnect()
 				end
-				UnbindFromHeartbeat("MetalAura")
+				UnbindFromHeartbeat("StarAura")
 			end
 		end,
 		Enabled = IClientToggleProperty.StarAuraToggle,
