@@ -2483,8 +2483,8 @@ do
 							else
 								local MakeHighLight = Instance.new("BoxHandleAdornment")
 								MakeHighLight.Name = "MetalEsp"
-								MakeHighLight.Adornee = TheMetalObject.RootPart
-								MakeHighLight.Size = TheMetalObject.RootPart.Size
+								MakeHighLight.Adornee = TheMetalObject.PrimaryPart
+								MakeHighLight.Size = TheMetalObject.PrimaryPart.Size
 								MakeHighLight.AlwaysOnTop = true
 								MakeHighLight.Color3 = Color3.fromRGB(229, 255, 0)
 								MakeHighLight.Parent = ESPFolder
@@ -2496,7 +2496,7 @@ do
 					
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
-								v.Adornee = i.RootPart
+								v.Adornee = i.PrimaryPart
 							else
 								v:Destroy()
 							end
