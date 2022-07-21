@@ -2416,6 +2416,7 @@ do
 	local BeeTable = {}
 	local Connection
 	local Connection2
+	local MainMaxAci = nil
 
 	for i , v in pairs(game.Workspace:GetChildren()) do
 		if v.Name == "CritStar" or v.Name == "VitalityStar" then
@@ -2519,6 +2520,17 @@ do
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 								v.Adornee = i.PrimaryPart
+
+								if IClientToggleProperty.StarAuraToggle then
+									if not MainMaxAci then
+										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
+									end
+
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 2
+								else
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
+								end
+
 							else
 								v:Destroy()
 							end
