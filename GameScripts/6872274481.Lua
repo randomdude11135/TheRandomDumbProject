@@ -2398,6 +2398,75 @@ do
 	ButtonInGui["MetalAura"] = { AutoBuyFrame, "MetalAuraToggle" }
 end
 
+----------// Star Aura Handler
+do
+	local IsCollectingMetal = false
+local StarTable = {}
+	local Connection
+	local Connection2
+
+	--// Frame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "Star Aura",
+		Callback = function(Value)
+			IClientToggleProperty.StarAuraToggle = IsToggleAble(Value)
+			if IClientToggleProperty.StarAuraToggle then
+
+				Connection = game.Workspace.ChildAdded:Connect(function(Value)
+					if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
+						table.insert(StarTable,Value)
+					end
+
+				end)	
+
+				Connection2 = game.Workspace.ChildRemoved:Connect(function(Value)
+					if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
+						table.remove(StarTable,table.find(StarTable,Value))
+					end
+
+				end)	
+
+				BindToHeartbeat("StarAura", function()
+					if IClientToggleProperty.StarAuraToggle then
+						for i, TheMetalObject in pairs(StarTable) do
+							if
+								IsCollectingMetal == false
+								and TheMetalObject.ProximityPrompt.Enabled == true
+								and (lplr.Character.RootPart.Position - TheMetalObject.Part.Position).Magnitude
+									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
+							then
+								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(
+									function()
+										IsCollectingMetal:Disconnect()
+										IsCollectingMetal = false
+									end
+								)
+								task.spawn(function()
+									TheMetalObject.ProximityPrompt:InputHoldBegin()
+									TheMetalObject.Changed:Wait()
+									TheMetalObject.ProximityPrompt:InputHoldEnd()
+									IsCollectingMetal:Disconnect()
+									IsCollectingMetal = false
+								end)
+								break
+							end
+						end
+					else
+					end
+				end)
+			else
+				Connection:Disconnect()
+				Connection2:Disconnect()
+				UnbindFromHeartbeat("MetalAura")
+			end
+		end,
+		Enabled = IClientToggleProperty.StarAuraToggle,
+	})
+
+	ButtonInGui["MetalAura"] = { AutoBuyFrame, "StarAuraToggle" }
+end
+
+
 ----------// Bee Aura Handler
 do
 	local IsCollectingMetal = false
