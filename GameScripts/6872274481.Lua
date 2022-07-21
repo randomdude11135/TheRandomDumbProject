@@ -2328,7 +2328,7 @@ do
 										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
 									end
 
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 1.5
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 2
 								else
 									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
 								end
@@ -2378,7 +2378,7 @@ do
 								IsCollectingMetal == false
 								and TheMetalObject.ProximityPrompt.Enabled == true
 								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude
-									<= TheMetalObject.ProximityPrompt.MaxActivationDistance * 1.25
+									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
 							then
 								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(
 									function()
@@ -2422,10 +2422,6 @@ do
 		if v.Name == "CritStar" or v.Name == "VitalityStar" then
 			print("Inserted " .. v.Name)
 			table.insert(StarTable,v)
-			if IClientToggleProperty.StarAuraToggle then 
-				v.ProximityPrompt.MaxActivationDistance *= 2
-			end
-
 		end
 	end
 
@@ -2433,18 +2429,12 @@ do
 	Connection = game.Workspace.ChildAdded:Connect(function(Value)
 		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
 			table.insert(StarTable,Value)
-			if IClientToggleProperty.StarAuraToggle then 
-				Value.ProximityPrompt.MaxActivationDistance *= 2
-			end
 		end
 	end)	
 
 	Connection2 = game.Workspace.ChildRemoved:Connect(function(Value)
 		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
 			table.remove(StarTable,table.find(StarTable,Value))
-			if IClientToggleProperty.StarAuraToggle then 
-				Value.ProximityPrompt.MaxActivationDistance *= 2
-			end
 		end
 
 	end)	
@@ -2526,7 +2516,7 @@ do
 										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
 									end
 
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 2
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 4
 								else
 									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
 								end
