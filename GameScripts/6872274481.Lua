@@ -2294,6 +2294,7 @@ end
 ----------// Metal ESP Handler
 do
 	local BeeTable = {}
+	local MainMaxAci = nil
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Metal ESP",
@@ -2321,6 +2322,16 @@ do
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 								v.Adornee = i.Part
+
+								if IClientToggleProperty.MetalAuraToggle then
+									if not MainMaxAci then
+										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
+									end
+
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 1.5
+								else
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
+								end
 
 								if IClientToggleProperty.MetalCollectType == "2x Speed" then
 									i.ProximityPrompt.HoldDuration = 0.5
@@ -2410,6 +2421,10 @@ do
 		if v.Name == "CritStar" or v.Name == "VitalityStar" then
 			print("Inserted " .. v.Name)
 			table.insert(StarTable,v)
+			if IClientToggleProperty.StarAuraToggle then 
+				v.ProximityPrompt.MaxActivationDistance *= 2
+			end
+
 		end
 	end
 
@@ -2417,12 +2432,18 @@ do
 	Connection = game.Workspace.ChildAdded:Connect(function(Value)
 		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
 			table.insert(StarTable,Value)
+			if IClientToggleProperty.StarAuraToggle then 
+				Value.ProximityPrompt.MaxActivationDistance *= 2
+			end
 		end
 	end)	
 
 	Connection2 = game.Workspace.ChildRemoved:Connect(function(Value)
 		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
 			table.remove(StarTable,table.find(StarTable,Value))
+			if IClientToggleProperty.StarAuraToggle then 
+				Value.ProximityPrompt.MaxActivationDistance *= 2
+			end
 		end
 
 	end)	
@@ -2438,11 +2459,12 @@ do
 				BindToHeartbeat("StarAura", function()
 					if IClientToggleProperty.StarAuraToggle then
 						for i, TheMetalObject in pairs(StarTable) do
+
 							if
 								IsCollectingMetal == false
 								and TheMetalObject.ProximityPrompt.Enabled == true
 								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.RootPart.Position).Magnitude
-									<= TheMetalObject.ProximityPrompt.MaxActivationDistance * 1.5
+									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
 							then
 								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(
 									function()
