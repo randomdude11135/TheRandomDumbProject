@@ -2402,8 +2402,31 @@ end
 do
 	local IsCollectingMetal = false
     local StarTable = {}
+	local BeeTable = {}
 	local Connection
 	local Connection2
+
+	for i , v in pairs(game.Workspace:GetChildren()) do
+		if v.Name == "CritStar" or v.Name == "VitalityStar" then
+			print("Inserted " .. v.Name)
+			table.insert(StarTable,v)
+		end
+	end
+
+
+	Connection = game.Workspace.ChildAdded:Connect(function(Value)
+		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
+			table.insert(StarTable,Value)
+		end
+	end)	
+
+	Connection2 = game.Workspace.ChildRemoved:Connect(function(Value)
+		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
+			table.remove(StarTable,table.find(StarTable,Value))
+		end
+
+	end)	
+
 
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
@@ -2412,36 +2435,10 @@ do
 			IClientToggleProperty.StarAuraToggle = IsToggleAble(Value)
 			if IClientToggleProperty.StarAuraToggle then
 
-
-				for i , v in pairs(game.Workspace:GetChildren()) do
-					if v.Name == "CritStar" or v.Name == "VitalityStar" then
-						print("Inserted " .. v.Name)
-						table.insert(StarTable,v)
-					end
-				end
-
-
-				Connection = game.Workspace.ChildAdded:Connect(function(Value)
-					if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
-						table.insert(StarTable,Value)
-					end
-				end)	
-
-				Connection2 = game.Workspace.ChildRemoved:Connect(function(Value)
-					if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
-						table.remove(StarTable,table.find(StarTable,Value))
-					end
-
-				end)	
-
-
 				BindToHeartbeat("StarAura", function()
 					if IClientToggleProperty.StarAuraToggle then
 						for i, TheMetalObject in pairs(StarTable) do
-							print(TheMetalObject.ProximityPrompt.Enabled)
-							print((lplr.Character.HumanoidRootPart.Position - TheMetalObject.RootPart.Position).Magnitude)
 							if
-							
 								IsCollectingMetal == false
 								and TheMetalObject.ProximityPrompt.Enabled == true
 								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.RootPart.Position).Magnitude
@@ -2467,17 +2464,62 @@ do
 					end
 				end)
 			else
-				if Connection and Connection2 then 
-					Connection:Disconnect()
-					Connection2:Disconnect()
-				end
 				UnbindFromHeartbeat("StarAura")
 			end
 		end,
 		Enabled = IClientToggleProperty.StarAuraToggle,
 	})
 
-	ButtonInGui["MetalAura"] = { AutoBuyFrame, "StarAuraToggle" }
+	local AutoBuyFrame2 = BlantantFrame.Toggle({
+		Text = "Star Esp",
+		Callback = function(Value)
+			IClientToggleProperty.StarESPToggle = IsToggleAble(Value)
+			if IClientToggleProperty.StarESPToggle then
+
+				BindToHeartbeat("StarEsp", function()
+					if IClientToggleProperty.StarESPToggle then
+						for i, TheMetalObject in pairs(StarTable) do
+							if BeeTable[TheMetalObject] then
+							else
+								local MakeHighLight = Instance.new("BoxHandleAdornment")
+								MakeHighLight.Name = "MetalEsp"
+								MakeHighLight.Adornee = TheMetalObject.Part
+								MakeHighLight.Size = TheMetalObject.RootPart.Size
+								MakeHighLight.AlwaysOnTop = true
+								MakeHighLight.Color3 = Color3.fromRGB(0, 0, 255)
+								MakeHighLight.Parent = ESPFolder
+								MakeHighLight.ZIndex = 1
+								MakeHighLight.Transparency = 0.3
+								BeeTable[TheMetalObject] = MakeHighLight
+							end
+						end
+					
+						for i, v in pairs(BeeTable) do
+							if i:IsDescendantOf(workspace) then
+								v.Adornee = i.RootPart
+							else
+								v:Destroy()
+							end
+						end
+
+					else
+						
+					end
+				end)
+			else
+				for i, v in pairs(BeeTable) do
+					v.Transparency = 1
+				end
+				BeeTable = {}
+				UnbindFromHeartbeat("StarEsp")
+			end
+		end,
+		Enabled = IClientToggleProperty.StarESPToggle,
+	})
+
+	ButtonInGui["StarAura"] = { AutoBuyFrame, "StarAuraToggle" }
+
+	ButtonInGui["StarEsp"] = { AutoBuyFrame2, "StarESPToggle" }
 end
 
 
