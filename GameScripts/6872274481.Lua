@@ -2398,7 +2398,7 @@ do
 	ButtonInGui["MetalAura"] = { AutoBuyFrame, "MetalAuraToggle" }
 end
 
-----------// Star Aura Handler
+----------// Star Handler
 do
 	local IsCollectingMetal = false
     local StarTable = {}
