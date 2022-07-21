@@ -2486,7 +2486,7 @@ do
 								MakeHighLight.Adornee = TheMetalObject.Part
 								MakeHighLight.Size = TheMetalObject.RootPart.Size
 								MakeHighLight.AlwaysOnTop = true
-								MakeHighLight.Color3 = Color3.fromRGB(0, 0, 255)
+								MakeHighLight.Color3 = Color3.fromRGB(229, 255, 0)
 								MakeHighLight.Parent = ESPFolder
 								MakeHighLight.ZIndex = 1
 								MakeHighLight.Transparency = 0.3
