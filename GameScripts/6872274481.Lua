@@ -2412,11 +2412,18 @@ local StarTable = {}
 			IClientToggleProperty.StarAuraToggle = IsToggleAble(Value)
 			if IClientToggleProperty.StarAuraToggle then
 
+
+				for i , v in pairs(game.Workspace:GetChildren()) do
+					if v.Name == "CritStar" or v.Name == "VitalityStar" then
+						table.insert(StarTable,v)
+					end
+				end
+
+
 				Connection = game.Workspace.ChildAdded:Connect(function(Value)
 					if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
 						table.insert(StarTable,Value)
 					end
-
 				end)	
 
 				Connection2 = game.Workspace.ChildRemoved:Connect(function(Value)
@@ -2425,6 +2432,7 @@ local StarTable = {}
 					end
 
 				end)	
+
 
 				BindToHeartbeat("StarAura", function()
 					if IClientToggleProperty.StarAuraToggle then
@@ -2455,8 +2463,10 @@ local StarTable = {}
 					end
 				end)
 			else
-				Connection:Disconnect()
-				Connection2:Disconnect()
+				if Connection and Connection2 then 
+					Connection:Disconnect()
+					Connection2:Disconnect()
+				end
 				UnbindFromHeartbeat("MetalAura")
 			end
 		end,
