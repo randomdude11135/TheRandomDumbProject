@@ -2442,7 +2442,7 @@ do
 								IsCollectingMetal == false
 								and TheMetalObject.ProximityPrompt.Enabled == true
 								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.RootPart.Position).Magnitude
-									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
+									<= TheMetalObject.ProximityPrompt.MaxActivationDistance * 1.5
 							then
 								IsCollectingMetal = TheMetalObject.ProximityPrompt.PromptButtonHoldEnded:Connect(
 									function()
