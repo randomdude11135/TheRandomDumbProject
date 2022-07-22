@@ -2516,7 +2516,7 @@ w
 										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
 									end
 
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 3.25
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * (3.25)
 								else
 									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
 								end
