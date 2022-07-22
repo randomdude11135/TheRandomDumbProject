@@ -2509,7 +2509,6 @@ do
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 								v.Adornee = i.PrimaryPart
-w
 								if IClientToggleProperty.StarAuraToggle then
 									if not MainMaxAci then
 										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
