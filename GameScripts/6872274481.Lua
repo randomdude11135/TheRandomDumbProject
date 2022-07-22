@@ -1,4 +1,3 @@
-warn("Version Trash Final 3")
 
 --// Remove all the ui
 shared.ButtonInGui["Speed"][1]:Remove()
