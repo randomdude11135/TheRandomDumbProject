@@ -519,6 +519,7 @@ do
 
 end
 
+
 do
 	local speedsettings = {
 		factor = 5.37,
@@ -553,7 +554,6 @@ do
 
 	ButtonInGui["Speed"] = { SpeedFrame, "SpeedToggled" }
 end
-
 
 ----------// Player ESP Handler
 do
@@ -617,7 +617,6 @@ do
 
 	ButtonInGui["Player ESP"] = { AutoBuyFrame, "PlayEspToggle" }
 end
-
 
 --------------------------------------// Cosmetics Tab
 ----------// Cape
