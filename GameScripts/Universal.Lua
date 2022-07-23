@@ -279,12 +279,12 @@ do
 					task.wait()
 				until isAlive()
 			end
-			if not LocalPlayer.CharacterAppearanceLoaded then
+			if not lplr.CharacterAppearanceLoaded then
 				repeat
 					task.wait()
-				until LocalPlayer.CharacterAppearanceLoaded
+				until lplr.CharacterAppearanceLoaded
 			end
-			local char = char or LocalPlayer.Character
+			local char = char or lplr.Character
 
 			local Humanoid = char:WaitForChild("Humanoid", 15)
 			local HumanoidRootPart = char:WaitForChild("HumanoidRootPart", 15)
@@ -320,11 +320,11 @@ do
 			char.PrimaryPart = FakeRoot -- // Change
 			char.Parent = workspace
 			RealRoot.CanCollide = true
-			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 0.5 or 0
+			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 0.3 or 0
 			RealRoot.Color = Color3.fromRGB(71, 236, 50)
 			RealRoot.Material = Enum.Material.Water
 
-			task.wait(1)
+			task.wait(0.1)
 
 			for i, v in next, char:GetDescendants() do
 				if v:IsA("BodyVelocity") then
@@ -345,6 +345,7 @@ do
 					v:Destroy()
 				end
 			end
+
 
 			BindToRenderStep("AnticheatAssist", function()
 				--// Check FPS
@@ -419,7 +420,7 @@ do
 								FakeRoot.CFrame = RealRoot.CFrame
 							end
 
-							local Delay = AnticheatAssistConstants.Delay
+							local Delay =  AnticheatAssistConstants.Delay
 							if tick() - AnticheatAssistLastTick > Delay then
 								AnticheatAssistLastTick = tick()
 								RealRoot.CFrame = RealRoot.CFrame:Lerp(FakeRoot.CFrame, AnticheatAssistConstants.Lerp)
@@ -478,6 +479,7 @@ do
 			end
 		end)
 	end
+
 
 	-- AntiCheat Bypass real
 
