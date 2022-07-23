@@ -107,6 +107,12 @@ local function UnbindFromRenderStep(name)
 end
 
 
+--// Folder
+local ESPFolder = Instance.new("Folder")
+ESPFolder.Name = "ESPFolder"
+ESPFolder.Parent = workspace
+
+_G.ESPFolder = ESPFolder
 
 --// Game Hider
 do
@@ -546,6 +552,70 @@ do
 	})
 
 	ButtonInGui["Speed"] = { SpeedFrame, "SpeedToggled" }
+end
+
+
+----------// Player ESP Handler
+do
+	local BeeTable = {}
+	--// Frame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "Player ESP",
+		Callback = function(Value)
+			IClientToggleProperty.PlayEspToggle = Value
+			if IClientToggleProperty.PlayEspToggle then
+				BindToRenderStep("ESP", function()
+					if IClientToggleProperty.PlayEspToggle then
+						for i, plr in pairs(Players:GetPlayers()) do
+							if plr.Character then
+								if BeeTable[plr.Character] then
+								else
+									if plr.Name == LocalPlayer.Name then
+									else
+										if plr.Character then
+											local MakeHighLight = Instance.new("BoxHandleAdornment")
+											MakeHighLight.Name = plr.Name
+											MakeHighLight.Adornee = plr.Character.HumanoidRootPart
+											MakeHighLight.Size = plr.Character.HumanoidRootPart.Size
+											MakeHighLight.AlwaysOnTop = true
+											MakeHighLight.Color3 = plr.Team.Name == LocalPlayer.Team.Name
+													and Color3.new(0.333333, 1, 0)
+												or Color3.new(1, 0, 0)
+											MakeHighLight.Parent = ESPFolder
+											MakeHighLight.ZIndex = 1
+											MakeHighLight.Transparency = 0.3
+											BeeTable[plr.Character] = MakeHighLight
+										end
+									end
+								end
+
+								for i, v in pairs(BeeTable) do
+									if i:IsDescendantOf(workspace) then
+										if i.Humanoid.Health > 0 then
+											v.Transparency = 0.3
+										else
+											v.Transparency = 1
+										end
+									else
+										v:Destroy()
+									end
+								end
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromRenderStep("ESP")
+				for i, v in pairs(BeeTable) do
+					v.Transparency = 1
+				end
+				BeeTable = {}
+			end
+		end,
+		Enabled = IClientToggleProperty.PlayEspToggle,
+	})
+
+	ButtonInGui["Player ESP"] = { AutoBuyFrame, "PlayEspToggle" }
 end
 
 
