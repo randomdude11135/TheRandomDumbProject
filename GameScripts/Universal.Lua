@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local cam = workspace.CurrentCamera
-local Team = game:GetService("Team")
+local Team = game:GetService("Teams")
 --// UI Elements
 local LiteFrame = shared.TabInGui["Non-Gaming chair"]
 local BlantantFrame = shared.TabInGui["Gaming chair"]
@@ -279,12 +279,12 @@ do
 					task.wait()
 				until isAlive()
 			end
-			if not lplr.CharacterAppearanceLoaded then
+			if not LocalPlayer.CharacterAppearanceLoaded then
 				repeat
 					task.wait()
-				until lplr.CharacterAppearanceLoaded
+				until LocalPlayer.CharacterAppearanceLoaded
 			end
-			local char = char or lplr.Character
+			local char = char or LocalPlayer.Character
 
 			local Humanoid = char:WaitForChild("Humanoid", 15)
 			local HumanoidRootPart = char:WaitForChild("HumanoidRootPart", 15)
