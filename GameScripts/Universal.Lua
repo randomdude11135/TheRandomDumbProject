@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local cam = workspace.CurrentCamera
-
+local Team = game:GetService("Team")
 --// UI Elements
 local LiteFrame = shared.TabInGui["Non-Gaming chair"]
 local BlantantFrame = shared.TabInGui["Gaming chair"]
@@ -578,7 +578,7 @@ do
 											MakeHighLight.Adornee = plr.Character.HumanoidRootPart
 											MakeHighLight.Size = plr.Character.HumanoidRootPart.Size
 											MakeHighLight.AlwaysOnTop = true
-											MakeHighLight.Color3 = plr.Team.Name == LocalPlayer.Team.Name
+											MakeHighLight.Color3 = #Team:GetChildren() >= 1 and  plr.Team.Name == LocalPlayer.Team.Name
 													and Color3.new(0.333333, 1, 0)
 												or Color3.new(1, 0, 0)
 											MakeHighLight.Parent = ESPFolder
