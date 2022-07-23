@@ -324,7 +324,7 @@ do
 			RealRoot.Color = Color3.fromRGB(71, 236, 50)
 			RealRoot.Material = Enum.Material.Water
 
-			task.wait(0.1)
+			task.wait(1)
 
 			for i, v in next, char:GetDescendants() do
 				if v:IsA("BodyVelocity") then
@@ -366,7 +366,6 @@ do
 
 				--// Setting CFrame
 				if isAlive() then
-					FakeRoot.CanCollide = false
 					--// Check if got anti cheated
 					if
 						networkownerfunc == nil
