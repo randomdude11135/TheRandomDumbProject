@@ -12,6 +12,12 @@ local AnimationTab = shared.TabInGui["Animations"]
 local IClientToggleProperty = shared.IClientToggledProperty
 local ButtonInGui = shared.ButtonInGui
 
+local oldisnetworkowner = isnetworkowner
+local networkownerfunc = isnetworkowner
+local isnetworkowner = isnetworkowner or function()
+	return true
+end
+
 local function Cape(char, texture)
 	for i,v in pairs(char:GetDescendants()) do
 		if v.Name == "Cape" then
@@ -82,7 +88,7 @@ local HeartbeatTable = {}
 local RenderStepTable = {}
 local function BindToHeartbeat(name, func)
 	if HeartbeatTable[name] == nil then
-		HeartbeatTable[name] = game:GetService("RunService").Heartbeat:connect(func)
+		HeartbeatTable[name] = game:GetService("RunService").Heartbeat:Connect(func)
 	end
 end
 
@@ -95,7 +101,7 @@ end
 
 local function BindToRenderStep(name, func)
 	if RenderStepTable[name] == nil then
-		RenderStepTable[name] = game:GetService("RunService").RenderStepped:connect(func)
+		RenderStepTable[name] = game:GetService("RunService").RenderStepped:Connect(func)
 	end
 end
 
@@ -314,7 +320,7 @@ do
 			char.PrimaryPart = FakeRoot -- // Change
 			char.Parent = workspace
 			RealRoot.CanCollide = true
-			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 1 or 0
+			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 0.5 or 0
 			RealRoot.Color = Color3.fromRGB(71, 236, 50)
 			RealRoot.Material = Enum.Material.Water
 
