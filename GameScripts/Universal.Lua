@@ -1,5 +1,5 @@
 --// Main Varibles
-warn("[IClient]: Running Universal Module")
+warn("[IClient]: Running Universal Module 2")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -320,7 +320,7 @@ do
 			char.PrimaryPart = FakeRoot -- // Change
 			char.Parent = workspace
 			RealRoot.CanCollide = true
-			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 0.3 or 0
+			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 0.5 or 0
 			RealRoot.Color = Color3.fromRGB(71, 236, 50)
 			RealRoot.Material = Enum.Material.Water
 
@@ -348,6 +348,8 @@ do
 
 
 			BindToRenderStep("AnticheatAssist", function()
+				RealRoot.CanCollide = false
+
 				--// Check FPS
 				if NextTrack <= os.time() then
 					local ping = math.floor(
