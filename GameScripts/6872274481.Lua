@@ -1903,6 +1903,45 @@ do
 	ButtonInGui["AntiCheat Real"] = { AntiCheatFrame, "AnticheatBypass" }
 end
 
+----------// Fast Drop Handler
+do
+
+	--// AutoBuyFrame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "FastDrop",
+		Callback = function(Value)
+			IClientToggleProperty.FastDropToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.FastDropToggle then
+				BindToHeartbeat("FastDrop", function()
+					if not IClientToggleProperty.FastDrop then
+						return
+					end
+					if isAlive() and (not bedwars["ClientStoreHandler"]:getState().Inventory.opened) and (uis:IsKeyDown(Enum.KeyCode.Q) or uis:IsKeyDown(Enum.KeyCode.Backspace)) and uis:GetFocusedTextBox() == nil then
+						task.spawn(bedwars["DropItem"])
+					end
+				end)
+			else
+				UnbindFromHeartbeat("FastDrop")
+			end
+		end,
+		Enabled = IClientToggleProperty.FastDropToggle,
+	})
+
+	ButtonInGui["FastDrop"] = { AutoBuyFrame, "FastDropToggle" }
+
+end
+
+
+task.spawn(function()
+	repeat
+		task.wait()
+		if entity.isAlive and (not bedwars["ClientStoreHandler"]:getState().Inventory.opened) and (uis:IsKeyDown(Enum.KeyCode.Q) or uis:IsKeyDown(Enum.KeyCode.Backspace)) and uis:GetFocusedTextBox() == nil then
+			task.spawn(bedwars["DropItem"])
+		end
+	until (not FastDrop)
+end)
+
 ----------// AutoBuy Handler
 do
 	local priolist = {
