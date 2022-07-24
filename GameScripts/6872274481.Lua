@@ -1917,7 +1917,7 @@ do
 					if not IClientToggleProperty.FastDrop then
 						return
 					end
-					if isAlive() and (not bedwars["ClientStoreHandler"]:getState().Inventory.opened) and (uis:IsKeyDown(Enum.KeyCode.Q) or uis:IsKeyDown(Enum.KeyCode.Backspace)) and uis:GetFocusedTextBox() == nil then
+					if isAlive() and (not bedwars["ClientStoreHandler"]:getState().Inventory.opened) and (UIS:IsKeyDown(Enum.KeyCode.Q) or UIS:IsKeyDown(Enum.KeyCode.Backspace)) and UIS:GetFocusedTextBox() == nil then
 						task.spawn(bedwars["DropItem"])
 					end
 				end)
@@ -3239,7 +3239,7 @@ do
 			HRP1.CFrame = OldPos
 			Char.Parent = OldParent
 			task.wait()
-			lplr.Character.Humanoid.Health = -5
+			--lplr.Character.Humanoid.Health = -5
 		end,
 	})
 end
