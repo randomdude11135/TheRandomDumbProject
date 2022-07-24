@@ -531,6 +531,8 @@ for i, v in pairs(debug.getupvalues(getmetatable(KnitClient.Controllers.SwordCon
 	end
 end
 
+shared.BedwarTable = bedwars
+
 local blocktable = bedwars["BlockController2"].new(bedwars["BlockEngine"], getwool())
 
 bedwars["placeBlock"] = function(newpos, customblock)
