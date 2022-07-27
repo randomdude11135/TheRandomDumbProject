@@ -1914,7 +1914,7 @@ do
 
 			if IClientToggleProperty.FastDropToggle then
 				BindToHeartbeat("FastDrop", function()
-					if not IClientToggleProperty.FastDrop then
+					if not IClientToggleProperty.FastDropToggle then
 						return
 					end
 					if isAlive() and (not bedwars["ClientStoreHandler"]:getState().Inventory.opened) and (UIS:IsKeyDown(Enum.KeyCode.Q) or UIS:IsKeyDown(Enum.KeyCode.Backspace)) and UIS:GetFocusedTextBox() == nil then
