@@ -424,6 +424,8 @@ local GloblCommandsList = {
 
 }
 
+
+
 --// Chat Listener
 for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent)) do
 	if
