@@ -105,13 +105,13 @@ local function SpecialCape(char, texture)
 	p.Transparency = 0
 	p.BrickColor = BrickColor.new("Black")
 	local decal = Instance.new("Decal", p)
-	decal.Texture = texture
+	--decal.Texture = "http://www.roblox.com/asset/?id=7596459141"
 	decal.Face = "Back"
 
-	task.spawn(function()
+	spawn(function()
 		local x = 0.06 -- number of seconds
 
-		local Yes = {
+		local CapeTexture = {
 			"http://www.roblox.com/asset/?id=7596459141",
 			"http://www.roblox.com/asset/?id=7596439980",
 			"http://www.roblox.com/asset/?id=7596441418",
@@ -145,8 +145,8 @@ local function SpecialCape(char, texture)
 		}
 
 		while true do
-			for i, v in pairs(yes) do
-				decal.Texture = v
+			for i, v in pairs(CapeTexture) do
+				decal.Texture = CapeTexture[i]
 				task.wait(x)
 			end
 		end
