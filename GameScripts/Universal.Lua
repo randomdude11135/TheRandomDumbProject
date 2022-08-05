@@ -808,14 +808,14 @@ do
 				Capeconnection = LocalPlayer.CharacterAdded:Connect(function(char)
 					task.spawn(function()
 						pcall(function()
-							Cape(char, "rbxassetid://880811505")
+							SpecialCape(char, "rbxassetid://880811505")
 						end)
 					end)
 				end)
 				if LocalPlayer.Character then
 					task.spawn(function()
 						pcall(function()
-							Cape(LocalPlayer.Character, "rbxassetid://880811505")
+							SpecialCape(LocalPlayer.Character, "rbxassetid://880811505")
 						end)
 					end)
 				end
