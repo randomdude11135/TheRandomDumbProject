@@ -438,11 +438,13 @@ do
 			char.Parent = game -- Parent char to game
 			FakeRoot = RealRoot:Clone() -- Clone Root (Fake Root)
 			FakeRoot.Parent = char
+			FakeRoot.Anchored = true
 			RealRoot.Parent = cam
 			FakeRoot.CFrame = RealRoot.CFrame
 			char.PrimaryPart = FakeRoot -- // Change
 			char.Parent = workspace
 			RealRoot.CanCollide = true
+
 			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 0.5 or 0
 			RealRoot.Color = Color3.fromRGB(71, 236, 50)
 			RealRoot.Material = Enum.Material.Water
@@ -470,7 +472,6 @@ do
 			end
 
 			BindToRenderStep("AnticheatAssist", function()
-				RealRoot.CanCollide = false
 
 				--// Check FPS
 				if NextTrack <= os.time() then
@@ -491,6 +492,7 @@ do
 
 				--// Setting CFrame
 				if isAlive() then
+
 					--// Check if got anti cheated
 					if
 						networkownerfunc == nil
@@ -509,13 +511,14 @@ do
 
 					--// Actual CFraming
 					if RealRoot and FakeRoot then
+						FakeRoot.Anchored = false
+						RealRoot.CanCollide = false
 						--//
 						if
 							networkownerfunc == nil
 							and gethiddenproperty(RealRoot, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
 						then
 							if lagbackcurrent == false then
-								lagbacknum = tick() + 8
 								lagbackcurrent = true
 							end
 							if lagbacknum <= tick() then
