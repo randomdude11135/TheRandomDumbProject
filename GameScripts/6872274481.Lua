@@ -1,4 +1,3 @@
-
 --// Remove all the ui
 shared.ButtonInGui["Speed"][1]:Remove()
 shared.ButtonInGui["AntiCheat Real"][1]:Remove()
@@ -49,9 +48,11 @@ local connectionstodisconnect = {}
 local disabletpcheck = false
 local anticheatfunnyyes = false
 local RunService = game:GetService("RunService")
-local savedc0 = game:GetService("ReplicatedStorage"):WaitForChild("Assets"):WaitForChild("Viewmodel"):WaitForChild(
-	"RightHand"
-):WaitForChild("RightWrist").C0
+local savedc0 = game:GetService("ReplicatedStorage")
+	:WaitForChild("Assets")
+	:WaitForChild("Viewmodel")
+	:WaitForChild("RightHand")
+	:WaitForChild("RightWrist").C0
 local oldisnetworkowner = isnetworkowner
 local networkownerfunc = isnetworkowner
 local isnetworkowner = isnetworkowner or function()
@@ -490,6 +491,10 @@ bedwars = {
 	),
 	["PingController"] = require(lplr.PlayerScripts.TS.controllers.game.ping["ping-controller"]).PingController,
 	["RaiseShieldRemote"] = getremote(debug.getconstants(KnitClient.Controllers.InfernalShieldController.constructor)),
+	["PaintRemote"] = getremote(debug.getconstants(KnitClient.Controllers.PaintShotgunController.fire)),
+	["ProjectileHitRemote"] = getremote(
+		debug.getconstants(debug.getproto(KnitClient.Controllers.ProjectileController.createLocalProjectile, 1))
+	),
 }
 
 local clientstorestate = bedwars["ClientStoreHandler"]:getState()
@@ -1905,7 +1910,6 @@ end
 
 ----------// Fast Drop Handler
 do
-
 	--// AutoBuyFrame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "FastDrop",
@@ -1917,7 +1921,12 @@ do
 					if not IClientToggleProperty.FastDropToggle then
 						return
 					end
-					if isAlive() and (not bedwars["ClientStoreHandler"]:getState().Inventory.opened) and (UIS:IsKeyDown(Enum.KeyCode.Q) or UIS:IsKeyDown(Enum.KeyCode.Backspace)) and UIS:GetFocusedTextBox() == nil then
+					if
+						isAlive()
+						and not bedwars["ClientStoreHandler"]:getState().Inventory.opened
+						and (UIS:IsKeyDown(Enum.KeyCode.Q) or UIS:IsKeyDown(Enum.KeyCode.Backspace))
+						and UIS:GetFocusedTextBox() == nil
+					then
 						task.spawn(bedwars["DropItem"])
 					end
 				end)
@@ -1929,17 +1938,20 @@ do
 	})
 
 	ButtonInGui["FastDrop"] = { AutoBuyFrame, "FastDropToggle" }
-
 end
-
 
 task.spawn(function()
 	repeat
 		task.wait()
-		if entity.isAlive and (not bedwars["ClientStoreHandler"]:getState().Inventory.opened) and (uis:IsKeyDown(Enum.KeyCode.Q) or uis:IsKeyDown(Enum.KeyCode.Backspace)) and uis:GetFocusedTextBox() == nil then
+		if
+			entity.isAlive
+			and not bedwars["ClientStoreHandler"]:getState().Inventory.opened
+			and (uis:IsKeyDown(Enum.KeyCode.Q) or uis:IsKeyDown(Enum.KeyCode.Backspace))
+			and uis:GetFocusedTextBox() == nil
+		then
 			task.spawn(bedwars["DropItem"])
 		end
-	until (not FastDrop)
+	until not FastDrop
 end)
 
 ----------// AutoBuy Handler
@@ -2159,7 +2171,6 @@ do
 
 	ButtonInGui["No Fall Damage"] = { AutoBuyFrame, "NoFallToggle" }
 end
-
 
 ----------// Bee ESP Handler
 do
@@ -2390,33 +2401,30 @@ end
 ----------// Star Handler
 do
 	local IsCollectingMetal = false
-    local StarTable = {}
+	local StarTable = {}
 	local BeeTable = {}
 	local Connection
 	local Connection2
 	local MainMaxAci = nil
 
-	for i , v in pairs(game.Workspace:GetChildren()) do
+	for i, v in pairs(game.Workspace:GetChildren()) do
 		if v.Name == "CritStar" or v.Name == "VitalityStar" then
 			print("Inserted " .. v.Name)
-			table.insert(StarTable,v)
+			table.insert(StarTable, v)
 		end
 	end
 
-
 	Connection = game.Workspace.ChildAdded:Connect(function(Value)
 		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
-			table.insert(StarTable,Value)
+			table.insert(StarTable, Value)
 		end
-	end)	
+	end)
 
 	Connection2 = game.Workspace.ChildRemoved:Connect(function(Value)
 		if Value.Name == "CritStar" or Value.Name == "VitalityStar" then
-			table.remove(StarTable,table.find(StarTable,Value))
+			table.remove(StarTable, table.find(StarTable, Value))
 		end
-
-	end)	
-
+	end)
 
 	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
@@ -2424,11 +2432,9 @@ do
 		Callback = function(Value)
 			IClientToggleProperty.StarAuraToggle = IsToggleAble(Value)
 			if IClientToggleProperty.StarAuraToggle then
-
 				BindToHeartbeat("StarAura", function()
 					if IClientToggleProperty.StarAuraToggle then
 						for i, TheMetalObject in pairs(StarTable) do
-
 							if
 								IsCollectingMetal == false
 								and TheMetalObject.ProximityPrompt.Enabled == true
@@ -2466,7 +2472,6 @@ do
 		Callback = function(Value)
 			IClientToggleProperty.StarESPToggle = IsToggleAble(Value)
 			if IClientToggleProperty.StarESPToggle then
-
 				BindToHeartbeat("StarEsp", function()
 					if IClientToggleProperty.StarESPToggle then
 						for i, TheMetalObject in pairs(StarTable) do
@@ -2484,7 +2489,7 @@ do
 								BeeTable[TheMetalObject] = MakeHighLight
 							end
 						end
-					
+
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 								v.Adornee = i.PrimaryPart
@@ -2493,18 +2498,15 @@ do
 										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
 									end
 
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * (3.25)
+									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 3.25
 								else
 									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
 								end
-
 							else
 								v:Destroy()
 							end
 						end
-
 					else
-						
 					end
 				end)
 			else
@@ -2522,7 +2524,6 @@ do
 
 	ButtonInGui["StarEsp"] = { AutoBuyFrame2, "StarESPToggle" }
 end
-
 
 ----------// Bee Aura Handler
 do
