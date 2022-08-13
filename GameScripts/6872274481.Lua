@@ -2311,17 +2311,6 @@ do
 						for i, v in pairs(BeeTable) do
 							if i:IsDescendantOf(workspace) then
 								v.Adornee = i.Part
-
-								if IClientToggleProperty.MetalAuraToggle then
-									if not MainMaxAci then
-										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
-									end
-
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
-								else
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
-								end
-
 								if IClientToggleProperty.MetalCollectType == "2x Speed" then
 									i.ProximityPrompt.HoldDuration = 0.5
 								elseif IClientToggleProperty.MetalCollectType == "Instant Collect" then
