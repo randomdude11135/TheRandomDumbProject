@@ -769,10 +769,10 @@ do
 			if IClientToggleProperty.AutoReport then
 				BindToRenderStep("AutoReport", function()
 					if IClientToggleProperty.AutoReportToggle then
-						for i, v in pairs(PLAYERS:GetPlayers()) do
+						for i, v in pairs(Players:GetPlayers()) do
 							if not LoggedPerson[v] and v ~= lplr then
 								LoggedPerson[v] = true
-								PLAYERS:ReportAbuse(v, "Swearing", "Player did a bad thing!")
+								Players:ReportAbuse(v, "Swearing", "Player did a bad thing!")
 							end
 						end
 					end
