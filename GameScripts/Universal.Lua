@@ -764,9 +764,8 @@ do
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Auto Report",
 		Callback = function(Value)
-
 			shared.IClientToggledProperty.AutoReportToggle = Value
-			if shared.IClientToggledProperty.AutoReport then
+			if shared.IClientToggledProperty.AutoReportToggle then
 				BindToRenderStep("AutoReport", function()
 					if shared.IClientToggledProperty.AutoReportToggle then
 						for i, v in pairs(Players:GetPlayers()) do
