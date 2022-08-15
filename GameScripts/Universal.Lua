@@ -764,11 +764,11 @@ do
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Auto Report",
 		Callback = function(Value)
-			IClientToggleProperty.AutoReportToggle = IsToggleAble(Value)
+			shared.IClientToggledProperty.AutoReportToggle = IsToggleAble(Value)
 
-			if IClientToggleProperty.AutoReport then
+			if shared.IClientToggledProperty.AutoReport then
 				BindToRenderStep("AutoReport", function()
-					if IClientToggleProperty.AutoReportToggle then
+					if shared.IClientToggledProperty.AutoReportToggle then
 						for i, v in pairs(Players:GetPlayers()) do
 							if not LoggedPerson[v] and v ~= lplr then
 								LoggedPerson[v] = true
@@ -781,7 +781,7 @@ do
 				UnbindFromRenderStep("AutoReport")
 			end
 		end,
-		Enabled = IClientToggleProperty.AutoReportToggle,
+		Enabled = shared.IClientToggledProperty.AutoReportToggle,
 	})
 end
 
