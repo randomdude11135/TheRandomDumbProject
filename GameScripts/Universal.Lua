@@ -756,6 +756,35 @@ do
 	ButtonInGui["Player ESP"] = { AutoBuyFrame, "PlayEspToggle" }
 end
 
+----------// Auto Report
+do
+	local LoggedPerson = {}
+
+	--// Frame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "Auto Report",
+		Callback = function(Value)
+			IClientToggleProperty.AutoReportToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.AutoReport then
+				BindToRenderStep("AutoReport", function()
+					if IClientToggleProperty.AutoReportToggle then
+						for i, v in pairs(PLAYERS:GetPlayers()) do
+							if not LoggedPerson[v] and v ~= lplr then
+								LoggedPerson[v] = true
+								PLAYERS:ReportAbuse(v, "Swearing", "Player did a bad thing!")
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromRenderStep("AutoReport")
+			end
+		end,
+		Enabled = IClientToggleProperty.AutoReportToggle,
+	})
+end
+
 --------------------------------------// Cosmetics Tab
 ----------// Cape
 do
