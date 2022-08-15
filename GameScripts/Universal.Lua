@@ -764,8 +764,8 @@ do
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "Auto Report",
 		Callback = function(Value)
-			shared.IClientToggledProperty.AutoReportToggle = IsToggleAble(Value)
 
+			shared.IClientToggledProperty.AutoReportToggle = Value
 			if shared.IClientToggledProperty.AutoReport then
 				BindToRenderStep("AutoReport", function()
 					if shared.IClientToggledProperty.AutoReportToggle then
