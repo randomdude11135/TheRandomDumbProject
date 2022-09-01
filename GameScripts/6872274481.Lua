@@ -2483,14 +2483,9 @@ do
 							if i:IsDescendantOf(workspace) then
 								v.Adornee = i.PrimaryPart
 								if IClientToggleProperty.StarAuraToggle then
-									repeat wait() until i.ProximityPrompt.MaxActivationDistance > 0
-									if not MainMaxAci then
-										MainMaxAci = i.ProximityPrompt.MaxActivationDistance
-									end
-
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci * 3.25
+									i.ProximityPrompt.MaxActivationDistance = 18
 								else
-									i.ProximityPrompt.MaxActivationDistance = MainMaxAci
+									i.ProximityPrompt.MaxActivationDistance = 5
 								end
 							else
 								v:Destroy()
