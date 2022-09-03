@@ -771,6 +771,7 @@ do
 						for i, v in pairs(Players:GetPlayers()) do
 							if not LoggedPerson[v] and v ~= lplr then
 								LoggedPerson[v] = true
+								_G.SendNotification("Reported","Reported " .. v.Name)
 								Players:ReportAbuse(v, "Swearing", "Player did a bad thing!")
 							end
 						end

@@ -5,6 +5,8 @@ until game:IsLoaded() == true
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+
 local LocalPlayer = Players.LocalPlayer
 repeat
 	task.wait(1)
@@ -93,6 +95,15 @@ if shared.AlreadyExecuted then
 	return
 else
 	shared.AlreadyExecuted = true
+end
+
+--// Global Functions
+_G.SendNotification = function(title,text)
+	StarterGui:SetCore("SendNotification",{
+		Title = title
+		Text = text,
+
+	})
 end
 
 --// Create Folder
