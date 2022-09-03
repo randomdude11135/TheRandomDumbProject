@@ -98,11 +98,10 @@ else
 end
 
 --// Global Functions
-_G.SendNotification = function(title,text)
+shared.SendNotification = function(title,text)
 	StarterGui:SetCore("SendNotification",{
 		Title = title
 		Text = text,
-
 	})
 end
 
