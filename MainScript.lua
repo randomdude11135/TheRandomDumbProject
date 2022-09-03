@@ -100,9 +100,10 @@ end
 --// Global Functions
 shared.SendNotification = function(title,text)
 	StarterGui:SetCore("SendNotification",{
-		Title = title
-		Text = text,
-	})
+		Title = title,
+		Text = text
+	}
+ 	)
 end
 
 --// Create Folder
