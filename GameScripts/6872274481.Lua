@@ -1091,9 +1091,7 @@ do
 			and isNotHoveringOverGui()
 			and #bedwars["AppController"]:getOpenApps() <= 1
 		then
-			autoclickertick = tick()
-				+ (ClickFirstTime and 0.1 or (1 / (IClientToggleProperty.AutoClickerCps * 2)))
-				+ 0.02
+			autoclickertick = tick() + ((1 / (IClientToggleProperty.AutoClickerCps * 2)))
 			ClickFirstTime = false
 			if getEquipped()["Type"] == "sword" and bedwars["KatanaController"].chargingMaid == nil then
 				bedwars["SwordController"]:swingSwordAtMouse()
