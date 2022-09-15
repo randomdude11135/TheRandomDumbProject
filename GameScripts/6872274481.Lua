@@ -1945,7 +1945,7 @@ task.spawn(function()
 	repeat
 		task.wait()
 		if
-			entity.isAlive
+			isAlive()
 			and not bedwars["ClientStoreHandler"]:getState().Inventory.opened
 			and (uis:IsKeyDown(Enum.KeyCode.Q) or uis:IsKeyDown(Enum.KeyCode.Backspace))
 			and uis:GetFocusedTextBox() == nil
@@ -2355,6 +2355,7 @@ do
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
 							if
 								IsCollectingMetal == false
+								and IsAlive()
 								and TheMetalObject.ProximityPrompt.Enabled == true
 								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude
 									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
