@@ -1157,7 +1157,7 @@ do
 		end
 	end)
 end
-]]
+
 ----------// Aim Assist Handler
 do
 	local aimbegan
