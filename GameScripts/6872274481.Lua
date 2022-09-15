@@ -2355,7 +2355,7 @@ do
 						for i, TheMetalObject in pairs(COLLECTION:GetTagged("hidden-metal")) do
 							if
 								IsCollectingMetal == false
-								and IsAlive()
+								and isAlive()
 								and TheMetalObject.ProximityPrompt.Enabled == true
 								and (lplr.Character.HumanoidRootPart.Position - TheMetalObject.Part.Position).Magnitude
 									<= TheMetalObject.ProximityPrompt.MaxActivationDistance
