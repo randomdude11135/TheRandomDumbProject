@@ -1074,7 +1074,7 @@ do
 		end,
 		Min = 1,
 		Max = 20,
-		Def = IClientToggleProperty.AutoClickerCps,
+		Def = 10,
 	})
 
 	ButtonInGui["AutoClickerCps"] = { InstantKillToggleFrame, "AutoClickerCps" }
