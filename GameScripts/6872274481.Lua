@@ -1098,16 +1098,6 @@ do
 			if getEquipped()["Type"] == "sword" and bedwars["KatanaController"].chargingMaid == nil then
 				bedwars["SwordController"]:swingSwordAtMouse()
 			end
-			if getEquipped()["Type"] == "block" and bedwars["BlockPlacementController"].blockPlacer then 
-				local mouseinfo = bedwars["BlockPlacementController"].blockPlacer.clientManager:getBlockSelector():getMouseInfo(0)
-				if mouseinfo then
-					task.spawn(function()
-						if bedwars["BlockPlacementController"].blockPlacer then
-							bedwars["BlockPlacementController"].blockPlacer:placeBlock(mouseinfo.placementPosition)
-						end
-					end)
-				end
-			end
 		end
 	end)
 end
