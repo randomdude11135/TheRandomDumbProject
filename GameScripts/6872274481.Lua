@@ -1038,7 +1038,7 @@ do
 	local InstantKillToggleFrame = LiteFrame.Toggle({
 		Text = "Toggle",
 		Callback = function(Value)
-			IClientToggleProperty.AutoClickerToggle = IsToggleAble(Value)
+			IClientToggleProperty.AutoClickerToggle = Value
 			if IClientToggleProperty.AutoClickerToggle == true then
 				autoclickerconnection1 = UIS.InputBegan:connect(function(input, gameProcessed)
 					if gameProcessed and input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1070,7 +1070,7 @@ do
 	local InstantKillToggleFrame = LiteFrame.Slider({
 		Text = "CPS",
 		Callback = function(Value)
-			IClientToggleProperty.AutoClickerCps = IsToggleAble(Value)
+			IClientToggleProperty.AutoClickerCps = Value
 		end,
 		Min = 1,
 		Max = 20,
