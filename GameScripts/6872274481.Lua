@@ -1098,7 +1098,7 @@ do
 			if getEquipped()["Type"] == "sword" and bedwars["KatanaController"].chargingMaid == nil then
 				bedwars["SwordController"]:swingSwordAtMouse()
 			end
-			if getEquipped()["Type"] == "block" and autoclickerblocks["Enabled"] and bedwars["BlockPlacementController"].blockPlacer then 
+			if getEquipped()["Type"] == "block" and bedwars["BlockPlacementController"].blockPlacer then 
 				local mouseinfo = bedwars["BlockPlacementController"].blockPlacer.clientManager:getBlockSelector():getMouseInfo(0)
 				if mouseinfo then
 					task.spawn(function()
