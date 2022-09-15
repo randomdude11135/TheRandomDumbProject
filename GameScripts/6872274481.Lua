@@ -1113,7 +1113,7 @@ do
 	end)
 end
 
-
+--[[
 ----------// Legit Kill Aura Handler
 do
 	local InstantKillToggleFrame = LiteFrame.Toggle({
@@ -1157,7 +1157,7 @@ do
 		end
 	end)
 end
-
+]]
 ----------// Aim Assist Handler
 do
 	local aimbegan
