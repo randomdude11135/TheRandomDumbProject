@@ -1095,7 +1095,6 @@ do
 				+ (ClickFirstTime and 0.1 or (1 / (IClientToggleProperty.AutoClickerCps * 2)))
 				+ 0.02
 			ClickFirstTime = false
-			autoclickertick = tick() + (1 / autoclickercps["GetRandomValue"]())
 			if getEquipped()["Type"] == "sword" and bedwars["KatanaController"].chargingMaid == nil then
 				bedwars["SwordController"]:swingSwordAtMouse()
 			end
