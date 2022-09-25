@@ -1001,10 +1001,10 @@ local AuraAnimations = {}
 for i, v in next, AuraAnimationList do
 	AuraAnimations[#AuraAnimations + 1] = i
 end
---[[
+
 local AttackEntityRemote = bedwars.ClientHandler:Get(bedwars.AttackRemote).instance
 local AuraAnimation = { Value = "" }
-]]
+
 connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHandler"].changed:connect(function(p3, p4)
 	if p3.Game ~= p4.Game then
 		matchState = p3.Game.matchState
@@ -1326,7 +1326,7 @@ do
 		if KillAuraTick > tick() then
 			return
 		end
-		local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange - 0.01)
+		local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange or 18 - 0.01)
 		if #plrs == 0 then
 			currentTarget = nil
 		end
