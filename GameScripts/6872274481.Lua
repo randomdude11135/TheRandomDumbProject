@@ -1294,7 +1294,7 @@ do
 end
 
 --------------------------------------// Blantant Tab
---[[
+
 ----------// Kill Aura Handler
 do
 	local KillAuraTick = tick()
@@ -1313,70 +1313,67 @@ do
 		Text = "KillAura [Range]",
 		Callback = function(Value)
 			IClientToggleProperty.KillAuraRange = Value
-
-			if IClientToggleProperty.KillAuraRange then
-				BindToHeartbeat("KillAura",function()
-					if not IClientToggleProperty.KillAuraToggle then
-						return
-					end
-					if KillAuraTick > tick() then
-						return
-					end
-					local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange - 0.01)
-					if #plrs == 0 then
-						currentTarget = nil
-					end
-			
-					for i, v in next, plrs do
-						if canBeTargeted(v) then
-							currentTarget = v
-							local weapon = getBestSword()
-							local selfpos = lplr.Character.HumanoidRootPart.Position
-								+ (
-									IClientToggleProperty.KillAuraRange > 14
-										and (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude > 14
-										and (CFrame.lookAt(
-											lplr.Character.HumanoidRootPart.Position,
-											v.Character.HumanoidRootPart.Position
-										).lookVector * 4)
-									or Vector3.new(0, 0, 0)
-								)
-							local attackArgs = {
-								["weapon"] = weapon ~= nil and weapon.tool,
-								["entityInstance"] = v.Character,
-								["validate"] = {
-									["raycast"] = {
-										["cameraPosition"] = hashvector(cam.CFrame.p),
-										["cursorDirection"] = hashvector(
-											Ray.new(cam.CFrame.p, v.Character.HumanoidRootPart.Position).Unit.Direction
-										),
-									},
-									["targetPosition"] = hashvector(v.Character.HumanoidRootPart.Position),
-									["selfPosition"] = hashvector(selfpos),
-								},
-								["chargedAttack"] = { ["chargeRatio"] = 1 },
-							}
-							spawn(function()
-								local weapon = getBestSword()
-								KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
-								AttackEntityRemote:InvokeServer(attackArgs)
-							end)
-							break
-						end
-					end
-				end)
-			else
-				UnbindFromHeartbeat("KillAura")
-			end
 		end,
 		Min = 1,
 		Max = 18,
-		Def = IClientToggleProperty.KillAuraRange,
+		Def = IClientToggleProperty.KillAuraRange or 18,
 	})
+
+	BindToHeartbeat("KillAura",function()
+		if not IClientToggleProperty.KillAuraToggle then
+			return
+		end
+		if KillAuraTick > tick() then
+			return
+		end
+		local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange - 0.01)
+		if #plrs == 0 then
+			currentTarget = nil
+		end
+
+		for i, v in next, plrs do
+			if canBeTargeted(v) then
+				currentTarget = v
+				local weapon = getBestSword()
+				local selfpos = lplr.Character.HumanoidRootPart.Position
+					+ (
+						IClientToggleProperty.KillAuraRange > 14
+							and (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude > 14
+							and (CFrame.lookAt(
+								lplr.Character.HumanoidRootPart.Position,
+								v.Character.HumanoidRootPart.Position
+							).lookVector * 4)
+						or Vector3.new(0, 0, 0)
+					)
+				local attackArgs = {
+					["weapon"] = weapon ~= nil and weapon.tool,
+					["entityInstance"] = v.Character,
+					["validate"] = {
+						["raycast"] = {
+							["cameraPosition"] = hashvector(cam.CFrame.p),
+							["cursorDirection"] = hashvector(
+								Ray.new(cam.CFrame.p, v.Character.HumanoidRootPart.Position).Unit.Direction
+							),
+						},
+						["targetPosition"] = hashvector(v.Character.HumanoidRootPart.Position),
+						["selfPosition"] = hashvector(selfpos),
+					},
+					["chargedAttack"] = { ["chargeRatio"] = 1 },
+				}
+				spawn(function()
+					local weapon = getBestSword()
+					KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
+					AttackEntityRemote:InvokeServer(attackArgs)
+				end)
+				break
+			end
+		end
+	end)
 
 	ButtonInGui["KillAura [Range]"] = { KillAuraRangeFrame, "KillAuraRange" }
 end
-]]
+
+
 ----------// Bed Nuker Handler
 do
 	local bedtick = tick()
