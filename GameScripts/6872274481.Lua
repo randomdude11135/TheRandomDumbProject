@@ -1360,7 +1360,22 @@ do
 				spawn(function()
 					local weapon = getBestSword()
 					KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
-					AttackEntityRemote:InvokeServer(attackArgs)
+
+					bedwars["SwordController"].lastAttack = workspace:GetServerTimeNow() - 0.11
+					AttackEntityRemote:FireServer({
+					["weapon"] = sword["tool"],
+					["chargedAttack"] = {chargeRatio = 0},
+					["entityInstance"] = plr.Character,
+					["validate"] = {
+						["raycast"] = {
+						["cameraPosition"] = hashvec(cam.CFrame.p), 
+						["cursorDirection"] = hashvec(Ray.new(cam.CFrame.p, root.Position).Unit.Direction)
+					},
+					["targetPosition"] = hashvec(root.Position),
+					["selfPosition"] = hashvec(selfpos)
+				}
+			})
+
 				end)
 				break
 			end
