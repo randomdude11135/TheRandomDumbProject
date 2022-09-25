@@ -479,10 +479,7 @@ bedwars = {
 	["VictoryScreen"] = require(lplr.PlayerScripts.TS.controllers["game"].match.ui["victory-section"]).VictorySection,
 	["ViewmodelController"] = KnitClient.Controllers.ViewmodelController,
 	["WeldTable"] = require(game:GetService("ReplicatedStorage").TS.util["weld-util"]).WeldUtil,
-	--[[
-	["AttackRemote"] = getremote(
-		debug.getconstants(getmetatable(KnitClient.Controllers.SwordController)["attackEntity"])
-	),]]
+	["AttackRemote"] = getremote(debug.getconstants(getmetatable(KnitClient.Controllers.SwordController)["attackEntity"])),
 	["VelocityUtil"] = require(
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out["shared"].util["velocity-util"]
 	).VelocityUtil,
