@@ -1002,7 +1002,7 @@ for i, v in next, AuraAnimationList do
 	AuraAnimations[#AuraAnimations + 1] = i
 end
 
-local AttackEntityRemote = bedwars.ClientHandler:Get(bedwars.AttackRemote).instance
+local AttackEntityRemote = bedwars["ClientHandler"]:Get(bedwars["AttackRemote"])["instance"]
 local AuraAnimation = { Value = "" }
 
 connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHandler"].changed:connect(function(p3, p4)
