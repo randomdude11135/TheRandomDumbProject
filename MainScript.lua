@@ -238,7 +238,6 @@ local LoginTab = LoadIClientUI.New({
 })
 
 loadstring(GetURL("GameScripts/Universal.Lua"))()
-warn("Done")
 local publicrepo = checkpublicrepo(game.PlaceId)
 if publicrepo then
 	loadstring(publicrepo)()
