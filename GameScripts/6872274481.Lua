@@ -293,27 +293,6 @@ local InventoryUtil = require(game:GetService("ReplicatedStorage").TS.inventory[
 local OldClientGet = getmetatable(Client).Get
 local OldClientWaitFor = getmetatable(Client).WaitFor
 
---[[
-getmetatable(Client).Get = function(Self, remotename)
-	if remotename == bedwars["AttackRemote"] then
-		local res = OldClientGet(Self, remotename)
-		return {
-			["instance"] = res["instance"],
-			["CallServer"] = function(Self, tab)
-				local suc, plr = pcall(function()
-					return PLAYERS:GetPlayerFromCharacter(tab.entityInstance)
-				end)
-				if suc and plr then
-					if plr and (bedwars["CheckWhitelisted"](plr) and bedwars["CheckWhitelisted"](lplr) == nil) then
-						return nil
-					end
-				end
-				return res:CallServer(tab)
-			end,
-		}
-	end
-	return OldClientGet(Self, remotename)
-end]]
 bedwars = {
 	["AnimationUtil"] = require(
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out["shared"].util["animation-util"]
