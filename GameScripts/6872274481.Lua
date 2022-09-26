@@ -155,15 +155,16 @@ local function addvectortocframe2(cframe, newylevel)
 	return CFrame.new(x, newylevel, z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
 end
 
+local function aimpos(vec, multiplier)
+	local newvec = (vec - UIS:GetMouseLocation() - Vector2.new(0, 36)) * tonumber(multiplier)
+	mousemoverel(newvec.X, newvec.Y)
+end
+
+
 local function BindToHeartbeat(name, func)
 	if HeartbeatTable[name] == nil then
 		HeartbeatTable[name] = game:GetService("RunService").Heartbeat:connect(func)
 	end
-end
-
-local function aimpos(vec, multiplier)
-	local newvec = (vec - UIS:GetMouseLocation() - Vector2.new(0, 36)) * tonumber(multiplier)
-	mousemoverel(newvec.X, newvec.Y)
 end
 
 local function UnbindFromHeartbeat(name)
