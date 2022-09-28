@@ -1270,95 +1270,31 @@ end
 
 ----------// Kill Aura Handler
 do
-	local KillAuraTick = tick()
-	local KillAuraToggleFrame = BlantantFrame.Toggle({
-		Text = "KillAura",
+	local Connection
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "MultiAura",
 		Callback = function(Value)
-			IClientToggleProperty.KillAuraToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.KillAuraToggle,
-	})
+			--print(shared.BedwarTable["getInventory"](LocalPlayer).hand.tool:GetFullName())
 
-	ButtonInGui["KillAura"] = { KillAuraToggleFrame, "KillAuraToggle" }
+			IClientToggleProperty.MultiAuraToggle = Value
 
-	--// Kill Aura Range Frame
-	local KillAuraRangeFrame = BlantantFrame.Slider({
-		Text = "KillAura [Range]",
-		Callback = function(Value)
-			IClientToggleProperty.KillAuraRange = Value
-		end,
-		Min = 1,
-		Max = 18,
-		Def = IClientToggleProperty.KillAuraRange or 18,
-	})
-
-	BindToHeartbeat("KillAura",function()
-		if not IClientToggleProperty.KillAuraToggle then
-			return
-		end
-		if KillAuraTick > tick() then
-			return
-		end
-		local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange or 18 - 0.01)
-		if #plrs == 0 then
-			currentTarget = nil
-		end
-
-		for i, v in next, plrs do
-			if canBeTargeted(v) then
-				currentTarget = v
-				local weapon = getBestSword()
-				local selfpos = lplr.Character.HumanoidRootPart.Position
-					+ (
-						IClientToggleProperty.KillAuraRange > 14
-							and (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude > 14
-							and (CFrame.lookAt(
-								lplr.Character.HumanoidRootPart.Position,
-								v.Character.HumanoidRootPart.Position
-							).lookVector * 4)
-						or Vector3.new(0, 0, 0)
-					)
-				local attackArgs = {
-					["weapon"] = weapon ~= nil and weapon.tool,
-					["entityInstance"] = v.Character,
-					["validate"] = {
-						["raycast"] = {
-							["cameraPosition"] = hashvector(cam.CFrame.p),
-							["cursorDirection"] = hashvector(
-								Ray.new(cam.CFrame.p, v.Character.HumanoidRootPart.Position).Unit.Direction
-							),
-						},
-						["targetPosition"] = hashvector(v.Character.HumanoidRootPart.Position),
-						["selfPosition"] = hashvector(selfpos),
-					},
-					["chargedAttack"] = { ["chargeRatio"] = 1 },
-				}
-				spawn(function()
-					local weapon = getBestSword()
-					KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
-
-					bedwars["SwordController"].lastAttack = workspace:GetServerTimeNow() - 0.11
-					AttackEntityRemote:FireServer({
-					["weapon"] = sword["tool"],
-					["chargedAttack"] = {chargeRatio = 0},
-					["entityInstance"] = plr.Character,
-					["validate"] = {
-						["raycast"] = {
-						["cameraPosition"] = hashvec(cam.CFrame.p), 
-						["cursorDirection"] = hashvec(Ray.new(cam.CFrame.p, root.Position).Unit.Direction)
-					},
-					["targetPosition"] = hashvec(root.Position),
-					["selfPosition"] = hashvec(selfpos)
-				}
-			})
-
+			if IClientToggleProperty.MultiAuraToggle then
+				Connection = RunService.Heartbeat:Connect(function(args)
+					if shared.BedwarTable["ClientStoreHandler"]:getState().Game.matchState == 0 then return end
+					local yes = getAllPlrsNear(17.999)
+					for i , v in pairs(yes) do
+						local selfpos = LocalPlayer.Character.HumanoidRootPart.Position
+						local newpos = v.Character.HumanoidRootPart.Position
+						shared.BedwarTable["ClientHandler"]:Get(shared.BedwarTable["PaintRemote"]):SendToServer(selfpos, CFrame.lookAt(selfpos, newpos).lookVector)
+						break
+					end
 				end)
-				break
+			else
+				if Connection then Connection:Disconnect() end
 			end
-		end
-	end)
-
-	ButtonInGui["KillAura [Range]"] = { KillAuraRangeFrame, "KillAuraRange" }
+		end,
+		Enabled = IClientToggleProperty.MultiAuraToggle,
+	})
 end
 
 
@@ -1394,6 +1330,9 @@ do
 
 	ButtonInGui["Bed Nuker"] = { BedNukerFrame, "BedAuraToggle" }
 end
+
+--no speed sorry:sob:
+
 
 ----------// Gravity Handler
 do
@@ -1837,6 +1776,7 @@ do
 
 	ButtonInGui["Auto Heal"] = { AutoBuyFrame, "AutoHealToggle" }
 end
+
 
 ----------// Auto Leave/Queue Handler
 do
