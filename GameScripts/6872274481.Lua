@@ -1267,7 +1267,6 @@ do
 end
 
 --------------------------------------// Blantant Tab
-
 ----------// Kill Aura Handler
 do
 	local Connection
@@ -1296,7 +1295,6 @@ do
 		Enabled = IClientToggleProperty.MultiAuraToggle,
 	})
 end
-
 
 ----------// Bed Nuker Handler
 do
@@ -1331,7 +1329,44 @@ do
 	ButtonInGui["Bed Nuker"] = { BedNukerFrame, "BedAuraToggle" }
 end
 
---no speed sorry:sob:
+----------// Speed Handler
+do
+	--// Speed Frame
+	local SpeedFrame = BlantantFrame.Toggle({
+		Text = "Speed",
+		Callback = function(Value)
+			IClientToggleProperty.SpeedToggled = IsToggleAble(Value)
+			if not IClientToggleProperty.SpeedToggled then
+				lplr.Character:WaitForChild("Humanoid").WalkSpeed = 16
+				UnbindFromHeartbeat("Speed")
+			else
+				BindToHeartbeat("Speed", function(dt)
+					if isAlive() then
+						if IClientToggleProperty.SpeedToggled then
+							lplr.Character.Humanoid.WalkSpeed = speedsettings.wsvalue
+							local velo = lplr.Character.Humanoid.MoveDirection
+								* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
+									lplr.Character.HumanoidRootPart
+								)) and speedsettings.factor or 0))
+								* dt
+							velo = Vector3.new(velo.x / 11, 0, velo.z / 11)
+							lplr.Character:TranslateBy(velo)
+							local velo2 = (lplr.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
+								/ speedsettings.velocitydivfactor
+							lplr.Character.HumanoidRootPart.Velocity =
+								Vector3.new(velo2.X, lplr.Character.HumanoidRootPart.Velocity.Y, velo2.Z)
+						end
+					end
+				end)
+			end
+		end,
+		Enabled = IClientToggleProperty.SpeedToggled,
+	})
+
+	ButtonInGui["Speed"] = { SpeedFrame, "SpeedToggled" }
+
+	--SpeedFrame:SetState(IClientToggleProperty.SpeedToggled)
+end
 
 
 ----------// Gravity Handler
@@ -1649,7 +1684,6 @@ end
 ----------// No Fall Damage Handler
 do
 	local falltick = tick()
-	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "No Fall Damage",
 		Callback = function(Value)
