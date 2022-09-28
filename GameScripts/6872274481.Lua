@@ -1331,6 +1331,48 @@ do
 	ButtonInGui["Bed Nuker"] = { BedNukerFrame, "BedAuraToggle" }
 end
 
+----------// Speed Handler
+do
+	--// Speed Frame
+	local SpeedFrame = BlantantFrame.Toggle({
+		Text = "Speed",
+		Callback = function(Value)
+			IClientToggleProperty.SpeedToggled = IsToggleAble(Value)
+			if not IClientToggleProperty.SpeedToggled then
+				lplr.Character:WaitForChild("Humanoid").WalkSpeed = 16
+				UnbindFromHeartbeat("Speed")
+			else
+				BindToHeartbeat("Speed", function(dt)
+					if isAlive() then
+						if IClientToggleProperty.SpeedToggled then
+							lplr.Character.Humanoid.WalkSpeed = speedsettings.wsvalue
+							local velo = lplr.Character.Humanoid.MoveDirection
+								* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
+									lplr.Character.HumanoidRootPart
+								)) and speedsettings.factor or 0))
+								* dt
+							velo = Vector3.new(velo.x / 11, 0, velo.z / 11)
+							lplr.Character:TranslateBy(velo)
+							local velo2 = (lplr.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
+								/ speedsettings.velocitydivfactor
+							lplr.Character.HumanoidRootPart.Velocity =
+								Vector3.new(velo2.X, lplr.Character.HumanoidRootPart.Velocity.Y, velo2.Z)
+						end
+					end
+				end)
+			end
+		end,
+		Enabled = IClientToggleProperty.SpeedToggled,
+	})
+
+	ButtonInGui["Speed"] = { SpeedFrame, "SpeedToggled" }
+
+	--SpeedFrame:SetState(IClientToggleProperty.SpeedToggled)
+end
+
+
+
+
 ----------// Gravity Handler
 do
 	--// Gravity Frame
@@ -1347,66 +1389,6 @@ do
 
 	ButtonInGui["Gravity Changer"] = { KillAuraRangeFrame, "GravitySet" }
 end
-
-----------// Flying Handler
-do
-	local flyup
-	local flydown
-	local flydownconnection
-	local flyupconnection
-
-	--// Flying Frame
-	local BedNukerFrame = BlantantFrame.Toggle({
-		Text = "Fly",
-		Callback = function(Value)
-			IClientToggleProperty.FlyToggle = IsToggleAble(Value, "FlyToggle")
-			if IClientToggleProperty.FlyToggle then
-				BindToRenderStep("Fly", function(time, dt)
-					if isAlive() then
-						local dt = 1
-						local updirection = 0 - 5
-						if UIS:GetFocusedTextBox() == nil then
-							updirection = (flyup and 30 or flydown and -30 or 0) * dt
-						end
-						local MoveDirection = lplr.Character.Humanoid.MoveDirection * (50 * dt)
-						lplr.Character.HumanoidRootPart.Velocity =
-							Vector3.new(MoveDirection.X, updirection, MoveDirection.Z)
-					end
-				end)
-				flyupconnection = UIS.InputBegan:Connect(function(input)
-					if input.KeyCode == Enum.KeyCode.Space then
-						flyup = true
-					end
-					if input.KeyCode == Enum.KeyCode.LeftShift then
-						flydown = true
-					end
-				end)
-				flydownconnection = UIS.InputEnded:Connect(function(input)
-					if input.KeyCode == Enum.KeyCode.Space then
-						flyup = false
-					end
-					if input.KeyCode == Enum.KeyCode.LeftShift then
-						flydown = false
-					end
-				end)
-			else
-				flyup = false
-				flydown = false
-				UnbindFromRenderStep("Fly")
-				if flyupconnection then
-					flyupconnection:Disconnect()
-				end
-				if flydownconnection then
-					flydownconnection:Disconnect()
-				end
-			end
-		end,
-		Enabled = IClientToggleProperty.FlyToggle,
-	})
-	ButtonInGui["Fly"] = { BedNukerFrame, "FlyToggle" }
-end
-
-
 
 ----------// Super Jump Handler
 do
