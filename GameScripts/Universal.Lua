@@ -771,7 +771,7 @@ do
 							if not LoggedPerson[v] and v ~= lplr then
 								LoggedPerson[v] = true
 								shared.SendNotification("Reported","Reported " .. v.Name)
-								Players:ReportAbuse(v, "Swearing", "Player did a bad thing!")
+								--Players:ReportAbuse(v, "Swearing", "Player did a bad thing!")
 							end
 						end
 					end
