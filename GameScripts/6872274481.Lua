@@ -61,12 +61,6 @@ local isnetworkowner = isnetworkowner or function()
 end
 local printtable = printtable or print
 
-local AnticheatBypassNumbers = {
-	TPSpeed = 0.1,
-	TPCombat = 0.3,
-	TPLerp = 0.39,
-	TPCheck = 15,
-}
 --// Functions
 local HeartbeatTable = {}
 local RenderStepTable = {}
@@ -1331,6 +1325,7 @@ end
 
 ----------// Speed Handler
 do
+	
 	--// Speed Frame
 	local SpeedFrame = BlantantFrame.Toggle({
 		Text = "Speed",
