@@ -1348,6 +1348,66 @@ do
 	ButtonInGui["Gravity Changer"] = { KillAuraRangeFrame, "GravitySet" }
 end
 
+----------// Flying Handler
+do
+	local flyup
+	local flydown
+	local flydownconnection
+	local flyupconnection
+
+	--// Flying Frame
+	local BedNukerFrame = BlantantFrame.Toggle({
+		Text = "Fly",
+		Callback = function(Value)
+			IClientToggleProperty.FlyToggle = IsToggleAble(Value, "FlyToggle")
+			if IClientToggleProperty.FlyToggle then
+				BindToRenderStep("Fly", function(time, dt)
+					if isAlive() then
+						local dt = 1
+						local updirection = 0 - 5
+						if UIS:GetFocusedTextBox() == nil then
+							updirection = (flyup and 30 or flydown and -30 or 0) * dt
+						end
+						local MoveDirection = lplr.Character.Humanoid.MoveDirection * (50 * dt)
+						lplr.Character.HumanoidRootPart.Velocity =
+							Vector3.new(MoveDirection.X, updirection, MoveDirection.Z)
+					end
+				end)
+				flyupconnection = UIS.InputBegan:Connect(function(input)
+					if input.KeyCode == Enum.KeyCode.Space then
+						flyup = true
+					end
+					if input.KeyCode == Enum.KeyCode.LeftShift then
+						flydown = true
+					end
+				end)
+				flydownconnection = UIS.InputEnded:Connect(function(input)
+					if input.KeyCode == Enum.KeyCode.Space then
+						flyup = false
+					end
+					if input.KeyCode == Enum.KeyCode.LeftShift then
+						flydown = false
+					end
+				end)
+			else
+				flyup = false
+				flydown = false
+				UnbindFromRenderStep("Fly")
+				if flyupconnection then
+					flyupconnection:Disconnect()
+				end
+				if flydownconnection then
+					flydownconnection:Disconnect()
+				end
+			end
+		end,
+		Enabled = IClientToggleProperty.FlyToggle,
+	})
+	ButtonInGui["Fly"] = { BedNukerFrame, "FlyToggle" }
+end
+
+
+
 ----------// Super Jump Handler
 do
 	local Duration, Power = { Value = 50 }, { Value = 5 }
