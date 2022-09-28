@@ -1325,6 +1325,12 @@ end
 
 ----------// Speed Handler
 do
+
+	local speedsettings = {
+		factor = 5.37,
+		velocitydivfactor = 2.9,
+		wsvalue = 22.5,
+	}
 	
 	--// Speed Frame
 	local SpeedFrame = BlantantFrame.Toggle({
