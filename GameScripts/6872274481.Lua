@@ -1913,6 +1913,89 @@ do
 	end)
 end
 
+----------// Chest Stealer Handler
+do
+	local ChestStealerDelay = { ["Value"] = 1 }
+
+	local cheststealerfuncs = {
+		Open = function()
+			if bedwars["AppController"]:isAppOpen("ChestApp") then
+				local chest = lplr.Character:FindFirstChild("ObservedChestFolder")
+				local chestitems = chest and chest.Value and chest.Value:GetChildren() or {}
+				if #chestitems > 0 then
+					for i3, v3 in pairs(chestitems) do
+						if v3:IsA("Accessory") then
+							task.spawn(function()
+								pcall(function()
+									bedwars["ClientHandler"]
+										:GetNamespace("Inventory")
+										:Get("ChestGetItem")
+										:CallServer(chest.Value, v3)
+								end)
+							end)
+							task.wait(ChestStealerDelay["Value"] / 100)
+						end
+					end
+				end
+			end
+		end,
+		Closed = function()
+			for i, v in pairs(CollectionService:GetTagged("chest")) do
+				if
+					(lplr.Character.HumanoidRootPart.Position - v.Position).magnitude <= 18
+					and v:FindFirstChild("ChestFolderValue")
+				then
+					local chest = v:FindFirstChild("ChestFolderValue")
+					chest = chest and chest.Value or nil
+					local chestitems = chest and chest:GetChildren() or {}
+					if #chestitems > 0 then
+						bedwars["ClientHandler"]:GetNamespace("Inventory"):Get("SetObservedChest"):SendToServer(chest)
+						for i3, v3 in pairs(chestitems) do
+							if v3:IsA("Accessory") then
+								task.spawn(function()
+									pcall(function()
+										bedwars["ClientHandler"]
+											:GetNamespace("Inventory")
+											:Get("ChestGetItem")
+											:CallServer(v.ChestFolderValue.Value, v3)
+									end)
+								end)
+								task.wait(ChestStealerDelay["Value"] / 100)
+							end
+						end
+						bedwars["ClientHandler"]:GetNamespace("Inventory"):Get("SetObservedChest"):SendToServer(nil)
+					end
+				end
+			end
+		end,
+	}
+
+	local WiggleAnimationFrame = ClosestCheat.Toggle({
+		Text = "Chest Stealer",
+		Callback = function(Value)
+			IClientToggleProperty.ChestStealerToggle = Value
+
+			if IClientToggleProperty.ChestStealerToggle then
+				BindToRenderStep("ChestStealer", function()
+					if IClientToggleProperty.ChestStealerToggle then
+					else
+						return
+					end
+					if isAlive() then
+						cheststealerfuncs["Open"]()
+						cheststealerfuncs["Closed"]()
+					end
+				end)
+			else
+				UnbindFromRenderStep("ChestStealer")
+			end
+		end,
+		Enabled = IClientToggleProperty.ChestStealerToggle,
+	})
+
+	ButtonInGui["Chest Stealer"] = { WiggleAnimationFrame, "ChestStealerToggle" }
+end
+
 ----------// SpinBot
 do
 	local bodyspin
