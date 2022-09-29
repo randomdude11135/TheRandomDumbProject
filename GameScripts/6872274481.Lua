@@ -1965,7 +1965,7 @@ do
 				UnbindFromRenderStep("ChestStealer")
 			end
 		end,
-		Enabled = IClientToggleProperty.ChestStealerToggle or  false,
+		Enabled = IClientToggleProperty.ChestStealerToggle or false,
 	})
 
 	ButtonInGui["Chest Stealer"] = { WiggleAnimationFrame, "ChestStealerToggle" }
