@@ -26,11 +26,6 @@ local AnimationTab = shared.TabInGui["Animations"]
 local IClientToggleProperty = shared.IClientToggledProperty
 local ButtonInGui = shared.ButtonInGui
 
---// Folder
-local ESPFolder = _G.ESPFolder or Instance.new("Folder")
-ESPFolder.Name = "ESPFolder"
-ESPFolder.Parent = workspace
-
 --// Bindable
 local updateitem = Instance.new("BindableEvent")
 
