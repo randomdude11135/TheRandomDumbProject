@@ -1945,7 +1945,7 @@ do
 		end,
 	}
 
-	local WiggleAnimationFrame = ClosestCheat.Toggle({
+	local WiggleAnimationFrame = LiteFrame.Toggle({
 		Text = "Chest Stealer",
 		Callback = function(Value)
 			IClientToggleProperty.ChestStealerToggle = Value
