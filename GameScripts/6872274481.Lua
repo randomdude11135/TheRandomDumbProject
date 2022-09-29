@@ -1478,20 +1478,6 @@ do
 		Enabled = IClientToggleProperty.FastDropToggle,
 	})
 
-	task.spawn(function()
-		repeat
-			task.wait()
-			if
-				isAlive()
-				and not bedwars["ClientStoreHandler"]:getState().Inventory.opened
-				and (uis:IsKeyDown(Enum.KeyCode.Q) or uis:IsKeyDown(Enum.KeyCode.Backspace))
-				and uis:GetFocusedTextBox() == nil
-			then
-				task.spawn(bedwars["DropItem"])
-			end
-		until not FastDrop
-	end)
-
 	ButtonInGui["FastDrop"] = { AutoBuyFrame, "FastDropToggle" }
 end
 
