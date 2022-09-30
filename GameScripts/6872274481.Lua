@@ -312,7 +312,7 @@ bedwars = {
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out.client.ui.lib.util["click-hold"]
 	).ClickHold,
 	["ClientHandler"] = Client,
-	["ClientHandlerDamageBlock"] = require(repstorage["rbxts_include"]["node_modules"]["@easy-games"]["block-engine"].out["shared"].remotes).BlockEngineRemotes.Client,
+	["ClientHandlerDamageBlock"] = require(ReplicatedStorage["rbxts_include"]["node_modules"]["@easy-games"]["block-engine"].out["shared"].remotes).BlockEngineRemotes.Client,
 	["ClientStoreHandler"] = require(game.Players.LocalPlayer.PlayerScripts.TS.ui.store).ClientStore,
 	["ClientHandlerSyncEvents"] = require(lplr.PlayerScripts.TS["client-sync-events"]).ClientSyncEvents,
 	["CombatConstant"] = require(game:GetService("ReplicatedStorage").TS.combat["combat-constant"]).CombatConstant,
@@ -411,7 +411,7 @@ bedwars = {
 	["ResetRemote"] = getremote(
 		debug.getconstants(debug.getproto(KnitClient.Controllers.ResetController.createBindable, 1))
 	),
-	["Roact"] = require(repstorage["rbxts_include"]["node_modules"]["@rbxts"]["roact"].src),
+	["Roact"] = require(ReplicatedStorage["rbxts_include"]["node_modules"]["@rbxts"]["roact"].src),
 	["RuntimeLib"] = require(game:GetService("ReplicatedStorage")["rbxts_include"].RuntimeLib),
 	["Shop"] = require(game:GetService("ReplicatedStorage").TS.games.bedwars.shop["bedwars-shop"]).BedwarsShop,
 	["TeamUpgrades"] = require(game:GetService("ReplicatedStorage").TS.games.bedwars.shop["bedwars-shop"]).BedwarsShop.TeamUpgrades,
