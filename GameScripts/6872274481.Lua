@@ -1266,11 +1266,11 @@ do
 			if IClientToggleProperty.MultiAuraToggle then
 
 				
-				Connection = RunService.Heartbeat:Connect(function(args)
+				Connection = RunService.Heartbeat:Connect(function()
 
 					--if bedwars["ClientStoreHandler"]:getState().Game.matchState == 0 then return end
 
-					local yes = getAllPlrsNear(17.999)
+					local yes = getAllPlrsNear(17.99)
 					for i , v in pairs(yes) do
 						local selfpos = LocalPlayer.Character.HumanoidRootPart.Position
 						local newpos = v.Character.HumanoidRootPart.Position
