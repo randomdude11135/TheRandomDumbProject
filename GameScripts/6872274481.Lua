@@ -1260,18 +1260,19 @@ do
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "MultiAura",
 		Callback = function(Value)
-			--print(shared.BedwarTable["getInventory"](LocalPlayer).hand.tool:GetFullName())
 
 			IClientToggleProperty.MultiAuraToggle = Value
 
 			if IClientToggleProperty.MultiAuraToggle then
 				Connection = RunService.Heartbeat:Connect(function(args)
-					if shared.BedwarTable["ClientStoreHandler"]:getState().Game.matchState == 0 then return end
+
+					if bedwars["ClientStoreHandler"]:getState().Game.matchState == 0 then return end
+
 					local yes = getAllPlrsNear(17.999)
 					for i , v in pairs(yes) do
 						local selfpos = LocalPlayer.Character.HumanoidRootPart.Position
 						local newpos = v.Character.HumanoidRootPart.Position
-						shared.BedwarTable["ClientHandler"]:Get(shared.BedwarTable["PaintRemote"]):SendToServer(selfpos, CFrame.lookAt(selfpos, newpos).lookVector)
+						bedwars["ClientHandler"]:Get(bedwars["PaintRemote"]):SendToServer(selfpos, CFrame.lookAt(selfpos, newpos).lookVector)
 						break
 					end
 				end)
@@ -1279,7 +1280,7 @@ do
 				if Connection then Connection:Disconnect() end
 			end
 		end,
-		Enabled = IClientToggleProperty.MultiAuraToggle,
+		Enabled = IClientToggleProperty.MultiAuraToggle or false,
 	})
 end
 
