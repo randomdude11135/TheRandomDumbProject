@@ -1264,9 +1264,11 @@ do
 			IClientToggleProperty.MultiAuraToggle = Value
 
 			if IClientToggleProperty.MultiAuraToggle then
+
+				
 				Connection = RunService.Heartbeat:Connect(function(args)
 
-					if bedwars["ClientStoreHandler"]:getState().Game.matchState == 0 then return end
+					--if bedwars["ClientStoreHandler"]:getState().Game.matchState == 0 then return end
 
 					local yes = getAllPlrsNear(17.999)
 					for i , v in pairs(yes) do
