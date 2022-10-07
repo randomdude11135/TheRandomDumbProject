@@ -1256,7 +1256,7 @@ end
 --------------------------------------// Blantant Tab
 ----------// Kill Aura Handler
 do
-	local Connection
+	local Connection = nil
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "MultiAura",
 		Callback = function(Value)
@@ -1272,7 +1272,7 @@ do
 
 					local yes = getAllPlrsNear(17.99)
 					for i , v in pairs(yes) do
-						local selfpos = LocalPlayer.Character.HumanoidRootPart.Position
+						local selfpos = lplr.Character.HumanoidRootPart.Position
 						local newpos = v.Character.HumanoidRootPart.Position
 						bedwars["ClientHandler"]:Get(bedwars["PaintRemote"]):SendToServer(selfpos, CFrame.lookAt(selfpos, newpos).lookVector)
 						break
