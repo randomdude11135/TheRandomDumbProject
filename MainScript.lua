@@ -168,7 +168,7 @@ end
 LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
 		local teleportstr =
-			'shared.StayNotLogin = shared.StayNotLogin loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
+			'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
 		writefile(
 			"IClient/Settings/"
 				.. game.PlaceId
@@ -240,6 +240,7 @@ local LoginTab = LoadIClientUI.New({
 pcall(function()
 	loadstring(GetURL("GameScripts/Universal.Lua"))()
 end)
+
 pcall(function()
 	local publicrepo = checkpublicrepo(game.PlaceId)
 	if publicrepo then
