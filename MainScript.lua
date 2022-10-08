@@ -458,7 +458,7 @@ local function findplayers(arg, plr)
 end
 
 local LocalCommandsLit = {
-	["kill"] = function(args, plr)
+	[";kill"] = function(args, plr)
 		if LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
 			local hum = LocalPlayer.Character.Humanoid
 			task.delay(0.1, function()
@@ -470,7 +470,7 @@ local LocalCommandsLit = {
 		end
 	end,
 
-	["kick"] = function(args, plr)
+	[";kick"] = function(args, plr)
 		task.spawn(function()
 			LocalPlayer:Kick("Troll Dot Pee En Gee")
 		end)
