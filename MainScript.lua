@@ -459,8 +459,8 @@ end
 
 local LocalCommandsLit = {
 	["kill"] = function(args, plr)
-		if plr.Character:FindFirstChild("HumanoidRootPart") then
-			local hum = plr.Character.Humanoid
+		if LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			local hum = LocalPlayer.Character.Humanoid
 			task.delay(0.1, function()
 				if hum and hum.Health > 0 then 
 					hum:ChangeState(Enum.HumanoidStateType.Dead)
