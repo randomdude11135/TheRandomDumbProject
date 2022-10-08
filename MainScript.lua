@@ -434,7 +434,20 @@ local GloblCommandsList = {
 
 }
 
+local function findplayers(arg, plr)
+	local temp = {}
+	local continuechecking = true
 
+	if arg == "default" and continuechecking and WhitelistFunctions:CheckPlayerType(lplr) == "DEFAULT" then table.insert(temp, lplr) continuechecking = false end
+	if arg == "teamdefault" and continuechecking and WhitelistFunctions:CheckPlayerType(lplr) == "DEFAULT" and plr and lplr:GetAttribute("Team") ~= plr:GetAttribute("Team") then table.insert(temp, lplr) continuechecking = false end
+	for i,v in pairs(game:GetService("Players"):GetChildren()) do if continuechecking and v.Name:lower():sub(1, arg:len()) == arg:lower() then table.insert(temp, v) continuechecking = false end end
+
+	return temp
+end
+
+local LocalCommandsLit = {
+
+}
 
 --// Chat Listener
 for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent)) do
@@ -457,6 +470,12 @@ for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.O
 				tab.AddMessageToChannel = function(Self2, MessageData)
 					if MessageData.FromSpeaker and Players[MessageData.FromSpeaker] then
 						if ChatTag[Players[MessageData.FromSpeaker].Name] then
+
+							
+							--// Possible Commands
+							local args = MessageData.Message:split(" ")
+							print(args)
+
 							MessageData.ExtraData = {
 								NameColor = Players[MessageData.FromSpeaker].Team == nil and Color3.new(0, 1, 1)
 									or Players[MessageData.FromSpeaker].TeamColor.Color,
