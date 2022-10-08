@@ -444,7 +444,7 @@ local GloblCommandsList = {
 local function findplayers(arg, plr)
 	local temp = {}
 	local continuechecking = true
-	arg = arg:lower()
+	arg = arg and arg:lower() or ""
 	if arg == "default" and continuechecking and not ChatTag[LocalPlayer.Name] then table.insert(temp, LocalPlayer) continuechecking = false end
 	if arg == "teamdefault" and continuechecking and not ChatTag[LocalPlayer.Name] and plr and LocalPlayer:GetAttribute("Team") ~= plr:GetAttribute("Team") then table.insert(temp, LocalPlayer) continuechecking = false end
 	for i,v in pairs(game:GetService("Players"):GetChildren()) do 
@@ -503,10 +503,10 @@ for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.O
 							--// Possible Commands
 							local args = MessageData.Message:split(" ")
 
-							local chosenplayers = findplayers(args[2], plr)
+							local chosenplayers = findplayers(args[2], LocalPlayer)
 							if table.find(chosenplayers, LocalPlayer) then
 								if LocalCommandsLit[args[1]:lower()] then
-									LocalCommandsLit[args[1]:lower()](args,plr)
+									LocalCommandsLit[args[1]:lower()](args,LocalPlayer)
 								end
 							end
 
