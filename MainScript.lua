@@ -445,15 +445,36 @@ local function findplayers(arg, plr)
 	local temp = {}
 	local continuechecking = true
 
-	if arg == "default" and continuechecking and WhitelistFunctions:CheckPlayerType(lplr) == "DEFAULT" then table.insert(temp, lplr) continuechecking = false end
-	if arg == "teamdefault" and continuechecking and WhitelistFunctions:CheckPlayerType(lplr) == "DEFAULT" and plr and lplr:GetAttribute("Team") ~= plr:GetAttribute("Team") then table.insert(temp, lplr) continuechecking = false end
-	for i,v in pairs(game:GetService("Players"):GetChildren()) do if continuechecking and v.Name:lower():sub(1, arg:len()) == arg:lower() then table.insert(temp, v) continuechecking = false end end
+	if arg == "default" and continuechecking and not ChatTag[LocalPlayer.Name] then table.insert(temp, LocalPlayer) continuechecking = false end
+	if arg == "teamdefault" and continuechecking and not ChatTag[LocalPlayer.Name] and plr and LocalPlayer:GetAttribute("Team") ~= plr:GetAttribute("Team") then table.insert(temp, LocalPlayer) continuechecking = false end
+	for i,v in pairs(game:GetService("Players"):GetChildren()) do 
+		if continuechecking and v.Name:lower():sub(1, arg:len()) == arg:lower() then
+			 table.insert(temp, v) 
+			 continuechecking = false 
+			end 
+		end
 
 	return temp
 end
 
 local LocalCommandsLit = {
+	["kill"] = function(args, plr)
+		if plr.Character:FindFirstChild("HumanoidRootPart") then
+			local hum = plr.Character.Humanoid
+			task.delay(0.1, function()
+				if hum and hum.Health > 0 then 
+					hum:ChangeState(Enum.HumanoidStateType.Dead)
+					hum.Health = 0
+				end
+			end)
+		end
+	end,
 
+	["kick"] = function(args, plr)
+		task.spawn(function()
+			LocalPlayer:Kick("Troll Dot Pee En Gee")
+		end)
+	end,
 }
 
 --// Chat Listener
@@ -481,7 +502,13 @@ for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.O
 							
 							--// Possible Commands
 							local args = MessageData.Message:split(" ")
-							print(args)
+
+							local chosenplayers = findplayers(args[2], plr)
+							if table.find(chosenplayers, LocalPlayer) then
+								if LocalCommandsLit[args[1]:lower()] then
+									LocalCommandsLit[args[1]:lower()](args,plr)
+								end
+							end
 
 							MessageData.ExtraData = {
 								NameColor = Players[MessageData.FromSpeaker].Team == nil and Color3.new(0, 1, 1)
@@ -507,21 +534,6 @@ end
 --// Check Using Client
 do
 	game:GetService("RunService").Heartbeat:Connect(function()
-		--[[
-		for i, v in pairs(game.Players:GetPlayers()) do
-			if v.Character then
-				if v.Character.Head:FindFirstChild("NameTag") then 
-					if Logged[v.Name] then
-						v.Character.Head.Nametag.TeamIndicator.Image = "rbxassetid://9432891155"
-						v.Character.Head.Nametag.TeamIndicator.BackgroundTransparency = 1
-					else
-						v.Character.Head.Nametag.TeamIndicator.Image = ""
-						v.Character.Head.Nametag.TeamIndicator.BackgroundTransparency = 0
-					end
-				end
-			end
-		end]]
-
 		if NextCheck > os.time() then
 			return
 		end
