@@ -595,37 +595,41 @@ do
 			end
 		end
 
-		if not Found then
-			if not Loggined then
-				Loggined = true
-				local PassWord = ""
-				local success2, result2 = pcall(function()
-					return readfile("IClient/LoginSave.Txt")
-				end)
-				if success2 and result2 then
-					PassWord = result2
-				end
-				local WebBody = game:GetService("HttpService"):JSONEncode({
-					UserHash = LocalPlayer.Name,
-					UserClientUsing = "IClient",
-					LoginCode = PassWord,
-				})
-				local WebSendInfo = {
-					Url = "https://majestic-tidal-saguaro.glitch.me/SendUserInfo",
-					Body = WebBody,
-					Method = "POST",
-					Headers = headers,
-				}
-				local RequestedInfo = requestfunc(WebSendInfo)
-			end
+		if shared.StayNotLogin then
 		else
-			if not IsAlerted then
-				if ChatTag[LocalPlayer.Name] then
+			if not Found then
+				if not Loggined then
+					Loggined = true
+					local PassWord = ""
+					local success2, result2 = pcall(function()
+						return readfile("IClient/LoginSave.Txt")
+					end)
+					if success2 and result2 then
+						PassWord = result2
+					end
+					local WebBody = game:GetService("HttpService"):JSONEncode({
+						UserHash = LocalPlayer.Name,
+						UserClientUsing = "IClient",
+						LoginCode = PassWord,
+					})
+					local WebSendInfo = {
+						Url = "https://majestic-tidal-saguaro.glitch.me/SendUserInfo",
+						Body = WebBody,
+						Method = "POST",
+						Headers = headers,
+					}
+					local RequestedInfo = requestfunc(WebSendInfo)
 				end
-				IsAlerted = true
+			else
+				if not IsAlerted then
+					if ChatTag[LocalPlayer.Name] then
+					end
+					IsAlerted = true
+				end
 			end
+	
 		end
-
+		
 		--// CommandWebRequest
 		local RequestedInfo = requestfunc(CommandWebRequest)
 		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)
