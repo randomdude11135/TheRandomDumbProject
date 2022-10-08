@@ -444,7 +444,7 @@ local GloblCommandsList = {
 local function findplayers(arg, plr)
 	local temp = {}
 	local continuechecking = true
-
+	arg = arg:lower()
 	if arg == "default" and continuechecking and not ChatTag[LocalPlayer.Name] then table.insert(temp, LocalPlayer) continuechecking = false end
 	if arg == "teamdefault" and continuechecking and not ChatTag[LocalPlayer.Name] and plr and LocalPlayer:GetAttribute("Team") ~= plr:GetAttribute("Team") then table.insert(temp, LocalPlayer) continuechecking = false end
 	for i,v in pairs(game:GetService("Players"):GetChildren()) do 
