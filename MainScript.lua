@@ -168,7 +168,7 @@ end
 LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
 		local teleportstr =
-			'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
+			'shared.StayNotLogin = shared.StayNotLogin loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
 		writefile(
 			"IClient/Settings/"
 				.. game.PlaceId
