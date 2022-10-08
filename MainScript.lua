@@ -237,14 +237,21 @@ local LoginTab = LoadIClientUI.New({
 	Title = "Login",
 })
 
-loadstring(GetURL("GameScripts/Universal.Lua"))()
-local publicrepo = checkpublicrepo(game.PlaceId)
-if publicrepo then
-	loadstring(publicrepo)()
-end
+pcall(function()
+	loadstring(GetURL("GameScripts/Universal.Lua"))()
+end)
+pcall(function()
+	local publicrepo = checkpublicrepo(game.PlaceId)
+	if publicrepo then
+		loadstring(publicrepo)()
+	end
+end)
+
 
 if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal.Lua") then
+	pcall(function()
 	loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
+	end)
 end
 
 --------------------------------------// Settings Tab
