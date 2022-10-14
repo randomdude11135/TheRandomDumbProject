@@ -666,8 +666,10 @@ do
 			Callback = function(Value)
 				IClientToggleProperty.SpeedToggled = Value
 				if not IClientToggleProperty.SpeedToggled then
-					LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = 16
-					UnbindFromHeartbeat("Speed")
+					if HeartbeatTable["Speed"] then
+						LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = 16
+						UnbindFromHeartbeat("Speed")
+					end
 				else
 					BindToHeartbeat("Speed", function(dt)
 						if isAlive() then
