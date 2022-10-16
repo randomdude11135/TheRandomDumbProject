@@ -1,3 +1,8 @@
+--// Remove all the ui
+
+shared.ButtonInGui["Speed"][1]:Remove()
+shared.ButtonInGui["AntiCheat Real"][1]:Remove()
+
 --// Main Varibles
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
@@ -12,6 +17,7 @@ local GamePlaceId = game.PlaceId
 local mouse = lplr:GetMouse()
 local cam = WORKSPACE.CurrentCamera
 local ContentProvider = game:GetService("ContentProvider")
+local RealRoot
 
 --// UI Elements
 local LiteFrame = shared.TabInGui["Non-Gaming chair"]
@@ -19,11 +25,6 @@ local BlantantFrame = shared.TabInGui["Gaming chair"]
 local AnimationTab = shared.TabInGui["Animations"]
 local IClientToggleProperty = shared.IClientToggledProperty
 local ButtonInGui = shared.ButtonInGui
-
---// Folder
-local ESPFolder = Instance.new("Folder")
-ESPFolder.Name = "ESPFolder"
-ESPFolder.Parent = workspace
 
 --// Bindable
 local updateitem = Instance.new("BindableEvent")
@@ -42,27 +43,19 @@ local CurrentAnimation = nil
 local connectionstodisconnect = {}
 local disabletpcheck = false
 local anticheatfunnyyes = false
-local savedc0 = game:GetService("ReplicatedStorage"):WaitForChild("Assets"):WaitForChild("Viewmodel"):WaitForChild(
-	"RightHand"
-):WaitForChild("RightWrist").C0
+local RunService = game:GetService("RunService")
+local savedc0 = game:GetService("ReplicatedStorage")
+	:WaitForChild("Assets")
+	:WaitForChild("Viewmodel")
+	:WaitForChild("RightHand")
+	:WaitForChild("RightWrist").C0
 local oldisnetworkowner = isnetworkowner
 local networkownerfunc = isnetworkowner
 local isnetworkowner = isnetworkowner or function()
 	return true
 end
 local printtable = printtable or print
-local speedsettings = {
-	factor = 5.37,
-	velocitydivfactor = 2.9,
-	wsvalue = 22.5,
-}
 
-local AnticheatBypassNumbers = {
-	TPSpeed = 0.1,
-	TPCombat = 0.3,
-	TPLerp = 0.39,
-	TPCheck = 15,
-}
 --// Functions
 local HeartbeatTable = {}
 local RenderStepTable = {}
@@ -100,10 +93,8 @@ end
 
 function PlayFunction()
 	if IClientToggleProperty.CurrentPickAnimationId <= 200 then
-		CurrentAnimation = bedwars["GameAnimationUtil"].playAnimation(
-			lplr.Character,
-			IClientToggleProperty.CurrentPickAnimationId
-		)
+		CurrentAnimation =
+			bedwars["GameAnimationUtil"].playAnimation(lplr.Character, IClientToggleProperty.CurrentPickAnimationId)
 
 		if IClientToggleProperty.CurrentPickAnimationId == 34 then
 			task.wait(1)
@@ -123,9 +114,8 @@ function PlayFunction()
 
 			SavedAnimation[IClientToggleProperty.CurrentPickAnimationId] = anim2
 		end
-		CurrentAnimation = lplr.Character.Humanoid:LoadAnimation(
-			SavedAnimation[IClientToggleProperty.CurrentPickAnimationId]
-		)
+		CurrentAnimation =
+			lplr.Character.Humanoid:LoadAnimation(SavedAnimation[IClientToggleProperty.CurrentPickAnimationId])
 		CurrentAnimation.Priority = Enum.AnimationPriority.Action
 		task.wait()
 		CurrentAnimation:Play()
@@ -154,15 +144,16 @@ local function addvectortocframe2(cframe, newylevel)
 	return CFrame.new(x, newylevel, z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
 end
 
+local function aimpos(vec, multiplier)
+	local newvec = (vec - UIS:GetMouseLocation() - Vector2.new(0, 36)) * tonumber(multiplier)
+	mousemoverel(newvec.X, newvec.Y)
+end
+
+
 local function BindToHeartbeat(name, func)
 	if HeartbeatTable[name] == nil then
 		HeartbeatTable[name] = game:GetService("RunService").Heartbeat:connect(func)
 	end
-end
-
-local function aimpos(vec, multiplier)
-	local newvec = (vec - UIS:GetMouseLocation() - Vector2.new(0, 36)) * tonumber(multiplier)
-	mousemoverel(newvec.X, newvec.Y)
 end
 
 local function UnbindFromHeartbeat(name)
@@ -185,41 +176,9 @@ local function UnbindFromRenderStep(name)
 	end
 end
 
-local function BindToStepped(name, func)
-	if SteppedTable[name] == nil then
-		SteppedTable[name] = game:GetService("RunService").Stepped:connect(func)
-	end
-end
-
-local function UnbindFromStepped(name)
-	if SteppedTable[name] then
-		SteppedTable[name]:Disconnect()
-		SteppedTable[name] = nil
-	end
-end
-
-local function skipFrame()
-	return game:GetService("RunService").Heartbeat:Wait()
-end
-
-local function betterfind(tab, obj)
-	for i, v in pairs(tab) do
-		if v == obj then
-			return i
-		end
-	end
-	return nil
-end
-
 local function canBeTargeted(plr, doTeamCheck)
 	if plr and plr.Team then
 		return not (plr.Team.Name == lplr.Team.Name)
-	end
-end
-
-local function getColorFromPlayer(v)
-	if v.Team ~= nil then
-		return v.TeamColor.Color
 	end
 end
 
@@ -229,38 +188,6 @@ local function getremote(t)
 			return t[i + 1]
 		end
 	end
-end
-
-local function getPlrNear(max)
-	local returning, nearestnum = nil, max
-	for i, v in next, PLAYERS:GetPlayers() do
-		if isAlive(v) and v ~= lplr then
-			local diff = (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
-			if diff < nearestnum then
-				nearestnum = diff
-				nearestval = v
-			end
-		end
-	end
-	return returning
-end
-
-local function getPlrNearMouse(max)
-	local max = max or 99999999999999
-	local nearestval, nearestnum = nil, max
-	for i, v in next, PLAYERS:GetPlayers() do
-		if isAlive(v) and v ~= lplr then
-			local pos, vis = WORKSPACE.CurrentCamera:WorldToScreenPoint(v.Character.HumanoidRootPart.Position)
-			if vis and pos then
-				local diff = (UIS:GetMouseLocation() - Vector2.new(pos.X, pos.Y)).Magnitude
-				if diff < nearestnum then
-					nearestnum = diff
-					nearestval = v
-				end
-			end
-		end
-	end
-	return nearestval
 end
 
 local function getAllPlrsNear(max)
@@ -282,15 +209,6 @@ local function getAllPlrsNear(max)
 	return t
 end
 
-local function getMoveDirection(plr)
-	if not isAlive(plr) then
-		return Vector3.new()
-	end
-	local velocity = plr.Character.HumanoidRootPart:GetVelocityAtPosition(plr.Character.HumanoidRootPart.Position)
-	local velocityDirection = velocity.Magnitude > 0 and velocity.Unit or Vector3.new()
-	return velocityDirection
-end
-
 local function getwool()
 	for i5, v5 in pairs(bedwars["getInventory"](lplr)["items"]) do
 		if v5.itemType:match("wool") then
@@ -307,22 +225,6 @@ local function getwoolamt()
 		end
 	end
 	return 0
-end
-
-local function getblockitem()
-	for i5, v5 in pairs(bedwars.getInventory(lplr).items) do
-		if
-			v5.itemType:match("wool")
-			or v5.itemType:match("grass")
-			or v5.itemType:match("stone_brick")
-			or v5.itemType:match("wood_plank")
-			or v5.itemType:match("stone")
-			or v5.itemType:match("bedrock")
-		then
-			return v5.itemType, v5.amount
-		end
-	end
-	return nil
 end
 
 local function getItem(itemName)
@@ -366,35 +268,9 @@ local function hashvector(vec)
 	}
 end
 
-local function targetCheck(plr)
-	return plr and plr.Humanoid and plr.Humanoid.Health > 0 and plr.Character:FindFirstChild("ForceField") == nil
-end
-
-local function GetNearestHumanoidToPosition(player, distance, overridepos)
-	local closest, returnedplayer = distance, nil
-	if lplr.isAlive then
-		for i, v in pairs(lplr.entityList) do
-			if v.Targetable and targetCheck(v) then
-				local mag = (lplr.character.HumanoidRootPart.Position - v.RootPart.Position).magnitude
-				if overridepos and mag > distance then
-					mag = (overridepos - v.RootPart.Position).magnitude
-				end
-				if mag <= closest then
-					closest = mag
-					returnedplayer = v
-				end
-			end
-		end
-	end
-	return returnedplayer
-end
-
 --// Framework
-warn("[IClient]: Getting Framework")
 local Flamework =
-	require(
-		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@flamework"].core.out
-	).Flamework
+	require(game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@flamework"].core.out).Flamework
 repeat
 	task.wait()
 until Flamework.isInitialized
@@ -406,50 +282,8 @@ local Client = require(game:GetService("ReplicatedStorage").TS.remotes).default.
 local InventoryUtil = require(game:GetService("ReplicatedStorage").TS.inventory["inventory-util"]).InventoryUtil
 local OldClientGet = getmetatable(Client).Get
 local OldClientWaitFor = getmetatable(Client).WaitFor
-getmetatable(Client).Get = function(Self, remotename)
-	if remotename == bedwars["AttackRemote"] then
-		local res = OldClientGet(Self, remotename)
-		return {
-			["instance"] = res["instance"],
-			["CallServer"] = function(Self, tab)
-				local suc, plr = pcall(function()
-					return PLAYERS:GetPlayerFromCharacter(tab.entityInstance)
-				end)
-				if suc and plr then
-					if plr and (bedwars["CheckWhitelisted"](plr) and bedwars["CheckWhitelisted"](lplr) == nil) then
-						return nil
-					end
-				end
-				return res:CallServer(tab)
-			end,
-		}
-	end
-	return OldClientGet(Self, remotename)
-end
 
 bedwars = {
-	["CheckWhitelisted"] = function(plr, ownercheck)
-		local plrstr = bedwars["HashFunction"](plr.Name .. plr.UserId)
-		local localstr = bedwars["HashFunction"](lplr.Name .. lplr.UserId)
-		return false
-	end,
-	["CheckPlayerType"] = function(plr)
-		local plrstr = bedwars["HashFunction"](plr.Name .. plr.UserId)
-		local playertype = "DEFAULT"
-		return playertype
-	end,
-	["HashFunction"] = function(str)
-		return nil
-	end,
-	["IsPrivateIngame"] = function()
-		for i, v in pairs(PLAYERS:GetChildren()) do
-			if bedwars["CheckPlayerType"](v) ~= "DEFAULT" then
-				return true
-			end
-		end
-		return false
-	end,
-
 	["AnimationUtil"] = require(
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out["shared"].util["animation-util"]
 	).AnimationUtil,
@@ -478,9 +312,7 @@ bedwars = {
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out.client.ui.lib.util["click-hold"]
 	).ClickHold,
 	["ClientHandler"] = Client,
-	["ClientHandlerDamageBlock"] = require(
-		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["block-engine"].out.remotes
-	).BlockEngineRemotes.Client,
+	["ClientHandlerDamageBlock"] = require(ReplicatedStorage["rbxts_include"]["node_modules"]["@easy-games"]["block-engine"].out["shared"].remotes).BlockEngineRemotes.Client,
 	["ClientStoreHandler"] = require(game.Players.LocalPlayer.PlayerScripts.TS.ui.store).ClientStore,
 	["ClientHandlerSyncEvents"] = require(lplr.PlayerScripts.TS["client-sync-events"]).ClientSyncEvents,
 	["CombatConstant"] = require(game:GetService("ReplicatedStorage").TS.combat["combat-constant"]).CombatConstant,
@@ -579,7 +411,7 @@ bedwars = {
 	["ResetRemote"] = getremote(
 		debug.getconstants(debug.getproto(KnitClient.Controllers.ResetController.createBindable, 1))
 	),
-	["Roact"] = require(game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["roact"].src),
+	["Roact"] = require(ReplicatedStorage["rbxts_include"]["node_modules"]["@rbxts"]["roact"].src),
 	["RuntimeLib"] = require(game:GetService("ReplicatedStorage")["rbxts_include"].RuntimeLib),
 	["Shop"] = require(game:GetService("ReplicatedStorage").TS.games.bedwars.shop["bedwars-shop"]).BedwarsShop,
 	["TeamUpgrades"] = require(game:GetService("ReplicatedStorage").TS.games.bedwars.shop["bedwars-shop"]).BedwarsShop.TeamUpgrades,
@@ -611,9 +443,7 @@ bedwars = {
 	["VictoryScreen"] = require(lplr.PlayerScripts.TS.controllers["game"].match.ui["victory-section"]).VictorySection,
 	["ViewmodelController"] = KnitClient.Controllers.ViewmodelController,
 	["WeldTable"] = require(game:GetService("ReplicatedStorage").TS.util["weld-util"]).WeldUtil,
-	["AttackRemote"] = getremote(
-		debug.getconstants(getmetatable(KnitClient.Controllers.SwordController)["attackEntity"])
-	),
+	["AttackRemote"] = getremote(debug.getconstants(getmetatable(KnitClient.Controllers.SwordController)["attackEntity"])),
 	["VelocityUtil"] = require(
 		game:GetService("ReplicatedStorage")["rbxts_include"]["node_modules"]["@easy-games"]["game-core"].out["shared"].util["velocity-util"]
 	).VelocityUtil,
@@ -623,6 +453,10 @@ bedwars = {
 	),
 	["PingController"] = require(lplr.PlayerScripts.TS.controllers.game.ping["ping-controller"]).PingController,
 	["RaiseShieldRemote"] = getremote(debug.getconstants(KnitClient.Controllers.InfernalShieldController.constructor)),
+	["PaintRemote"] = getremote(debug.getconstants(KnitClient.Controllers.PaintShotgunController.fire)),
+	["ProjectileHitRemote"] = getremote(
+		debug.getconstants(debug.getproto(KnitClient.Controllers.ProjectileController.createLocalProjectile, 1))
+	),
 }
 
 local clientstorestate = bedwars["ClientStoreHandler"]:getState()
@@ -663,6 +497,8 @@ for i, v in pairs(debug.getupvalues(getmetatable(KnitClient.Controllers.SwordCon
 		end
 	end
 end
+
+shared.BedwarTable = bedwars
 
 local blocktable = bedwars["BlockController2"].new(bedwars["BlockEngine"], getwool())
 
@@ -734,9 +570,8 @@ local function getScaffold(vec, diagonaltoggle)
 	local newpos = (oldpos - realvec)
 	local returedpos = realvec
 	if lplr.isAlive then
-		local angle = math.deg(
-			math.atan2(-lplr.character.Humanoid.MoveDirection.X, -lplr.character.Humanoid.MoveDirection.Z)
-		)
+		local angle =
+			math.deg(math.atan2(-lplr.character.Humanoid.MoveDirection.X, -lplr.character.Humanoid.MoveDirection.Z))
 		local goingdiagonal = (angle >= 130 and angle <= 150)
 			or (angle <= -35 and angle >= -50)
 			or (angle >= 35 and angle <= 50)
@@ -1064,7 +899,7 @@ local removeNukerFunc, addNukerFunc =
 			table.remove(nukerblocks, table.find(nukerblocks, v))
 		end
 	end, function(i, v)
-		table.insert(bedwarsblocks,v)
+		table.insert(bedwarsblocks, v)
 		local v = v == nil and i or v
 		if v.Name == "bed" or v.Name:find("lucky_block") then
 			table.insert(nukerblocks, v)
@@ -1128,7 +963,7 @@ for i, v in next, AuraAnimationList do
 	AuraAnimations[#AuraAnimations + 1] = i
 end
 
-local AttackEntityRemote = bedwars.ClientHandler:Get(bedwars.AttackRemote).instance
+local AttackEntityRemote = bedwars["ClientHandler"]:Get(bedwars["AttackRemote"])["instance"]
 local AuraAnimation = { Value = "" }
 
 connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHandler"].changed:connect(function(p3, p4)
@@ -1143,6 +978,7 @@ connectionstodisconnect[#connectionstodisconnect + 1] = bedwars["ClientStoreHand
 		kit = p3.Bedwars.kit
 	end
 end)
+
 
 --------------------------------------// Non-Blantant Tab
 ----------// AutoClicker Handler
@@ -1162,7 +998,7 @@ do
 	local InstantKillToggleFrame = LiteFrame.Toggle({
 		Text = "Toggle",
 		Callback = function(Value)
-			IClientToggleProperty.AutoClickerToggle = IsToggleAble(Value)
+			IClientToggleProperty.AutoClickerToggle = Value
 			if IClientToggleProperty.AutoClickerToggle == true then
 				autoclickerconnection1 = UIS.InputBegan:connect(function(input, gameProcessed)
 					if gameProcessed and input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1194,11 +1030,11 @@ do
 	local InstantKillToggleFrame = LiteFrame.Slider({
 		Text = "CPS",
 		Callback = function(Value)
-			IClientToggleProperty.AutoClickerCps = IsToggleAble(Value)
+			IClientToggleProperty.AutoClickerCps = Value
 		end,
 		Min = 1,
 		Max = 20,
-		Def = IClientToggleProperty.AutoClickerCps,
+		Def = 10,
 	})
 
 	ButtonInGui["AutoClickerCps"] = { InstantKillToggleFrame, "AutoClickerCps" }
@@ -1215,27 +1051,16 @@ do
 			and isNotHoveringOverGui()
 			and #bedwars["AppController"]:getOpenApps() <= 1
 		then
-			autoclickertick = tick()
-				+ (ClickFirstTime and 0.1 or (1 / (IClientToggleProperty.AutoClickerCps * 2)))
-				+ 0.02
+			autoclickertick = tick() + ((1 / (IClientToggleProperty.AutoClickerCps * 2)))
 			ClickFirstTime = false
 			if getEquipped()["Type"] == "sword" and bedwars["KatanaController"].chargingMaid == nil then
 				bedwars["SwordController"]:swingSwordAtMouse()
-			end
-			if getEquipped()["Type"] == "block" and bedwars["BlockPlacementController"].blockPlacer then
-				local mouseinfo = bedwars["BlockPlacementController"].blockPlacer.clientManager
-					:getBlockSelector()
-					:getMouseInfo(0)
-				if mouseinfo then
-					if bedwars["BlockPlacementController"].blockPlacer then
-						bedwars["BlockPlacementController"].blockPlacer:placeBlock(mouseinfo.placementPosition)
-					end
-				end
 			end
 		end
 	end)
 end
 
+--[[
 ----------// Legit Kill Aura Handler
 do
 	local InstantKillToggleFrame = LiteFrame.Toggle({
@@ -1279,7 +1104,7 @@ do
 		end
 	end)
 end
-
+]]
 ----------// Aim Assist Handler
 do
 	local aimbegan
@@ -1302,54 +1127,51 @@ do
 						aimactive = false
 					end
 				end)
+
+				BindToRenderStep("AimAssist", function()
+					if aimactive and IClientToggleProperty.AimAssistToggle then
+						local plr = getAllPlrsNear(18 - 0.01)
+						for i, v in next, plr do
+							local plr = v
+							if
+								plr
+								and canBeTargeted(plr)
+								and getEquipped()["Type"] == "sword"
+								and #bedwars["AppController"]:getOpenApps() <= 1
+								and isNotHoveringOverGui()
+								and bedwars["SwordController"]:canSee({
+									["instance"] = plr.Character,
+									["player"] = plr,
+									["getInstance"] = function()
+										return plr.Character
+									end,
+								})
+								and bedwars["KatanaController"].chargingMaid == nil
+							then
+								local pos, vis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
+								if vis and isrbxactive() then
+									local senst = UserSettings():GetService("UserGameSettings").MouseSensitivity
+										* (5)
+									aimpos(Vector2.new(pos.X, pos.Y), senst)
+									break
+								end
+							end
+						end
+					end
+				end)
 			else
 				if aimbegan and aimended then
 					aimbegan:Disconnect()
 					aimended:Disconnect()
 				end
+
+				UnbindFromRenderStep("AimAssist")
+
 				aimactive = false
 			end
 		end,
 		Enabled = IClientToggleProperty.AimAssistToggle,
 	})
-
-	local function aimpos(vec, multiplier)
-		local newvec = (vec - UIS:GetMouseLocation() - Vector2.new(0, 36)) * tonumber(multiplier)
-		mousemoverel(newvec.X, newvec.Y)
-	end
-
-	BindToRenderStep("AimAssist", function()
-		if aimactive then
-			local targettable = {}
-			local targetsize = 0
-			local plr = getAllPlrsNear(18 - 0.01)
-			for i, v in next, plr do
-				local plr = v
-				if
-					plr
-					and canBeTargeted(plr)
-					and getEquipped()["Type"] == "sword"
-					and #bedwars["AppController"]:getOpenApps() <= 1
-					and isNotHoveringOverGui()
-					and bedwars["SwordController"]:canSee({
-						["instance"] = plr.Character,
-						["player"] = plr,
-						["getInstance"] = function()
-							return plr.Character
-						end,
-					})
-					and bedwars["KatanaController"].chargingMaid == nil
-				then
-					local pos, vis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
-					if vis and isrbxactive() then
-						local senst = UserSettings():GetService("UserGameSettings").MouseSensitivity * (1 - (0 / 100))
-						aimpos(Vector2.new(pos.X, pos.Y), senst)
-						break
-					end
-				end
-			end
-		end
-	end)
 
 	ButtonInGui["AimAssistToggle"] = { SprintFrame, "AimAssistToggle" }
 end
@@ -1362,25 +1184,22 @@ do
 		Text = "Sprint",
 		Callback = function(Value)
 			IClientToggleProperty.SprintToggle = IsToggleAble(Value)
+			if IClientToggleProperty.SprintToggle then
+				BindToHeartbeat("Sprintng", function()
+					if IClientToggleProperty.SprintToggle == false then
+						bedwars["sprintTable"]:stopSprinting()
+					else
+						bedwars["sprintTable"]:startSprinting()
+					end
+				end)
+			else
+				UnbindFromHeartbeat("Sprintng")
+			end
 		end,
 		Enabled = IClientToggleProperty.SprintToggle,
 	})
 
 	ButtonInGui["Sprint"] = { SprintFrame, "SprintToggle" }
-
-	BindToHeartbeat("Sprintng", function()
-		if IClientToggleProperty.SprintToggle == false then
-			if not AlreadyStop then
-				bedwars["sprintTable"]:stopSprinting()
-				AlreadyStop = true
-			end
-		else
-			if AlreadyStop then
-				bedwars["sprintTable"]:startSprinting()
-				AlreadyStop = false
-			end
-		end
-	end)
 end
 
 ----------// Auto Tool Handler
@@ -1437,118 +1256,78 @@ end
 --------------------------------------// Blantant Tab
 ----------// Kill Aura Handler
 do
-	--// Kill Aura Frame
-	local KillAuraToggleFrame = BlantantFrame.Toggle({
-		Text = "KillAura",
+	local Connection = nil
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "MultiAura",
 		Callback = function(Value)
-			IClientToggleProperty.KillAuraToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.KillAuraToggle,
-	})
 
-	ButtonInGui["KillAura"] = { KillAuraToggleFrame, "KillAuraToggle" }
+			IClientToggleProperty.MultiAuraToggle = Value
 
-	--// Kill Aura Range Frame
-	local KillAuraRangeFrame = BlantantFrame.Slider({
-		Text = "KillAura [Range]",
-		Callback = function(Value)
-			IClientToggleProperty.KillAuraRange = Value
-		end,
-		Min = 1,
-		Max = 18,
-		Def = IClientToggleProperty.KillAuraRange,
-	})
+			if IClientToggleProperty.MultiAuraToggle then
 
-	ButtonInGui["KillAura [Range]"] = { KillAuraRangeFrame, "KillAuraRange" }
+				
+				Connection = RunService.Heartbeat:Connect(function()
 
-	--// Kill Aura Handler
-	local KillAuraTick = tick()
-	game["Run Service"].Heartbeat:Connect(function()
-		if not IClientToggleProperty.KillAuraToggle then
-			return
-		end
-		if KillAuraTick > tick() then
-			return
-		end
-		local plrs = getAllPlrsNear(IClientToggleProperty.KillAuraRange - 0.01)
-		if #plrs == 0 then
-			currentTarget = nil
-		end
+					--if bedwars["ClientStoreHandler"]:getState().Game.matchState == 0 then return end
 
-		for i, v in next, plrs do
-			if canBeTargeted(v) then
-				currentTarget = v
-				local weapon = getBestSword()
-				local selfpos = lplr.Character.HumanoidRootPart.Position
-					+ (
-						IClientToggleProperty.KillAuraRange > 14
-							and (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude > 14
-							and (CFrame.lookAt(
-								lplr.Character.HumanoidRootPart.Position,
-								v.Character.HumanoidRootPart.Position
-							).lookVector * 4)
-						or Vector3.new(0, 0, 0)
-					)
-				local attackArgs = {
-					["weapon"] = weapon ~= nil and weapon.tool,
-					["entityInstance"] = v.Character,
-					["validate"] = {
-						["raycast"] = {
-							["cameraPosition"] = hashvector(cam.CFrame.p),
-							["cursorDirection"] = hashvector(
-								Ray.new(cam.CFrame.p, v.Character.HumanoidRootPart.Position).Unit.Direction
-							),
-						},
-						["targetPosition"] = hashvector(v.Character.HumanoidRootPart.Position),
-						["selfPosition"] = hashvector(selfpos),
-					},
-					["chargedAttack"] = { ["chargeRatio"] = 1 },
-				}
-				spawn(function()
-					local weapon = getBestSword()
-					KillAuraTick = tick() + bedwars["ItemTable"][weapon["tool"].Name].sword.attackSpeed
-					AttackEntityRemote:InvokeServer(attackArgs)
+					local yes = getAllPlrsNear(17.99)
+					for i , v in pairs(yes) do
+						local selfpos = lplr.Character.HumanoidRootPart.Position
+						local newpos = v.Character.HumanoidRootPart.Position
+						bedwars["ClientHandler"]:Get(bedwars["PaintRemote"]):SendToServer(selfpos, CFrame.lookAt(selfpos, newpos).lookVector)
+						break
+					end
 				end)
-				break
+			else
+				if Connection then Connection:Disconnect() end
 			end
-		end
-	end)
+		end,
+		Enabled = IClientToggleProperty.MultiAuraToggle or false,
+	})
 end
 
 ----------// Bed Nuker Handler
 do
+	local bedtick = tick()
 	--// Bed Nuker Frame
 	local BedNukerFrame = BlantantFrame.Toggle({
 		Text = "Bed Nuker",
 		Callback = function(Value)
 			IClientToggleProperty.BedAuraToggle = IsToggleAble(Value, "BedAuraToggle")
+			if IClientToggleProperty.BedAuraToggle then
+				BindToHeartbeat("BedNuker", function()
+					if tick() < bedtick or not IClientToggleProperty.BedAuraToggle then
+						return
+					end
+					local blocktab = { "bed" }
+					local block = getBlockNear(40, blocktab)
+					if block then
+						local bestSide = getbestside(block.Position)
+						if bestSide then
+							bedtick = tick() + 0.3
+							bedwars["breakBlock"](block.Position, true, bestSide)
+						end
+					end
+				end)
+			else
+				UnbindFromHeartbeat("BedNuker")
+			end
 		end,
 		Enabled = IClientToggleProperty.BedAuraToggle,
 	})
 
 	ButtonInGui["Bed Nuker"] = { BedNukerFrame, "BedAuraToggle" }
-
-	local bedtick = tick()
-	spawn(function()
-		BindToHeartbeat("BedNuker", function()
-			if tick() < bedtick or not IClientToggleProperty.BedAuraToggle then
-				return
-			end
-			local blocktab = { "bed" }
-			local block = getBlockNear(40, blocktab)
-			if block then
-				local bestSide = getbestside(block.Position)
-				if bestSide then
-					bedtick = tick() + 0.3
-					bedwars["breakBlock"](block.Position, true, bestSide)
-				end
-			end
-		end)
-	end)
 end
 
 ----------// Speed Handler
 do
+
+	local speedsettings = {
+		factor = 5.37,
+		velocitydivfactor = 2.9,
+		wsvalue = 22.5,
+	}
+	
 	--// Speed Frame
 	local SpeedFrame = BlantantFrame.Toggle({
 		Text = "Speed",
@@ -1556,6 +1335,26 @@ do
 			IClientToggleProperty.SpeedToggled = IsToggleAble(Value)
 			if not IClientToggleProperty.SpeedToggled then
 				lplr.Character:WaitForChild("Humanoid").WalkSpeed = 16
+				UnbindFromHeartbeat("Speed")
+			else
+				BindToHeartbeat("Speed", function(dt)
+					if isAlive() then
+						if IClientToggleProperty.SpeedToggled then
+							lplr.Character.Humanoid.WalkSpeed = speedsettings.wsvalue
+							local velo = lplr.Character.Humanoid.MoveDirection
+								* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
+									lplr.Character.HumanoidRootPart
+								)) and speedsettings.factor or 0))
+								* dt
+							velo = Vector3.new(velo.x / 11, 0, velo.z / 11)
+							lplr.Character:TranslateBy(velo)
+							local velo2 = (lplr.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
+								/ speedsettings.velocitydivfactor
+							lplr.Character.HumanoidRootPart.Velocity =
+								Vector3.new(velo2.X, lplr.Character.HumanoidRootPart.Velocity.Y, velo2.Z)
+						end
+					end
+				end)
 			end
 		end,
 		Enabled = IClientToggleProperty.SpeedToggled,
@@ -1564,31 +1363,8 @@ do
 	ButtonInGui["Speed"] = { SpeedFrame, "SpeedToggled" }
 
 	--SpeedFrame:SetState(IClientToggleProperty.SpeedToggled)
-
-	spawn(function()
-		BindToHeartbeat("Speed", function(dt)
-			if isAlive() then
-				if IClientToggleProperty.SpeedToggled then
-					lplr.Character.Humanoid.WalkSpeed = speedsettings.wsvalue
-					local velo = lplr.Character.Humanoid.MoveDirection
-						* (IClientToggleProperty.WalkSpeed * ((isnetworkowner and isnetworkowner(
-							lplr.Character.HumanoidRootPart
-						)) and speedsettings.factor or 0))
-						* dt
-					velo = Vector3.new(velo.x / 11, 0, velo.z / 11)
-					lplr.Character:TranslateBy(velo)
-					local velo2 = (lplr.Character.Humanoid.MoveDirection * IClientToggleProperty.WalkSpeed)
-						/ speedsettings.velocitydivfactor
-					lplr.Character.HumanoidRootPart.Velocity = Vector3.new(
-						velo2.X,
-						lplr.Character.HumanoidRootPart.Velocity.Y,
-						velo2.Z
-					)
-				end
-			end
-		end)
-	end)
 end
+
 
 ----------// Gravity Handler
 do
@@ -1597,79 +1373,14 @@ do
 		Text = "Gravity Changer",
 		Callback = function(Value)
 			IClientToggleProperty.GravitySet = IsToggleAble(Value, "GravitySet")
+			workspace.Gravity = IClientToggleProperty.GravitySet
 		end,
 		Min = 1,
 		Max = 192,
 		Def = IClientToggleProperty.GravitySet or 192,
 	})
 
-	--// Gravity Handler
-	BindToHeartbeat("Gravity", function(dt)
-		workspace.Gravity = IClientToggleProperty.GravitySet
-	end)
-
 	ButtonInGui["Gravity Changer"] = { KillAuraRangeFrame, "GravitySet" }
-end
-
-----------// Flying Handler
-do
-	local flyup
-	local flydown
-	local flydownconnection
-	local flyupconnection
-
-	--// Flying Frame
-	local BedNukerFrame = BlantantFrame.Toggle({
-		Text = "Fly yeah",
-		Callback = function(Value)
-			IClientToggleProperty.FlyToggle = IsToggleAble(Value, "FlyToggle")
-			if IClientToggleProperty.FlyToggle then
-				BindToStepped("Fly", function(time, dt)
-					if isAlive() then
-						local dt = 1
-						local updirection = 0 - 5
-						if UIS:GetFocusedTextBox() == nil then
-							updirection = (flyup and 30 or flydown and -30 or 0) * dt
-						end
-						local MoveDirection = lplr.Character.Humanoid.MoveDirection * (50 * dt)
-						lplr.Character.HumanoidRootPart.Velocity = Vector3.new(
-							MoveDirection.X,
-							updirection,
-							MoveDirection.Z
-						)
-					end
-				end)
-				flyupconnection = UIS.InputBegan:connect(function(input)
-					if input.KeyCode == Enum.KeyCode.Space then
-						flyup = true
-					end
-					if input.KeyCode == Enum.KeyCode.LeftShift then
-						flydown = true
-					end
-				end)
-				flydownconnection = UIS.InputEnded:connect(function(input)
-					if input.KeyCode == Enum.KeyCode.Space then
-						flyup = false
-					end
-					if input.KeyCode == Enum.KeyCode.LeftShift then
-						flydown = false
-					end
-				end)
-			else
-				flyup = false
-				flydown = false
-				UnbindFromStepped("Fly")
-				if flyupconnection then
-					flyupconnection:Disconnect()
-				end
-				if flydownconnection then
-					flydownconnection:Disconnect()
-				end
-			end
-		end,
-		Enabled = IClientToggleProperty.FlyToggle,
-	})
-	ButtonInGui["Fly yeah"] = { BedNukerFrame, "FlyToggle" }
 end
 
 ----------// Super Jump Handler
@@ -1695,7 +1406,6 @@ end
 
 ----------// Phase Handler
 do
-
 	local raycastparameters = RaycastParams.new()
 	raycastparameters.FilterType = Enum.RaycastFilterType.Whitelist
 	local phasedelay2 = tick()
@@ -1705,339 +1415,66 @@ do
 		Text = "Phase (Not done but atleast it work)",
 		Callback = function(Value)
 			IClientToggleProperty.PhaseToggled = IsToggleAble(Value)
+			if IClientToggleProperty.PhaseToggled then
+				BindToHeartbeat("PhaseRender", function()
+					if IClientToggleProperty.PhaseToggled then
+						if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
+							if phasedelay2 > tick() then
+								return
+							end
+							local pos3 = lplr.Character.Head.Position
+
+							raycastparameters.FilterDescendantsInstances =
+								{ bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform }
+							local newray =
+								workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
+							if newray then
+								print("Found")
+								phasedelay2 = tick() + 0.1
+								lplr.Character.HumanoidRootPart.CFrame =
+									addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -3.5))
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromHeartbeat("PhaseRender")
+			end
 		end,
 		Enabled = IClientToggleProperty.PhaseToggled,
 	})
-
-	BindToHeartbeat("PhaseRender",function()
-        if IClientToggleProperty.PhaseToggled then	
-			if isAlive() and lplr.Character.Humanoid.MoveDirection ~= Vector3.zero then
-
-				if phasedelay2 > tick() then return end
-				local pos3 = lplr.Character.Head.Position
-
-				raycastparameters.FilterDescendantsInstances = {bedwarsblocks, COLLECTION:GetTagged("spawn-cage"), workspace.SpectatorPlatform}
-				local newray = workspace:Raycast(pos3, lplr.Character.Humanoid.MoveDirection, raycastparameters)
-				if newray then
-					print("Found")
-					phasedelay2 = tick() + 0.1
-					lplr.Character.HumanoidRootPart.CFrame = addvectortocframe(lplr.Character.HumanoidRootPart.CFrame, (newray.Normal * -(3.5)))
-				end
-			end
-		end
-	end)	
 end
 
-----------// Anti cheat bypass real
+----------// Fast Drop Handler
 do
-	local IsUsingAntiCheatAssist = false
-
-	local AnticheatAssistConstants = {
-		MaxDistance = 20,
-		-- normal
-		Delay = 0.125,
-		Lerp = 0.39,
-		TPDelay = 0.1,
-
-		-- combat
-		CombatDelay = 0.1,
-		CombatLerp = 0.5,
-		CombatTPDelay = 0,
-	}
-
-	local BodyPart = {
-		R6 = {
-			"Head",
-			"Torso",
-			"Left Arm",
-			"Right Arm",
-			"Left Leg",
-			"Right Leg",
-		},
-		R15 = {
-			"Head",
-			"UpperTorso",
-			"LowerTorso",
-			"LeftUpperLeg",
-			"LeftLowerLeg",
-			"LeftFoot",
-			"RightUpperLeg",
-			"RightLowerLeg",
-			"RightFoot",
-			"LeftUpperArm",
-			"LeftLowerArm",
-			"LeftHand",
-			"RightUpperArm",
-			"RightLowerArm",
-			"RightHand",
-		},
-	}
-
-	local OldHipHeight
-	local AnticheatAssistLastTick = 0
-	local AnticheatAssistConnections = {}
-	local AnticheatAssistTransparent = {}
-	local lagbacknum = 0
-	local lagbackcurrent = false
-	local NextTrack = os.time()
-	local pinglist = {}
-	local fpslist = {}
-
-	local function AnticheatAssistFunction(char)
-		IsUsingAntiCheatAssist = true
-		spawn(function()
-			if not isAlive() then
-				repeat
-					task.wait()
-				until isAlive()
-			end
-			if not lplr.CharacterAppearanceLoaded then
-				repeat
-					task.wait()
-				until lplr.CharacterAppearanceLoaded
-			end
-			local char = char or lplr.Character
-
-			local Humanoid = char:WaitForChild("Humanoid", 15)
-			local HumanoidRootPart = char:WaitForChild("HumanoidRootPart", 15)
-			local RigType = Humanoid.RigType
-			local BodyParts = BodyPart[RigType.Name]
-			for i, v in next, BodyParts do
-				char:WaitForChild(v, 10)
-			end
-
-			repeat
-				task.wait()
-				if
-					networkownerfunc == nil
-					and gethiddenproperty(HumanoidRootPart, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
-				then
-					sethiddenproperty(HumanoidRootPart, "NetworkOwnershipRule", Enum.NetworkOwnership.Automatic)
-				end
-			until HumanoidRootPart
-				and (
-					networkownerfunc and networkownerfunc(HumanoidRootPart)
-					or networkownerfunc == nil
-						and gethiddenproperty(HumanoidRootPart, "NetworkOwnershipRule") == Enum.NetworkOwnership.Automatic
-				)
-
-			OldHipHeight = OldHipHeight or Humanoid.HipHeight --// Change Hip Hieght
-			Humanoid.HipHeight = OldHipHeight
-			RealRoot = HumanoidRootPart -- // Change HhumanoidRotPart
-			char.Parent = game -- Parent char to game
-			FakeRoot = RealRoot:Clone() -- Clone Root (Fake Root)
-			FakeRoot.Parent = char
-			RealRoot.Parent = cam
-			FakeRoot.CFrame = RealRoot.CFrame
-			char.PrimaryPart = FakeRoot -- // Change
-			char.Parent = workspace
-			RealRoot.CanCollide = true
-			RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 1 or 0
-			RealRoot.Color = Color3.fromRGB(71, 236, 50)
-			RealRoot.Material = Enum.Material.Water
-
-			task.wait(0.1)
-
-			for i, v in next, char:GetDescendants() do
-				if v:IsA("BodyVelocity") then
-					v:Destroy()
-				end
-				if v:IsA("Weld") or v:IsA("Motor6D") then
-					if v.Part0 and v.Part0 == RealRoot then
-						v.Part0 = FakeRoot
-					end
-					if v.Part1 and v.Part1 == RealRoot then
-						v.Part1 = FakeRoot
-					end
-				end
-			end
-
-			for i, v in next, RealRoot:GetDescendants() do
-				if v:IsA("BodyVelocity") then
-					v:Destroy()
-				end
-			end
-
-			PlayFunction()
-
-			BindToStepped("AnticheatAssist", function()
-				--// Check FPS
-				if NextTrack <= os.time() then
-					local ping = math.floor(
-						tonumber(game:GetService("Stats"):FindFirstChild("PerformanceStats").Ping:GetValue())
-					)
-					local fps = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
-					if #pinglist >= 10 then
-						table.remove(pinglist, 1)
-					end
-					if #fpslist >= 10 then
-						table.remove(fpslist, 1)
-					end
-					table.insert(pinglist, ping)
-					table.insert(fpslist, fps)
-					task.wait(1)
-				end
-
-				--// Setting CFrame
-				if isAlive() then
-					--// Check if got anti cheated
-					if
-						networkownerfunc == nil
-						and gethiddenproperty(RealRoot, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
-					then
-						if lagbackcurrent == false then
-							lagbacknum = tick() + 8
-							lagbackcurrent = true
-						end
-						if lagbacknum <= tick() then
-							sethiddenproperty(RealRoot, "NetworkOwnershipRule", Enum.NetworkOwnership.Automatic)
-						end
-					else
-						lagbackcurrent = false
-					end
-
-					--// Actual CFraming
-					if RealRoot and FakeRoot then
-						--//
-						if
-							networkownerfunc == nil
-							and gethiddenproperty(RealRoot, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
-						then
-							if lagbackcurrent == false then
-								lagbacknum = tick() + 8
-								lagbackcurrent = true
-							end
-							if lagbacknum <= tick() then
-								sethiddenproperty(RealRoot, "NetworkOwnershipRule", Enum.NetworkOwnership.Automatic)
-							end
-						else
-							lagbackcurrent = false
-						end
-
-						--// Setting up the cframe
-						if
-							networkownerfunc and (not networkownerfunc(RealRoot))
-							or networkownerfunc == nil
-								and gethiddenproperty(RealRoot, "NetworkOwnershipRule") == Enum.NetworkOwnership.Manual
-						then
-							FakeRoot.CFrame = RealRoot.CFrame
-						else
-							local MoveDirection = Humanoid.MoveDirection * 20
-							local Velo = Vector3.new(MoveDirection.X, FakeRoot.Velocity.Y, MoveDirection.Z)
-							RealRoot.Velocity = Velo
-							RealRoot.RotVelocity = Vector3.zero
-							RealRoot.Transparency = AnticheatAssistTransparent.Enabled and 1 or 0.7
-
-							local Magnitude = (FakeRoot.Position - RealRoot.Position).Magnitude
-							if Magnitude > AnticheatAssistConstants.MaxDistance then
-								FakeRoot.CFrame = RealRoot.CFrame
-							end
-
-							local Delay = currentTarget ~= nil and AnticheatAssistConstants.CombatDelay
-								or AnticheatAssistConstants.Delay
-							if tick() - AnticheatAssistLastTick > Delay then
-								AnticheatAssistLastTick = tick()
-								RealRoot.CFrame = RealRoot.CFrame:Lerp(FakeRoot.CFrame, AnticheatAssistConstants.Lerp)
-							end
-						end
-					end
-				end
-			end)
-		end)
-	end
-
-	local function DisableAnticheatAssist(char)
-		if IsUsingAntiCheatAssist then
-		else
-			return
-		end
-		spawn(function()
-			if not isAlive() then
-				repeat
-					task.wait()
-				until isAlive()
-			end
-			local char = char or lplr.Character
-			local Humanoid = char:FindFirstChildWhichIsA("Humanoid")
-			UnbindFromStepped("AnticheatAssist")
-			pcall(function()
-				char.Parent = game
-			end)
-			if RealRoot and RealRoot.Parent ~= nil then
-				RealRoot.Parent = char
-				char.PrimaryPart = RealRoot
-				RealRoot.Transparency = 1
-			end
-			if char.Parent ~= nil then
-				char.Parent = workspace
-			end
-			for i, v in next, char:GetDescendants() do
-				if v:IsA("BodyVelocity") then
-					v:Destroy()
-				end
-				if v:IsA("Weld") or v:IsA("Motor6D") then
-					if v.Part0 and v.Part0 == FakeRoot then
-						v.Part0 = RealRoot
-					end
-					if v.Part1 and v.Part1 == FakeRoot then
-						v.Part1 = RealRoot
-					end
-				end
-			end
-			if Humanoid then
-				Humanoid.HipHeight = OldHipHeight
-			end
-			if FakeRoot then
-				FakeRoot:Destroy()
-				FakeRoot = nil
-			end
-		end)
-	end
-
-	-- AntiCheat Bypass real
-
-	--// AntiCheat Frame
-	local AntiCheatFrame = BlantantFrame.Toggle({
-		Text = "AntiCheat Real",
+	--// AutoBuyFrame
+	local AutoBuyFrame = BlantantFrame.Toggle({
+		Text = "FastDrop",
 		Callback = function(Value)
-			IClientToggleProperty.AnticheatBypass = IsToggleAble(Value)
-			if IClientToggleProperty.AnticheatBypass then
-				AnticheatAssistConnections["CharacterRemoving"] = lplr.CharacterRemoving:Connect(function(char)
-					DisableAnticheatAssist(char)
-				end)
+			IClientToggleProperty.FastDropToggle = IsToggleAble(Value)
 
-				AnticheatAssistConnections["CharacterAdded"] = lplr.CharacterAdded:Connect(function(char)
-					AnticheatAssistFunction(char)
+			if IClientToggleProperty.FastDropToggle then
+				BindToHeartbeat("FastDrop", function()
+					if not IClientToggleProperty.FastDropToggle then
+						return
+					end
+					if
+						isAlive()
+						and not bedwars["ClientStoreHandler"]:getState().Inventory.opened
+						and (UIS:IsKeyDown(Enum.KeyCode.Q) or UIS:IsKeyDown(Enum.KeyCode.Backspace))
+						and UIS:GetFocusedTextBox() == nil
+					then
+						task.spawn(bedwars["DropItem"])
+					end
 				end)
-
-				AnticheatAssistConnections["TeamUpdate"] = lplr:GetPropertyChangedSignal("Team"):Connect(function()
-					local char = lplr.Character
-					DisableAnticheatAssist(char)
-					AnticheatAssistFunction(char)
-				end)
-
-				if isAlive() then
-					AnticheatAssistFunction(lplr.Character)
-				end
 			else
-				UnbindFromStepped("AnticheatAssist")
-
-				for i, v in next, AnticheatAssistConnections do
-					v:Disconnect()
-					AnticheatAssistConnections[i] = nil
-				end
-
-				if isAlive() then
-					DisableAnticheatAssist(lplr.Character)
-				end
+				UnbindFromHeartbeat("FastDrop")
 			end
 		end,
-		Enabled = IClientToggleProperty.AnticheatBypass,
+		Enabled = IClientToggleProperty.FastDropToggle,
 	})
 
-	ButtonInGui["AntiCheat Real"] = { AntiCheatFrame, "AnticheatBypass" }
-
-	--AntiCheatFrame:SetState(IClientToggleProperty.AnticheatBypass)
+	ButtonInGui["FastDrop"] = { AutoBuyFrame, "FastDropToggle" }
 end
 
 ----------// AutoBuy Handler
@@ -2140,6 +1577,68 @@ do
 		Text = "Auto Buy",
 		Callback = function(Value)
 			IClientToggleProperty.AutoBuyToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.AutoBuyToggle then
+				BindToHeartbeat("AutoBuy", function()
+					if not IClientToggleProperty.AutoBuyToggle then
+						return
+					end
+					local currentTeamUpgrades = bedwars["ClientStoreHandler"]:getState().Bedwars.teamUpgrades
+					if isAlive() then
+						for i, v in next, is do
+							local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
+							if mag <= 15 then
+								for b, a in ipairs(priolist) do
+									local buyme
+									for i, v in next, a do
+										local item = getShopItem(v)
+										local amt = getItemAmt(item.currency)
+										local currentItem = getCurrentItem(a) or { itemType = "placeholder" }
+										if
+											amt
+											and item
+											and item.price
+											and amt >= item.price
+											and (i > (table.find(a, currentItem.itemType) or 0))
+										then
+											if item.itemType == "diamond_sword" or item.itemType == "emerald_sword" then
+												if currentTeamUpgrades.armory ~= nil then
+													buyme = item
+												end
+											else
+												buyme = item
+											end
+										end
+									end
+									if buyme and not getItem(buyme.itemType) then
+										if buyme.itemType == "wool_white" and getwoolamt() < WoolCap.Value then
+											buy(buyme)
+										elseif buyme.itemType ~= "wool_white" then
+											buy(buyme)
+										end
+									end
+								end
+							end
+						end
+						for i, v in next, tu do
+							local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
+							if mag <= 15 then
+								for a, b in ipairs(teampriolist) do
+									local upgradetab = getTeamUpgrade(b)
+									local currentTier = currentTeamUpgrades[b] or -1
+									if currentTier + 1 ~= #upgradetab.tiers then
+										for i, v in next, upgradetab.tiers do
+											upgrade(b, i - 1)
+										end
+									end
+								end
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromHeartbeat("AutoBuy")
+			end
 		end,
 		Enabled = IClientToggleProperty.AutoBuyToggle,
 	})
@@ -2162,712 +1661,37 @@ do
 		end
 	end)
 
-	BindToHeartbeat("AutoBuy", function()
-		if not IClientToggleProperty.AutoBuyToggle then
-			return
-		end
-		local currentTeamUpgrades = bedwars["ClientStoreHandler"]:getState().Bedwars.teamUpgrades
-		if isAlive() then
-			for i, v in next, is do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					for b, a in ipairs(priolist) do
-						local buyme
-						for i, v in next, a do
-							local item = getShopItem(v)
-							local amt = getItemAmt(item.currency)
-							local currentItem = getCurrentItem(a) or { itemType = "placeholder" }
-							if
-								amt
-								and item
-								and item.price
-								and amt >= item.price
-								and (i > (table.find(a, currentItem.itemType) or 0))
-							then
-								if item.itemType == "diamond_sword" or item.itemType == "emerald_sword" then
-									if currentTeamUpgrades.armory ~= nil then
-										buyme = item
-									end
-								else
-									buyme = item
-								end
-							end
-						end
-						if buyme and not getItem(buyme.itemType) then
-							if buyme.itemType == "wool_white" and getwoolamt() < WoolCap.Value then
-								buy(buyme)
-							elseif buyme.itemType ~= "wool_white" then
-								buy(buyme)
-							end
-						end
-					end
-				end
-			end
-			for i, v in next, tu do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					for a, b in ipairs(teampriolist) do
-						local upgradetab = getTeamUpgrade(b)
-						local currentTier = currentTeamUpgrades[b] or -1
-						if currentTier + 1 ~= #upgradetab.tiers then
-							for i, v in next, upgradetab.tiers do
-								upgrade(b, i - 1)
-							end
-						end
-					end
-				end
-			end
-		end
-	end)
-
 	--AutoBuyFrame:SetState(IClientToggleProperty.AutoBuyToggle)
 end
 
 ----------// No Fall Damage Handler
 do
 	local falltick = tick()
-	--// Frame
 	local AutoBuyFrame = BlantantFrame.Toggle({
 		Text = "No Fall Damage",
 		Callback = function(Value)
 			IClientToggleProperty.NoFallToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.NoFallToggle then
+				BindToHeartbeat("NoFall", function()
+					if not IClientToggleProperty.NoFallToggle then
+						return
+					end
+					if tick() >= falltick then
+					else
+						return
+					end
+					falltick = tick() + 0.5
+					bedwars["ClientHandler"]:Get("GroundHit"):SendToServer()
+				end)
+			else
+				UnbindFromHeartbeat("NoFall")
+			end
 		end,
 		Enabled = IClientToggleProperty.NoFallToggle,
 	})
 
 	ButtonInGui["No Fall Damage"] = { AutoBuyFrame, "NoFallToggle" }
-
-	BindToHeartbeat("NoFall", function()
-		if not IClientToggleProperty.NoFallToggle then
-			return
-		end
-		if tick() >= falltick then
-		else
-			return
-		end
-		falltick = tick() + 0.5
-		bedwars["ClientHandler"]:Get("GroundHit"):SendToServer()
-	end)
-end
-
-----------// Player ESP Handler
-do
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "Player ESP",
-		Callback = function(Value)
-			IClientToggleProperty.PlayEspToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.PlayEspToggle,
-	})
-
-	ButtonInGui["Player ESP"] = { AutoBuyFrame, "PlayEspToggle" }
-
-	local BeeTable = {}
-
-	BindToRenderStep("ESP", function()
-		if IClientToggleProperty.PlayEspToggle then
-			for i, plr in pairs(PLAYERS:GetPlayers()) do
-				if plr.Character then
-					if BeeTable[plr.Character] then
-					else
-						if plr.Name == lplr.Name then
-						else
-							if plr.Character then
-								local MakeHighLight = Instance.new("BoxHandleAdornment")
-								MakeHighLight.Name = plr.Name
-								MakeHighLight.Adornee = plr.Character.HumanoidRootPart
-								MakeHighLight.Size = plr.Character.HumanoidRootPart.Size
-								MakeHighLight.AlwaysOnTop = true
-								MakeHighLight.Color3 = plr.Team.Name == lplr.Team.Name and Color3.new(0.333333, 1, 0)
-									or Color3.new(1, 0, 0)
-								MakeHighLight.Parent = ESPFolder
-								MakeHighLight.ZIndex = 1
-								MakeHighLight.Transparency = 0.3
-								BeeTable[plr.Character] = MakeHighLight
-							end
-						end
-					end
-
-					for i, v in pairs(BeeTable) do
-						if i:IsDescendantOf(workspace) then
-							if i.Humanoid.Health > 0 then
-								v.Transparency = 0.3
-							else
-								v.Transparency = 1
-							end
-						else
-							v:Destroy()
-						end
-					end
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
-end
-
-----------// Bee ESP Handler
-do
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "Bee ESP",
-		Callback = function(Value)
-			IClientToggleProperty.BeeEspToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.BeeEspToggle,
-	})
-
-	ButtonInGui["Bee ESP"] = { AutoBuyFrame, "BeeEspToggle" }
-
-	local BeeTable = {}
-
-	BindToRenderStep("BeeEsp", function()
-		if IClientToggleProperty.BeeEspToggle then
-			for i, plr in pairs(COLLECTION:GetTagged("bee")) do
-				if BeeTable[plr] then
-				else
-					local MakeHighLight = Instance.new("BoxHandleAdornment")
-					MakeHighLight.Name = "BeeEsp"
-					MakeHighLight.Adornee = plr.Root
-					MakeHighLight.Size = plr.Root.Size
-					MakeHighLight.AlwaysOnTop = true
-					MakeHighLight.Color3 = Color3.fromRGB(255, 255, 127)
-					MakeHighLight.Parent = ESPFolder
-					MakeHighLight.ZIndex = 1
-					MakeHighLight.Transparency = 0.3
-					BeeTable[plr] = MakeHighLight
-				end
-			end
-
-			for i, v in pairs(BeeTable) do
-				if i:IsDescendantOf(workspace) then
-					if IClientToggleProperty.InstantBeeToggle then
-						i.Root.ProximityPrompt.HoldDuration = 0
-					else
-						i.Root.ProximityPrompt.HoldDuration = 0.3
-					end
-				else
-					v:Destroy()
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
-end
-
-----------// Sheep ESP Handler
-do
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "Sheep ESP",
-		Callback = function(Value)
-			IClientToggleProperty.SheepEspToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.SheepEspToggle,
-	})
-
-	ButtonInGui["Sheep ESP"] = { AutoBuyFrame, "SheepEspToggle" }
-
-	local BeeTable = {}
-
-	BindToRenderStep("SheepEsp", function()
-		if IClientToggleProperty.SheepEspToggle then
-			for i, plr in pairs(COLLECTION:GetTagged("SheepModel")) do
-				if BeeTable[plr] then
-				else
-					local MakeHighLight = Instance.new("BoxHandleAdornment")
-					MakeHighLight.Name = "SheepEsp"
-					MakeHighLight.Adornee = plr.RootPart
-					MakeHighLight.Size = plr.RootPart.Size
-					MakeHighLight.AlwaysOnTop = true
-					MakeHighLight.Color3 = Color3.fromRGB(85, 170, 255)
-					MakeHighLight.Parent = ESPFolder
-					MakeHighLight.ZIndex = 1
-					MakeHighLight.Transparency = 0.3
-					BeeTable[plr] = MakeHighLight
-				end
-			end
-
-			for i, v in pairs(BeeTable) do
-				if i:IsDescendantOf(workspace) then
-				else
-					v:Destroy()
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
-end
-
-----------// Metal ESP Handler
-do
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "Metal ESP",
-		Callback = function(Value)
-			IClientToggleProperty.MetalEspToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.MetalEspToggle,
-	})
-
-	ButtonInGui["Metal ESP"] = { AutoBuyFrame, "MetalEspToggle" }
-
-	local BeeTable = {}
-
-	BindToRenderStep("MetalEsp", function()
-		if IClientToggleProperty.MetalEspToggle then
-			for i, plr in pairs(COLLECTION:GetTagged("hidden-metal")) do
-				if BeeTable[plr] then
-				else
-					local MakeHighLight = Instance.new("BoxHandleAdornment")
-					MakeHighLight.Name = "MetalEsp"
-					MakeHighLight.Adornee = plr.Part
-					MakeHighLight.Size = plr.Part.Size
-					MakeHighLight.AlwaysOnTop = true
-					MakeHighLight.Color3 = Color3.fromRGB(0, 0, 255)
-					MakeHighLight.Parent = ESPFolder
-					MakeHighLight.ZIndex = 1
-					MakeHighLight.Transparency = 0.3
-					BeeTable[plr] = MakeHighLight
-				end
-			end
-
-			for i, v in pairs(BeeTable) do
-				if i:IsDescendantOf(workspace) then
-					v.Adornee = i.Part
-
-					if IClientToggleProperty.MetalCollectType == "2x Speed" then
-						i.ProximityPrompt.HoldDuration = 0.5
-					elseif IClientToggleProperty.MetalCollectType == "Instant Collect" then
-						i.ProximityPrompt.HoldDuration = 0
-					else
-						i.ProximityPrompt.HoldDuration = 1
-					end
-				else
-					v:Destroy()
-				end
-			end
-		else
-			for i, v in pairs(BeeTable) do
-				v.Transparency = 1
-			end
-		end
-	end)
-end
-
-----------// Auto Bank Handler
-do
-	--// UI Stats
-	local MakeUI = Instance.new("ScreenGui", lplr.PlayerGui)
-	MakeUI.ResetOnSpawn = false
-	autobankui = Instance.new("Frame")
-	autobankui.Size = UDim2.new(0, 160, 0, 40)
-	autobankui.Position = UDim2.new(0, 0, 0, -200)
-	autobankui.BackgroundTransparency = 1
-	autobankui.Parent = MakeUI
-	local emerald = Instance.new("ImageLabel")
-	emerald.Image = bedwars["getIcon"]({ itemType = "emerald" }, true)
-	emerald.Size = UDim2.new(0, 40, 0, 40)
-	emerald.Name = "emerald"
-	emerald.Position = UDim2.new(0, 80, 0, 0)
-	emerald.BackgroundTransparency = 1
-	emerald.Parent = autobankui
-	local emeraldtext = Instance.new("TextLabel")
-	emeraldtext.TextSize = 20
-	emeraldtext.BackgroundTransparency = 1
-	emeraldtext.Size = UDim2.new(1, 0, 1, 0)
-	emeraldtext.Font = Enum.Font.SourceSans
-	emeraldtext.TextStrokeTransparency = 0.3
-	emeraldtext.Name = "Amount"
-	emeraldtext.Text = ""
-	emeraldtext.TextColor3 = Color3.new(1, 1, 1)
-	emeraldtext.Parent = emerald
-	local diamond = emerald:Clone()
-	diamond.Image = bedwars["getIcon"]({ itemType = "diamond" }, true)
-	diamond.Position = UDim2.new(0, 40, 0, 0)
-	diamond.Name = "diamond"
-	diamond.Parent = autobankui
-	local iron = emerald:Clone()
-	iron.Image = bedwars["getIcon"]({ itemType = "iron" }, true)
-	iron.Position = UDim2.new(0, 0, 0, 0)
-	iron.Name = "iron"
-	iron.Parent = autobankui
-	local crystal = emerald:Clone()
-	crystal.Image = bedwars["getIcon"]({ itemType = "void_crystal" }, true)
-	crystal.Position = UDim2.new(0, 120, 0, 0)
-	crystal.Name = "void_crystal"
-	crystal.Parent = autobankui
-
-	local echest = ReplicatedStorage.Inventories:FindFirstChild(lplr.Name .. "_personal")
-	local AutoBankTransmitted, AutoBankTransmittedType = false, false
-
-	local function refreshbank()
-		if autobankui then
-			local echest = ReplicatedStorage.Inventories:FindFirstChild(lplr.Name .. "_personal")
-			for i, v in pairs(autobankui:GetChildren()) do
-				if echest:FindFirstChild(v.Name) then
-					v.Amount.Text = echest[v.Name]:GetAttribute("Amount")
-				else
-					v.Amount.Text = ""
-				end
-			end
-		end
-	end
-
-	local tu = {}
-	local is = {}
-	local isWithdrawed = false
-
-	for i, v in next, WORKSPACE:GetChildren() do
-		if v.Name == "item_shop" then
-			is[#is + 1] = v
-		elseif v.Name:find("upgrade_shop") then
-			tu[#tu + 1] = v
-		end
-	end
-
-	childadded = WORKSPACE.ChildAdded:Connect(function(v)
-		if v.Name == "item_shop" then
-			is[#is + 1] = v
-		elseif v.Name:find("upgrade_shop") then
-			tu[#tu + 1] = v
-		end
-	end)
-
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "Auto Bank",
-		Callback = function(Value)
-			IClientToggleProperty.AutoBankToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.AutoBankToggle,
-	})
-
-	ButtonInGui["Auto Bank"] = { AutoBuyFrame, "AutoBankToggle" }
-
-	local IsWithdrawed = false
-	local WithdrawTick = tick()
-
-	BindToRenderStep("AutoBank", function()
-		if tick() < WithdrawTick then
-			return
-		end
-		WithdrawTick = tick() + 0.15
-		if IClientToggleProperty.AutoBankToggle then
-			local IsNearNPC = false
-
-			for i, v in next, is do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					IsNearNPC = true
-				end
-			end
-			for i, v in next, tu do
-				local mag = (lplr.Character.HumanoidRootPart.Position - v.Position).magnitude
-				if mag <= 15 then
-					IsNearNPC = true
-				end
-			end
-
-			if isAlive() then
-				isWithdrawed = false
-				if IsNearNPC then
-					if echest == nil then
-						echest = ReplicatedStorage.Inventories:FindFirstChild(lplr.Name .. "_personal")
-					end
-					local chestitems = echest and echest:GetChildren() or {}
-					if #chestitems > 0 then
-						for i3, v3 in pairs(chestitems) do
-							if
-								v3:IsA("Accessory")
-								and (
-									v3.Name == "void_crystal"
-									or v3.Name == "emerald"
-									or v3.Name == "iron"
-									or v3.Name == "diamond"
-								)
-							then
-								task.spawn(function()
-									bedwars["ClientHandler"]
-										:GetNamespace("Inventory")
-										:Get("ChestGetItem")
-										:CallServer(echest, v3)
-									refreshbank()
-								end)
-							end
-						end
-					end
-				else
-					local chestitems = bedwars["getInventory"](lplr).items
-					for i3, v3 in pairs(chestitems) do
-						if
-							v3.itemType == "void_crystal"
-							or v3.itemType == "emerald"
-							or v3.itemType == "iron"
-							or v3.itemType == "diamond"
-						then
-							bedwars["ClientHandler"]
-								:GetNamespace("Inventory")
-								:Get("ChestGiveItem")
-								:CallServer(echest, v3.tool)
-							refreshbank()
-						end
-					end
-				end
-			end
-
-			if autobankui then
-				local hotbar = lplr.PlayerGui:FindFirstChild("hotbar")
-				if hotbar then
-					local healthbar = hotbar["1"]:FindFirstChild("HotbarHealthbarContainer")
-					if healthbar then
-						autobankui.Position = UDim2.new(0.5, -80, 0, healthbar.AbsolutePosition.Y - 50)
-					end
-				end
-			end
-		else
-			if not isWithdrawed then
-				isWithdrawed = true
-				local chestitems = echest and echest:GetChildren() or {}
-				if #chestitems > 0 then
-					for i3, v3 in pairs(chestitems) do
-						if
-							v3:IsA("Accessory")
-							and (
-								v3.Name == "void_crystal"
-								or v3.Name == "emerald"
-								or v3.Name == "iron"
-								or v3.Name == "diamond"
-							)
-						then
-							task.spawn(function()
-								bedwars["ClientHandler"]
-									:GetNamespace("Inventory")
-									:Get("ChestGetItem")
-									:CallServer(echest, v3)
-								refreshbank()
-							end)
-						end
-					end
-				end
-			end
-		end
-	end)
-end
-
-----------// Chest Stealer Handler
-do
-	local ChestStealerDelay = { ["Value"] = 1 }
-
-	local cheststealerfuncs = {
-		Open = function()
-			if bedwars["AppController"]:isAppOpen("ChestApp") then
-				local chest = lplr.Character:FindFirstChild("ObservedChestFolder")
-				local chestitems = chest and chest.Value and chest.Value:GetChildren() or {}
-				if #chestitems > 0 then
-					for i3, v3 in pairs(chestitems) do
-						if v3:IsA("Accessory") then
-							task.spawn(function()
-								pcall(function()
-									bedwars["ClientHandler"]
-										:GetNamespace("Inventory")
-										:Get("ChestGetItem")
-										:CallServer(chest.Value, v3)
-								end)
-							end)
-							task.wait(ChestStealerDelay["Value"] / 100)
-						end
-					end
-				end
-			end
-		end,
-		Closed = function()
-			for i, v in pairs(COLLECTION:GetTagged("chest")) do
-				if
-					(lplr.Character.HumanoidRootPart.Position - v.Position).magnitude <= 18
-					and v:FindFirstChild("ChestFolderValue")
-				then
-					local chest = v:FindFirstChild("ChestFolderValue")
-					chest = chest and chest.Value or nil
-					local chestitems = chest and chest:GetChildren() or {}
-					if #chestitems > 0 then
-						bedwars["ClientHandler"]:GetNamespace("Inventory"):Get("SetObservedChest"):SendToServer(chest)
-						for i3, v3 in pairs(chestitems) do
-							if v3:IsA("Accessory") then
-								task.spawn(function()
-									pcall(function()
-										bedwars["ClientHandler"]
-											:GetNamespace("Inventory")
-											:Get("ChestGetItem")
-											:CallServer(v.ChestFolderValue.Value, v3)
-									end)
-								end)
-								task.wait(ChestStealerDelay["Value"] / 100)
-							end
-						end
-						bedwars["ClientHandler"]:GetNamespace("Inventory"):Get("SetObservedChest"):SendToServer(nil)
-					end
-				end
-			end
-		end,
-	}
-
-	local WiggleAnimationFrame = BlantantFrame.Toggle({
-		Text = "Chest Stealer",
-		Callback = function(Value)
-			IClientToggleProperty.ChestStealerToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.ChestStealerToggle,
-	})
-
-	ButtonInGui["Chest Stealer"] = { WiggleAnimationFrame, "ChestStealerToggle" }
-
-	BindToRenderStep("ChestStealer", function()
-		if IClientToggleProperty.ChestStealerToggle then
-		else
-			return
-		end
-		if isAlive() then
-			cheststealerfuncs["Open"]()
-			cheststealerfuncs["Closed"]()
-		end
-	end)
-end
-
-----------// Fast Consumer Handler
-do
-	local shoothook
-	local oldchargetime
-	local oldclickhold
-	local oldclickhold2
-	local roact
-
-	local WiggleAnimationFrame = BlantantFrame.Toggle({
-		Text = "Insta Consume",
-		Callback = function(Value)
-			IClientToggleProperty.FastConsumeToggle = IsToggleAble(Value, "FastConsumeToggle")
-			if IClientToggleProperty.FastConsumeToggle then
-				oldclickhold = bedwars["ClickHold"].startClick
-				oldclickhold2 = bedwars["ClickHold"].showProgress
-				bedwars["ClickHold"].showProgress = function(p5)
-					local roact = debug.getupvalue(oldclickhold2, 1)
-					local countdown = roact.mount(
-						roact.createElement(
-							"ScreenGui",
-							{},
-							{
-								roact.createElement(
-									"Frame",
-									{
-										[roact.Ref] = p5.wrapperRef,
-										Size = UDim2.new(0, 0, 0, 0),
-										Position = UDim2.new(0.5, 0, 0.55, 0),
-										AnchorPoint = Vector2.new(0.5, 0),
-										BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-										BackgroundTransparency = 0.8,
-									},
-									{
-										roact.createElement("Frame", {
-											[roact.Ref] = p5.progressRef,
-											Size = UDim2.new(0, 0, 1, 0),
-											BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-											BackgroundTransparency = 0.5,
-										}),
-									}
-								),
-							}
-						),
-						lplr:FindFirstChild("PlayerGui")
-					)
-					p5.handle = countdown
-					local sizetween = game
-						:GetService("TweenService")
-						:Create(p5.wrapperRef:getValue(), TweenInfo.new(0.1), {
-							Size = UDim2.new(0.11, 0, 0.005, 0),
-						})
-					table.insert(p5.tweens, sizetween)
-					sizetween:Play()
-					local countdowntween = game:GetService("TweenService"):Create(
-						p5.progressRef:getValue(),
-						TweenInfo.new(p5.durationSeconds * (0 / 40), Enum.EasingStyle.Linear),
-						{
-							Size = UDim2.new(1, 0, 1, 0),
-						}
-					)
-					table.insert(p5.tweens, countdowntween)
-					countdowntween:Play()
-					return countdown
-				end
-				bedwars["ClickHold"].startClick = function(p4)
-					p4.startedClickTime = tick()
-					local u2 = p4:showProgress()
-					local clicktime = p4.startedClickTime
-					bedwars["RuntimeLib"].Promise.defer(function()
-						task.wait(p4.durationSeconds * (0 / 40))
-						if u2 == p4.handle and clicktime == p4.startedClickTime and p4.closeOnComplete then
-							p4:hideProgress()
-							if p4.onComplete ~= nil then
-								p4.onComplete()
-							end
-							if p4.onPartialComplete ~= nil then
-								p4.onPartialComplete(1)
-							end
-							p4.startedClickTime = -1
-						end
-					end)
-				end
-			else
-				if oldclickhold and oldclickhold2 then
-					bedwars["ClickHold"].startClick = oldclickhold
-					bedwars["ClickHold"].showProgress = oldclickhold2
-				end
-				oldchargetime = nil
-				oldclickhold = nil
-				oldclickhold2 = nil
-				shoothook = nil
-			end
-		end,
-		Enabled = IClientToggleProperty.FastConsumeToggle,
-	})
-	ButtonInGui["Insta Consume"] = { WiggleAnimationFrame, "FastConsumeToggle" }
-end
-
-----------// Fast Bee Handler
-do
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "Instant Bee pickup",
-		Callback = function(Value)
-			IClientToggleProperty.InstantBeeToggle = IsToggleAble(Value)
-		end,
-		Enabled = IClientToggleProperty.InstantBeeToggle,
-	})
-
-	ButtonInGui["Fast Bee"] = { AutoBuyFrame, "InstantBeeToggle" }
-end
-
-----------// Fast Metal Handler
-do
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Dropdown({
-		Text = "Metal Collect Type",
-		Callback = function(Value)
-			IClientToggleProperty.MetalCollectType = Value
-		end,
-		Options = { "Normal Speed", "2x Speed", "Instant Collect" },
-	})
-
-	ButtonInGui["Metal Collect Type"] = { AutoBuyFrame, "MetalCollectType" }
 end
 
 ----------// Instant Fishing Handler
@@ -2905,63 +1729,71 @@ do
 		Text = "Auto Heal",
 		Callback = function(Value)
 			IClientToggleProperty.AutoHealToggle = IsToggleAble(Value)
+
+			if IClientToggleProperty.AutoHealToggle then
+				BindToRenderStep("AutoHeal", function()
+					if IClientToggleProperty.AutoHealToggle then
+					else
+						return
+					end
+					if isAlive() then
+						local item = getItem("apple")
+						local shield = getItem("big_shield") or getItem("mini_shield")
+						local pot = getItem("heal_splash_potion")
+						if item or pot then
+							if
+								lplr.Character:GetAttribute("Health")
+								<= (lplr.Character:GetAttribute("MaxHealth") - (100 - 70))
+							then
+								if item then
+									bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
+										["item"] = item["tool"],
+									})
+								else
+									local newray = workspace:Raycast(
+										(lplr.character.HumanoidRootPart).Position,
+										Vector3.new(0, -76, 0),
+										blockraycast
+									)
+									if newray ~= nil then
+										bedwars["ClientHandler"]:Get(bedwars["ProjectileRemote"]):CallServerAsync(
+											pot["tool"],
+											"heal_splash_potion",
+											"heal_splash_potion",
+											(lplr.character.HumanoidRootPart).Position,
+											Vector3.new(0, -70, 0),
+											game:GetService("HttpService"):GenerateGUID(),
+											{ drawDurationSeconds = 1 }
+										)
+									end
+								end
+							end
+						end
+						if shield then
+							if
+								lplr.Character:GetAttribute("Shield_POTION")
+								and (
+									(not lplr.Character:GetAttribute("Shield_POTION"))
+									or lplr.Character:GetAttribute("Shield_POTION") == 0
+								)
+							then
+								bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
+									["item"] = shield["tool"],
+								})
+							end
+						end
+					end
+				end)
+			else
+				UnbindFromRenderStep("AutoHeal")
+			end
 		end,
 		Enabled = IClientToggleProperty.AutoHealToggle,
 	})
 
 	ButtonInGui["Auto Heal"] = { AutoBuyFrame, "AutoHealToggle" }
-
-	BindToRenderStep("AutoHeal", function()
-		if IClientToggleProperty.AutoHealToggle then
-		else
-			return
-		end
-		if isAlive() then
-			local item = getItem("apple")
-			local shield = getItem("big_shield") or getItem("mini_shield")
-			local pot = getItem("heal_splash_potion")
-			if item or pot then
-				if lplr.Character:GetAttribute("Health") <= (lplr.Character:GetAttribute("MaxHealth") - (100 - 70)) then
-					if item then
-						bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
-							["item"] = item["tool"],
-						})
-					else
-						local newray = workspace:Raycast(
-							(lplr.character.HumanoidRootPart).Position,
-							Vector3.new(0, -76, 0),
-							blockraycast
-						)
-						if newray ~= nil then
-							bedwars["ClientHandler"]:Get(bedwars["ProjectileRemote"]):CallServerAsync(
-								pot["tool"],
-								"heal_splash_potion",
-								"heal_splash_potion",
-								(lplr.character.HumanoidRootPart).Position,
-								Vector3.new(0, -70, 0),
-								game:GetService("HttpService"):GenerateGUID(),
-								{ drawDurationSeconds = 1 }
-							)
-						end
-					end
-				end
-			end
-			if shield then
-				if
-					lplr.Character:GetAttribute("Shield_POTION")
-					and (
-						(not lplr.Character:GetAttribute("Shield_POTION"))
-						or lplr.Character:GetAttribute("Shield_POTION") == 0
-					)
-				then
-					bedwars["ClientHandler"]:Get(bedwars["EatRemote"]):CallServerAsync({
-						["item"] = shield["tool"],
-					})
-				end
-			end
-		end
-	end)
 end
+
 
 ----------// Auto Leave/Queue Handler
 do
@@ -2997,7 +1829,6 @@ do
 				and bedwars["ClientStoreHandler"]:getState().Party.leader.userId == lplr.UserId
 			then
 				if IClientToggleProperty.AutoPlayToggle then
-					warn("[IClient]: Queueing " .. queueType)
 					bedwars["LobbyClientEvents"].joinQueue:fire({
 						queueType = queueType,
 					})
@@ -3039,6 +1870,89 @@ do
 	end)
 end
 
+----------// Chest Stealer Handler
+do
+	local ChestStealerDelay = { ["Value"] = 1 }
+
+	local cheststealerfuncs = {
+		Open = function()
+			if bedwars["AppController"]:isAppOpen("ChestApp") then
+				local chest = lplr.Character:FindFirstChild("ObservedChestFolder")
+				local chestitems = chest and chest.Value and chest.Value:GetChildren() or {}
+				if #chestitems > 0 then
+					for i3, v3 in pairs(chestitems) do
+						if v3:IsA("Accessory") then
+							task.spawn(function()
+								pcall(function()
+									bedwars["ClientHandler"]
+										:GetNamespace("Inventory")
+										:Get("ChestGetItem")
+										:CallServer(chest.Value, v3)
+								end)
+							end)
+							task.wait(ChestStealerDelay["Value"] / 100)
+						end
+					end
+				end
+			end
+		end,
+		Closed = function()
+			for i, v in pairs(CollectionService:GetTagged("chest")) do
+				if
+					(lplr.Character.HumanoidRootPart.Position - v.Position).magnitude <= 18
+					and v:FindFirstChild("ChestFolderValue")
+				then
+					local chest = v:FindFirstChild("ChestFolderValue")
+					chest = chest and chest.Value or nil
+					local chestitems = chest and chest:GetChildren() or {}
+					if #chestitems > 0 then
+						bedwars["ClientHandler"]:GetNamespace("Inventory"):Get("SetObservedChest"):SendToServer(chest)
+						for i3, v3 in pairs(chestitems) do
+							if v3:IsA("Accessory") then
+								task.spawn(function()
+									pcall(function()
+										bedwars["ClientHandler"]
+											:GetNamespace("Inventory")
+											:Get("ChestGetItem")
+											:CallServer(v.ChestFolderValue.Value, v3)
+									end)
+								end)
+								task.wait(ChestStealerDelay["Value"] / 100)
+							end
+						end
+						bedwars["ClientHandler"]:GetNamespace("Inventory"):Get("SetObservedChest"):SendToServer(nil)
+					end
+				end
+			end
+		end,
+	}
+
+	local WiggleAnimationFrame = LiteFrame.Toggle({
+		Text = "Chest Stealer",
+		Callback = function(Value)
+			IClientToggleProperty.ChestStealerToggle = Value
+
+			if IClientToggleProperty.ChestStealerToggle then
+				BindToRenderStep("ChestStealer", function()
+					if IClientToggleProperty.ChestStealerToggle then
+					else
+						return
+					end
+					if isAlive() then
+						cheststealerfuncs["Open"]()
+						cheststealerfuncs["Closed"]()
+					end
+				end)
+			else
+				UnbindFromRenderStep("ChestStealer")
+			end
+		end,
+		Enabled = IClientToggleProperty.ChestStealerToggle or false,
+	})
+
+	ButtonInGui["Chest Stealer"] = { WiggleAnimationFrame, "ChestStealerToggle" }
+end
+
 ----------// SpinBot
 do
 	local bodyspin
@@ -3062,11 +1976,11 @@ do
 					end
 				end)
 			else
+				UnbindFromRenderStep("SpinBot")
 				if bodyspin then
 					bodyspin.AngularVelocity = Vector3.new(0, 0, 0)
 					bodyspin:Destroy()
 				end
-				UnbindFromRenderStep("SpinBot")
 			end
 		end,
 		Enabled = IClientToggleProperty.SpinBotToggle,
@@ -3081,7 +1995,6 @@ do
 	local AutoBuyFrame = BlantantFrame.Button({
 		Text = "Be a person who cant do anything in exchange of not dying to most damage",
 		Callback = function(Value)
-
 			--[[
 			lplr.Character.Humanoid.Health = -5
 			for i = 1, 5 do
@@ -3100,7 +2013,7 @@ do
 			HRP1.CFrame = OldPos
 			Char.Parent = OldParent
 			task.wait()
-			lplr.Character.Humanoid.Health = -5
+			--lplr.Character.Humanoid.Health = -5
 		end,
 	})
 end
@@ -3163,18 +2076,18 @@ do
 					end
 					if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
 						BV.velocity = (
-								(workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B))
-								+ (
-									(
-										workspace.CurrentCamera.CoordinateFrame
-										* CFrame.new(
-											CONTROL.L + CONTROL.R,
-											(CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
-											0
-										).p
-									) - workspace.CurrentCamera.CoordinateFrame.p
-								)
-							) * SPEED
+							(workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B))
+							+ (
+								(
+									workspace.CurrentCamera.CoordinateFrame
+									* CFrame.new(
+										CONTROL.L + CONTROL.R,
+										(CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
+										0
+									).p
+								) - workspace.CurrentCamera.CoordinateFrame.p
+							)
+						) * SPEED
 						lCONTROL = { F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R }
 					elseif
 						(CONTROL.L + CONTROL.R) == 0
@@ -3183,22 +2096,22 @@ do
 						and SPEED ~= 0
 					then
 						BV.velocity = (
-								(workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B))
-								+ (
-									(
-										workspace.CurrentCamera.CoordinateFrame
-										* CFrame.new(
-											lCONTROL.L + lCONTROL.R,
-											(lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
-											0
-										).p
-									) - workspace.CurrentCamera.CoordinateFrame.p
-								)
-							) * SPEED
+							(workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B))
+							+ (
+								(
+									workspace.CurrentCamera.CoordinateFrame
+									* CFrame.new(
+										lCONTROL.L + lCONTROL.R,
+										(lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2,
+										0
+									).p
+								) - workspace.CurrentCamera.CoordinateFrame.p
+							)
+						) * SPEED
 					else
 						BV.velocity = Vector3.new(0, 0, 0)
 					end
-					--BG.cframe = workspace.CurrentCamera.CoordinateFrame
+				--BG.cframe = workspace.CurrentCamera.CoordinateFrame
 				until not FLYING
 				CONTROL = { F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0 }
 				lCONTROL = { F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0 }
@@ -3273,32 +2186,6 @@ do
 			end
 		end,
 	})
-end
-
-----------// Auto Report
-do
-
-	local LoggedPerson = {}
-
-	--// Frame
-	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "Auto Report",
-		Callback = function(Value)
-			IClientToggleProperty.AutoReportToggle = IsToggleAble(Value)
-		end,
-	    Enabled = IClientToggleProperty.AutoReportToggle
-	})
-
-	BindToRenderStep("AutoReport",function()
-		if IClientToggleProperty.AutoReportToggle then
-			for  i , v in pairs(PLAYERS:Getplayers()) do
-				if not LoggedPerson[v] and v ~= lplr  then
-					LoggedPerson[v] = true
-					PLAYERS:ReportAbuse(v, "Swearing", "Player did a bad thing!")
-				end
-			end	
-		end
-	end)	
 end
 
 --------------------------------------// Animation Tab

@@ -2160,6 +2160,11 @@ function Material.Load(Config)
 				return ToggleDefault
 			end
 
+			function ToggleLibrary:Remove()
+				Toggle:Destroy()
+				return ToggleDefault
+			end
+
 			return ToggleLibrary
 		end
 
@@ -2438,7 +2443,8 @@ function Material.Load(Config)
 		return OptionLibrary
 	end
 
-	return TabLibrary
+	return TabLibrary,MainFrame
 end
+
 --// Hello
 return Material

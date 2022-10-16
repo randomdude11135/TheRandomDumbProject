@@ -10,7 +10,6 @@ checkpublicrepo = function(id)
 		Method = "GET"
 	}) end)
 	if not suc then
-		warn("[IClient]: Error loading")
 		checkpublicreponum = checkpublicreponum + 1
 		task.wait(2)
 		return checkpublicrepo(id)
