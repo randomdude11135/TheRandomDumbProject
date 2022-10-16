@@ -197,11 +197,15 @@ MainFrame.Visible = false
 shared.MainUI = LoadIClientUI
 
 
+<<<<<<< HEAD
+shared.MainUI = LoadIClientUI
+=======
 UserInputService.InputBegan:Connect(function(obj)
 	if obj.KeyCode == Enum.KeyCode.RightShift then
 		MainFrame.Visible = not MainFrame.Visible
 	end
 end)
+>>>>>>> d307143a0e6e38604c4f35f64b681ad7c366af71
 
 ----// Non - Blantant Frame
 local LiteFrame = LoadIClientUI.New({
@@ -241,6 +245,12 @@ pcall(function()
 	loadstring(GetURL("GameScripts/Universal.Lua"))()
 end)
 
+<<<<<<< HEAD
+if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal") then
+	loadstring(readfile("IClient/CustomModules/Universal"))()
+end
+
+=======
 pcall(function()
 	local publicrepo = checkpublicrepo(game.PlaceId)
 	if publicrepo then
@@ -254,6 +264,7 @@ if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal
 	loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
 	end)
 end
+>>>>>>> d307143a0e6e38604c4f35f64b681ad7c366af71
 
 --------------------------------------// Settings Tab
 do
@@ -375,6 +386,12 @@ local Found = false
 local Loggined = false
 local NextCheck = os.time()
 local headers = {
+<<<<<<< HEAD
+	["content-type"] = "application/json"
+}	
+local WebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient", Body = {}, Method = "GET", Headers = headers}
+local CommandWebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetRunningCommands", Body = {}, Method = "GET", Headers = headers}
+=======
 	["content-type"] = "application/json",
 }
 local WebRequest = {
@@ -389,6 +406,7 @@ local CommandWebRequest = {
 	Method = "GET",
 	Headers = headers,
 }
+>>>>>>> d307143a0e6e38604c4f35f64b681ad7c366af71
 
 do
 	local PasswordSet
@@ -532,6 +550,10 @@ for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.O
 	end
 end
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> d307143a0e6e38604c4f35f64b681ad7c366af71
 --// Check Using Client
 do
 	game:GetService("RunService").Heartbeat:Connect(function()
@@ -651,6 +673,29 @@ do
 
 end
 
+<<<<<<< HEAD
+local GloblCommandsList = {
+ ["Kick"] = function(BodyInfo)
+	LocalPlayer:Kick("Trolled")
+ end
+
+}
+
+--// Commands Listener
+do
+	local NextTck = os.time()
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if NextTck > os.time() then return end
+		NextTck = os.time() + 5
+		local RequestedInfo = requestfunc(CommandWebRequest)
+		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)		
+
+		for i , v in pairs(EncodedInfo) do
+			
+		end
+	end)	
+end
+=======
 function createannouncement(announcetab)
 	local MakeUI = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
 	local notifyframereal = Instance.new("TextButton")
@@ -762,3 +807,4 @@ function createannouncement(announcetab)
 		notifyframereal:Remove()
 	end
 end
+>>>>>>> d307143a0e6e38604c4f35f64b681ad7c366af71
