@@ -197,7 +197,11 @@ MainFrame.Visible = false
 shared.MainUI = LoadIClientUI
 
 
-shared.MainUI = LoadIClientUI
+UserInputService.InputBegan:Connect(function(obj)
+	if obj.KeyCode == Enum.KeyCode.RightShift then
+		MainFrame.Visible = not MainFrame.Visible
+	end
+end)
 
 ----// Non - Blantant Frame
 local LiteFrame = LoadIClientUI.New({
@@ -237,10 +241,19 @@ pcall(function()
 	loadstring(GetURL("GameScripts/Universal.Lua"))()
 end)
 
-if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal") then
-	loadstring(readfile("IClient/CustomModules/Universal"))()
-end
+pcall(function()
+	local publicrepo = checkpublicrepo(game.PlaceId)
+	if publicrepo then
+		loadstring(publicrepo)()
+	end
+end)
 
+
+if isfolder("IClient/CustomModules") and isfile("IClient/CustomModules/Universal.Lua") then
+	pcall(function()
+	loadstring(readfile("IClient/CustomModules/Universal.Lua"))()
+	end)
+end
 
 --------------------------------------// Settings Tab
 do
@@ -362,10 +375,20 @@ local Found = false
 local Loggined = false
 local NextCheck = os.time()
 local headers = {
-	["content-type"] = "application/json"
-}	
-local WebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient", Body = {}, Method = "GET", Headers = headers}
-local CommandWebRequest = {Url = "https://majestic-tidal-saguaro.glitch.me/GetRunningCommands", Body = {}, Method = "GET", Headers = headers}
+	["content-type"] = "application/json",
+}
+local WebRequest = {
+	Url = "https://majestic-tidal-saguaro.glitch.me/GetPlayerUsingClient",
+	Body = {},
+	Method = "GET",
+	Headers = headers,
+}
+local CommandWebRequest = {
+	Url = "https://majestic-tidal-saguaro.glitch.me/GetRunningCommands",
+	Body = {},
+	Method = "GET",
+	Headers = headers,
+}
 
 do
 	local PasswordSet
@@ -628,24 +651,114 @@ do
 
 end
 
-local GloblCommandsList = {
- ["Kick"] = function(BodyInfo)
-	LocalPlayer:Kick("Trolled")
- end
-
-}
-
---// Commands Listener
-do
-	local NextTck = os.time()
-	game:GetService("RunService").Heartbeat:Connect(function()
-		if NextTck > os.time() then return end
-		NextTck = os.time() + 5
-		local RequestedInfo = requestfunc(CommandWebRequest)
-		local EncodedInfo = game:GetService("HttpService"):JSONDecode(RequestedInfo.Body)		
-
-		for i , v in pairs(EncodedInfo) do
-			
-		end
-	end)	
+function createannouncement(announcetab)
+	local MakeUI = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+	local notifyframereal = Instance.new("TextButton")
+	notifyframereal.AnchorPoint = Vector2.new(0.5, 0)
+	notifyframereal.BackgroundColor3 = announcetab.Error and Color3.fromRGB(235, 87, 87) or Color3.fromRGB(100, 103, 167)
+	notifyframereal.BorderSizePixel = 0
+	notifyframereal.AutoButtonColor = false
+	notifyframereal.Text = ""
+	notifyframereal.Position = UDim2.new(0.5, 0, 0.01, -36)
+	notifyframereal.Size = UDim2.new(0.4, 0, 0, 0)
+	notifyframereal.Parent = MakeUI
+	local notifyframe = Instance.new("Frame")
+	notifyframe.BackgroundTransparency = 1
+	notifyframe.Size = UDim2.new(1, 0, 1, 0)
+	notifyframe.Parent = notifyframereal
+	local notifyframecorner = Instance.new("UICorner")
+	notifyframecorner.CornerRadius = UDim.new(0, 5)
+	notifyframecorner.Parent = notifyframereal
+	local notifyframeaspect = Instance.new("UIAspectRatioConstraint")
+	notifyframeaspect.AspectRatio = 10
+	notifyframeaspect.DominantAxis = Enum.DominantAxis.Height
+	notifyframeaspect.Parent = notifyframereal
+	local notifyframelist = Instance.new("UIListLayout")
+	notifyframelist.SortOrder = Enum.SortOrder.LayoutOrder
+	notifyframelist.FillDirection = Enum.FillDirection.Horizontal
+	notifyframelist.HorizontalAlignment = Enum.HorizontalAlignment.Left
+	notifyframelist.VerticalAlignment = Enum.VerticalAlignment.Center
+	notifyframelist.Parent = notifyframe
+	local notifyframe2 = Instance.new("Frame")
+	notifyframe2.BackgroundTransparency = 1
+	notifyframe2.BorderSizePixel = 0
+	notifyframe2.LayoutOrder = 1
+	notifyframe2.Size = UDim2.new(0.3, 0, 0, 0)
+	notifyframe2.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	notifyframe2.Parent = notifyframe
+	local notifyframesat = Instance.new("ImageLabel")
+	notifyframesat.BackgroundTransparency = 1
+	notifyframesat.BorderSizePixel = 0
+	notifyframesat.Size = UDim2.new(0.7, 0, 0.7, 0)
+	notifyframesat.LayoutOrder = 2
+	notifyframesat.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	notifyframesat.Image = announcetab.Error and "rbxassetid://6768383834" or "rbxassetid://6685538693"
+	notifyframesat.Parent = notifyframe
+	local notifyframe3 = Instance.new("Frame")
+	notifyframe3.BackgroundTransparency = 1
+	notifyframe3.BorderSizePixel = 0
+	notifyframe3.LayoutOrder = 3
+	notifyframe3.Size = UDim2.new(4.1, 0, 0.8, 0)
+	notifyframe3.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	notifyframe3.Parent = notifyframe
+	local notifyframenotifyframelist = Instance.new("UIPadding")
+	notifyframenotifyframelist.PaddingBottom = UDim.new(0.08, 0)
+	notifyframenotifyframelist.PaddingLeft = UDim.new(0.06, 0)
+	notifyframenotifyframelist.PaddingTop = UDim.new(0.08, 0)
+	notifyframenotifyframelist.Parent = notifyframe3
+	local notifyframeaspectnotifyframeaspect = Instance.new("UIListLayout")
+	notifyframeaspectnotifyframeaspect.Parent = notifyframe3
+	notifyframeaspectnotifyframeaspect.VerticalAlignment = Enum.VerticalAlignment.Center
+	local notifyframelistnotifyframeaspect = Instance.new("TextLabel")
+	notifyframelistnotifyframeaspect.BackgroundTransparency = 1
+	notifyframelistnotifyframeaspect.BorderSizePixel = 0
+	notifyframelistnotifyframeaspect.Size = UDim2.new(1, 0, 0.6, 0)
+	notifyframelistnotifyframeaspect.Font = Enum.Font.Roboto
+	notifyframelistnotifyframeaspect.Text = "IClient Announcement"
+	notifyframelistnotifyframeaspect.TextColor3 = Color3.fromRGB(255, 255, 255)
+	notifyframelistnotifyframeaspect.TextScaled = true
+	notifyframelistnotifyframeaspect.TextWrapped = true
+	notifyframelistnotifyframeaspect.TextXAlignment = Enum.TextXAlignment.Left
+	notifyframelistnotifyframeaspect.Parent = notifyframe3
+	local notifyframe2notifyframeaspect = Instance.new("TextLabel")
+	notifyframe2notifyframeaspect.BackgroundTransparency = 1
+	notifyframe2notifyframeaspect.BorderSizePixel = 0
+	notifyframe2notifyframeaspect.Size = UDim2.new(1, 0, 0.4, 0)
+	notifyframe2notifyframeaspect.Font = Enum.Font.Roboto
+	notifyframe2notifyframeaspect.Text = "<b>"..announcetab.Text.."</b>"
+	notifyframe2notifyframeaspect.TextColor3 = Color3.fromRGB(255, 255, 255)
+	notifyframe2notifyframeaspect.TextScaled = true
+	notifyframe2notifyframeaspect.TextWrapped = true
+	notifyframe2notifyframeaspect.RichText = true
+	notifyframe2notifyframeaspect.TextXAlignment = Enum.TextXAlignment.Left
+	notifyframe2notifyframeaspect.Parent = notifyframe3
+	local notifyprogress = Instance.new("Frame")
+	notifyprogress.Parent = notifyframereal
+	notifyprogress.BorderSizePixel = 0
+	notifyprogress.BackgroundColor3 = Color3.new(1, 1, 1)
+	notifyprogress.Position = UDim2.new(0, 0, 1, -3)
+	notifyprogress.Size = UDim2.new(1, 0, 0, 3)
+	local notifyprogresscorner = Instance.new("UICorner")
+	notifyprogresscorner.CornerRadius = UDim.new(0, 100)
+	notifyprogresscorner.Parent = notifyprogress
+	game:GetService("TweenService"):Create(notifyframereal, TweenInfo.new(0.12), {Size = UDim2.fromScale(0.4, 0.065)}):Play()
+	game:GetService("TweenService"):Create(notifyprogress, TweenInfo.new(announcetab.Time or 20, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 0, 3)}):Play()
+	local sound = Instance.new("Sound")
+	sound.PlayOnRemove = true
+	sound.SoundId = "rbxassetid://6732495464"
+	sound.Parent = workspace
+	sound:Remove()
+	notifyframereal.MouseButton1Click:connect(function()
+		local sound = Instance.new("Sound")
+		sound.PlayOnRemove = true
+		sound.SoundId = "rbxassetid://6732690176"
+		sound.Parent = workspace
+		sound:Remove()
+		notifyframereal:Remove()
+		notifyframereal = nil
+	end)
+	task.wait(announcetab.Time or 20)
+	if notifyframereal then
+		notifyframereal:Remove()
+	end
 end
