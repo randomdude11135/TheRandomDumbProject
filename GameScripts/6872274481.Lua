@@ -1258,7 +1258,7 @@ end
 do
 	local Connection = nil
 	local AutoBuyFrame = BlantantFrame.Toggle({
-		Text = "MultiAura",
+		Text = "Kill Aura",
 		Callback = function(Value)
 
 			IClientToggleProperty.MultiAuraToggle = Value
@@ -1272,8 +1272,10 @@ do
 
 					local yes = getAllPlrsNear(17.99)
 					for i , v in pairs(yes) do
+
 						local selfpos = lplr.Character.HumanoidRootPart.Position
 						local newpos = v.Character.HumanoidRootPart.Position
+						
 						bedwars["ClientHandler"]:Get(bedwars["PaintRemote"]):SendToServer(selfpos, CFrame.lookAt(selfpos, newpos).lookVector)
 						break
 					end
