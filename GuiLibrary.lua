@@ -701,6 +701,9 @@ function CreateNewButton(ButtonConfig, Parent)
 end
 
 function Material.Load(Config)
+	local TabLibrary1,MainFrame1
+
+	task.spawn(function(args)
 	local Style = (Config.Style and math.clamp(Config.Style, 1, 3)) or 1
 	local Title = Config.Title or "MaterialLua"
 	local SizeX = Config.SizeX or 300
@@ -2443,7 +2446,12 @@ function Material.Load(Config)
 		return OptionLibrary
 	end
 
+	TabLibrary1 = TabLibrary
+	MainFrame1 = MainFrame
+	end)
+	repeat wait() until TabLibrary and MainFrame
 	return TabLibrary,MainFrame
+
 end
 
 --// Hello
