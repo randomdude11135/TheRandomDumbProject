@@ -2442,16 +2442,11 @@ function Material.Load(Config)
 			return SliderLibrary
 		end
 
-
 		return OptionLibrary
+	end)
 	end
 
-	TabLibrary1 = TabLibrary
-	MainFrame1 = MainFrame
-	end)
-	repeat wait() until TabLibrary and MainFrame
 	return TabLibrary,MainFrame
-
 end
 
 --// Hello
