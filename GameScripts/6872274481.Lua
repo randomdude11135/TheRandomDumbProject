@@ -274,6 +274,7 @@ local Flamework =
 repeat
 	task.wait()
 until Flamework.isInitialized
+task.wait(1)
 local KnitClient = debug.getupvalue(
 	require(lplr.PlayerScripts.TS.controllers.game["block-break-controller"]).BlockBreakController.onEnable,
 	1
