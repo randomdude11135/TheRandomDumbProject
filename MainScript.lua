@@ -1,3 +1,4 @@
+-- imagine skidding niggas
 --// Wait Until game is loaded
 repeat
 	task.wait()
