@@ -1055,7 +1055,7 @@ do
 								local pos, vis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
 								if vis and isrbxactive() then
 									local senst = UserSettings():GetService("UserGameSettings").MouseSensitivity
-										* (5)
+										* (1)
 									aimpos(Vector2.new(pos.X, pos.Y), senst)
 									break
 								end
