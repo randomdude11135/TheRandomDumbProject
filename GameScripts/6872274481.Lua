@@ -1054,7 +1054,7 @@ do
 							then
 								local pos, vis = cam:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
 								if vis and isrbxactive() then
-									aimpos(Vector2.new(pos.X, pos.Y), 1.5)
+									aimpos(Vector2.new(pos.X, pos.Y), 1)
 									break
 								end
 							end
